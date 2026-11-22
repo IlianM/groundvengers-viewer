@@ -2,7 +2,7 @@
 import { chargerDonnees } from '../src/data'
 
 const { donnees, erreurs } = chargerDonnees()
-console.log(`${donnees.equipements.length} équipements, ${donnees.liens.length} liens, ${donnees.noeuds.length} nœuds IA, ${donnees.batiment.zones.length} zones`)
+console.log(`${donnees.equipements.length} équipements, ${donnees.liens.length} liens, ${donnees.gaines.length} gaines, ${donnees.noeuds.length} nœuds IA, ${donnees.batiment.zones.length} zones`)
 if (erreurs.length) {
   console.error(`\n${erreurs.length} erreur(s) :`)
   for (const e of erreurs) console.error(' - ' + e)

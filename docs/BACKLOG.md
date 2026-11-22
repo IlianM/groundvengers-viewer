@@ -21,7 +21,7 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-15 | Compteurs et chemin Niagara | Should | ✅ partiel |
 | F-16 | Réseaux et firewall | Must | ✅ |
 | F-17 | Bornes Wi-Fi et couverture | Should | ✅ |
-| F-18 | Baies, gaines, chemins de câbles | Should | ✅ baies, ⬜ tracés de gaines |
+| F-18 | Baies, gaines, chemins de câbles | Should | ✅ |
 | F-19 | Points d'entrée | Must | ✅ |
 | F-20 | Score de surface d'attaque | Should | ✅ partiel (indicateur points d'entrée) |
 | F-21 | Scénario d'intrusion animé | Could | ⬜ |

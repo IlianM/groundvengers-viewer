@@ -90,6 +90,8 @@ export const VUES: DefVue[] = [
       { couleur: COULEURS.reseau.GTB, libelle: 'Réseau GTB isolé (volume vert)' },
       { couleur: COULEURS.reseau.bureautique, libelle: 'Réseau bureautique (volume bleu)' },
       { couleur: COULEURS.reseau.internet, libelle: 'Internet' },
+      { couleur: '#f08c00', libelle: 'Montante technique (colonne orange)' },
+      { couleur: COULEURS.protocole.fibre, libelle: 'Gaine fibre (chemin violet)' },
       { couleur: '#495057', libelle: 'Équipement de coupure (firewall, baie)' },
       { couleur: '#e03131', libelle: 'Flux bloqué / point d’entrée (anneau)' },
     ],

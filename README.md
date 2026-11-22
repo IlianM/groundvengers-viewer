@@ -51,7 +51,9 @@ Menu **Options** : mode sombre, et décor activable séparément (herbe/route, a
 
 ## Caméra
 
-Souris : clic gauche tourner, clic droit déplacer, molette zoom. Clavier : **flèches** pour se déplacer, **Maj + flèches** pour tourner et incliner, **+ / −** pour zoomer. Boutons Recentrer, Dessus, Façade. La case **Vue éclatée** (panneau de gauche) écarte les niveaux les uns des autres.
+Souris : clic gauche tourner, clic droit déplacer, molette zoom. Clavier : **flèches** pour se déplacer, **Maj + flèches** pour tourner et incliner, **+ / −** pour zoomer. Boutons Recentrer, Dessus, Façade. La case **Vue éclatée** (panneau de gauche) écarte les niveaux les uns des autres, et **Éclater aussi les pièces** écarte chaque pièce de son voisin ; les deux se combinent.
+
+En vue Cyber, le calque **Gaines et chemins de câbles** montre les chemins de câbles par réseau et la montante technique ; un clic ouvre la fiche (liens transportés). Les tracés actuels sont fictifs, à faire valider par l'équipe Cyber.
 
 ## Recherche et lien partageable
 

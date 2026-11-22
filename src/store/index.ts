@@ -25,6 +25,8 @@ type Etat = {
   cameraCible: { n: number; position: Vec3; cible: Vec3 }
   eclate: boolean // vue éclatée demandée
   ecart: number // écart actuel entre niveaux (animé de 0 à ECART_ECLATE)
+  eclatePieces: boolean // pièces écartées horizontalement
+  pieces: number // avancement animé de 0 à 1
 
   setVue: (v: VueId) => void
   setNiveau: (n: string | null) => void
@@ -40,6 +42,7 @@ type Etat = {
   setDeco: (k: keyof Deco, v: boolean) => void
   allerA: (position: Vec3, cible: Vec3) => void
   setEclate: (b: boolean) => void
+  setEclatePieces: (b: boolean) => void
 }
 
 // Options d'apparence gardées dans le navigateur (aucune donnée envoyée nulle part).
@@ -79,6 +82,8 @@ export const useEtat = create<Etat>((set, get) => ({
   cameraCible: { n: 0, ...CAMERA_DEFAUT },
   eclate: false,
   ecart: 0,
+  eclatePieces: false,
+  pieces: 0,
 
   setVue: (vue) => set({ vue, selection: null, calquesMasques: new Set() }),
   setNiveau: (niveau) => set({ niveau }),
@@ -101,9 +106,12 @@ export const useEtat = create<Etat>((set, get) => ({
   setEclate: (eclate) => {
     set({ eclate })
     animerEcart()
-    // on recule un peu pour garder tout le bâtiment dans le cadre
-    const c = get().cameraCible
-    set({ cameraCible: { n: c.n + 1, position: eclate ? [34, 28, 38] : CAMERA_DEFAUT.position, cible: eclate ? [0, 7, 0] : CAMERA_DEFAUT.cible } })
+    recadrer(get, set)
+  },
+  setEclatePieces: (eclatePieces) => {
+    set({ eclatePieces })
+    animerEcart()
+    recadrer(get, set)
   },
   allerA: (position, cible) => set((s) => ({ cameraCible: { n: s.cameraCible.n + 1, position, cible } })),
 }))
@@ -122,19 +130,29 @@ useEtat.subscribe((s, prev) => {
   if (s.theme !== prev.theme || s.deco !== prev.deco) appliquer(s)
 })
 
-// Animation de l'écart : on rapproche `ecart` de sa cible à chaque image (0,5 s environ), les composants suivent via le store.
+// On recule la caméra quand le bâtiment s'étale, pour le garder dans le cadre.
+function recadrer(get: () => Etat, set: (p: Partial<Etat>) => void) {
+  const { eclate, eclatePieces, cameraCible: c } = get()
+  const [position, cible]: [Vec3, Vec3] = eclatePieces
+    ? [[40, 34, 46], [0, eclate ? 7 : 4, 0]]
+    : eclate ? [[34, 28, 38], [0, 7, 0]] : [CAMERA_DEFAUT.position, CAMERA_DEFAUT.cible]
+  set({ cameraCible: { n: c.n + 1, position, cible } })
+}
+
+// Animation des écarts : on rapproche `ecart` et `pieces` de leur cible à chaque image (0,5 s environ) ; les composants suivent via le store.
 let animation = 0
 function animerEcart() {
   if (animation) return
   let dernier = performance.now()
   const pas = (t: number) => {
-    const { eclate, ecart } = useEtat.getState()
-    const cible = eclate ? ECART_ECLATE : 0
+    const { eclate, eclatePieces, ecart, pieces } = useEtat.getState()
     const k = 1 - Math.exp(-((t - dernier) / 1000) * 8)
     dernier = t
-    const suivant = Math.abs(cible - ecart) < 0.01 ? cible : ecart + (cible - ecart) * k
-    useEtat.setState({ ecart: suivant })
-    animation = suivant === cible ? 0 : requestAnimationFrame(pas)
+    const vers = (v: number, cible: number) => (Math.abs(cible - v) < 0.005 ? cible : v + (cible - v) * k)
+    const e2 = vers(ecart, eclate ? ECART_ECLATE : 0)
+    const p2 = vers(pieces, eclatePieces ? 1 : 0)
+    useEtat.setState({ ecart: e2, pieces: p2 })
+    animation = e2 === (eclate ? ECART_ECLATE : 0) && p2 === (eclatePieces ? 1 : 0) ? 0 : requestAnimationFrame(pas)
   }
   animation = requestAnimationFrame(pas)
 }

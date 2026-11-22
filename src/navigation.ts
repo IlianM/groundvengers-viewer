@@ -1,5 +1,5 @@
 // Aller à un élément : règle l'état de l'appli pour qu'il soit visible, le sélectionne et place la caméra.
-import { donnees, positionMonde, altitudeNiveau } from './data'
+import { donnees, positionMonde, altitudeNiveau, pointMonde, decalageZone } from './data'
 import { useEtat, ECART_ECLATE } from './store'
 import { VUES, type VueId } from './views'
 
@@ -7,7 +7,7 @@ const sansAccent = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
 
 export type Resultat = {
   id: string // id à sélectionner (équipement ou zone)
-  genre: 'zone' | 'equipement' | 'noeud'
+  genre: 'zone' | 'equipement' | 'noeud' | 'gaine'
   titre: string
   detail: string
   score: number
@@ -39,6 +39,13 @@ export function chercher(requete: string, max = 8): Resultat[] {
     const s = evalue(e.nom, autres)
     if (s >= 0) out.push({ id: e.id, genre: 'equipement', titre: e.nom, detail: `${e.type} · ${e.niveau} · ${e.id}`, score: s })
   }
+  for (const g of donnees.gaines) {
+    const s = evalue(g.nom, `${g.id} ${g.reseau} ${g.niveau ?? ''} ${g.de ?? ''} ${g.a ?? ''} gaine gaines chemin cables cable montante`)
+    if (s >= 0) {
+      out.push({ id: g.id, genre: 'gaine', vue: 'cyber', score: s, titre: g.nom,
+        detail: `${g.type === 'montante' ? 'Montante' : 'Gaine'} · ${g.type === 'montante' ? `${g.de} → ${g.a}` : g.niveau} · ${g.id}` })
+    }
+  }
   for (const n of donnees.noeuds) {
     const hote = donnees.parId.get(n.heberge_sur)
     const s = evalue(n.id, `${n.modele} ${n.architecture} ${n.frequence} ia nœud noeud modele ${hote?.nom ?? ''}`)
@@ -62,10 +69,28 @@ export function reveler(cible: Cible) {
   if (zone) {
     const [w, d] = donnees.batiment.emprise
     const alt = altitudeNiveau(zone.niveau, s.eclate ? ECART_ECLATE : 0)
-    const c: [number, number, number] = [zone.rect[0] + zone.rect[2] / 2 - w / 2, alt, zone.rect[1] + zone.rect[3] / 2 - d / 2]
+    const [dx, dz] = decalageZone(zone, s.eclatePieces ? 1 : 0)
+    const c: [number, number, number] = [zone.rect[0] + zone.rect[2] / 2 - w / 2 + dx, alt, zone.rect[1] + zone.rect[3] / 2 - d / 2 + dz]
     if (s.niveau && s.niveau !== zone.niveau) s.setNiveau(zone.niveau)
     if (s.calquesMasques.has('zones')) s.basculerCalque('zones')
     s.setSelection(zone.id)
+    s.allerA([c[0] + DECALAGE_ZONE[0], c[1] + DECALAGE_ZONE[1], c[2] + DECALAGE_ZONE[2]], c)
+    return
+  }
+  const g = donnees.gaineParId.get(cible.id)
+  if (g) {
+    if (s.vue !== 'cyber') s.setVue('cyber')
+    if (useEtat.getState().calquesMasques.has('gaines')) s.basculerCalque('gaines')
+    const alt = (i: string) => donnees.batiment.niveaux.find((n) => n.id === i)?.altitude ?? 0
+    const niv = g.type === 'montante' ? g.de! : g.niveau!
+    if (s.niveau && (g.type === 'horizontale' ? s.niveau !== niv : alt(s.niveau) < alt(g.de!) || alt(s.niveau) > alt(g.a!))) s.setNiveau(null)
+    s.setSelection(g.id)
+    const pts = g.chemin.map(([x, z]) => pointMonde(niv, x, g.hauteur, z, s.eclate ? ECART_ECLATE : 0, s.eclatePieces ? 1 : 0))
+    const c: [number, number, number] = [
+      pts.reduce((a, q) => a + q[0], 0) / pts.length,
+      g.type === 'montante' ? (altitudeNiveau(g.de!, s.eclate ? ECART_ECLATE : 0) + altitudeNiveau(g.a!, s.eclate ? ECART_ECLATE : 0)) / 2 : pts[0][1],
+      pts.reduce((a, q) => a + q[2], 0) / pts.length,
+    ]
     s.allerA([c[0] + DECALAGE_ZONE[0], c[1] + DECALAGE_ZONE[1], c[2] + DECALAGE_ZONE[2]], c)
     return
   }
@@ -88,6 +113,6 @@ export function reveler(cible: Cible) {
   if (s.niveau && s.niveau !== e.niveau) s.setNiveau(e.niveau)
   if (useEtat.getState().calquesMasques.has(e.categorie)) s.basculerCalque(e.categorie)
   s.setSelection(e.id)
-  const c = positionMonde(e, s.eclate ? ECART_ECLATE : 0)
+  const c = positionMonde(e, s.eclate ? ECART_ECLATE : 0, s.eclatePieces ? 1 : 0)
   s.allerA([c[0] + DECALAGE[0], c[1] + DECALAGE[1], c[2] + DECALAGE[2]], c)
 }

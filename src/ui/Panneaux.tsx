@@ -99,7 +99,7 @@ export function OutilsCamera() {
 }
 
 export function PanneauGauche() {
-  const { vue, niveau, setNiveau, coupe, setCoupe, eclate, setEclate, calquesMasques, basculerCalque, architectureIA, setArchitectureIA, seuilAnonymat, setSeuilAnonymat, minimumVital } = useEtat()
+  const { vue, niveau, setNiveau, coupe, setCoupe, eclate, setEclate, eclatePieces, setEclatePieces, calquesMasques, basculerCalque, architectureIA, setArchitectureIA, seuilAnonymat, setSeuilAnonymat, minimumVital } = useEtat()
   const def = VUES.find((v) => v.id === vue)!
   const ctx = { architectureIA }
   const categories = [...new Set(donnees.equipements.filter((e) => def.montre(e, ctx)).map((e) => e.categorie))]
@@ -128,6 +128,10 @@ export function PanneauGauche() {
         <input type="checkbox" checked={eclate} onChange={(e) => setEclate(e.target.checked)} />
         Vue éclatée (écarter les niveaux)
       </label>
+      <label className="calque" title="Écarte chaque pièce de son voisin, à l'horizontale, à partir du centre du bâtiment">
+        <input type="checkbox" checked={eclatePieces} onChange={(e) => setEclatePieces(e.target.checked)} />
+        Éclater aussi les pièces
+      </label>
 
       <h3>Calques</h3>
       {categories.map((c) => (
@@ -144,6 +148,7 @@ export function PanneauGauche() {
         <>
           <label className="calque"><input type="checkbox" checked={!calquesMasques.has('couverture')} onChange={() => basculerCalque('couverture')} />Couverture Wi-Fi</label>
           <label className="calque"><input type="checkbox" checked={!calquesMasques.has('volumes')} onChange={() => basculerCalque('volumes')} />Volumes réseau</label>
+          <label className="calque"><input type="checkbox" checked={!calquesMasques.has('gaines')} onChange={() => basculerCalque('gaines')} />Gaines et chemins de câbles</label>
         </>
       )}
 
@@ -235,6 +240,32 @@ export function FicheDetail() {
         <h3>Équipements ({dans.length})</h3>
         <ul className="liste-liens">{dans.map((e) => <li key={e.id}><button onClick={() => setSelection(e.id)}>{e.nom}</button></li>)}</ul>
         {zone.preuves.length > 0 && <><h3>Preuves</h3><ul className="preuves">{zone.preuves.map((p) => <BadgePreuve key={p} id={p} />)}</ul></>}
+      </aside>
+    )
+  }
+  const g = donnees.gaineParId.get(selection)
+  if (g) {
+    return (
+      <aside className="panneau droite">
+        <button className="fermer" onClick={() => setSelection(null)}>×</button>
+        <span className="badge" style={{ background: COULEURS.equipe[g.equipe] }}>{g.equipe}</span>
+        <h2>{g.nom}</h2>
+        <p className="id">{g.id}</p>
+        <dl>
+          <dt>Type</dt><dd>{g.type === 'montante' ? 'Montante technique' : 'Chemin de câbles'}</dd>
+          <dt>Réseau</dt><dd>{g.reseau}</dd>
+          <dt>{g.type === 'montante' ? 'Niveaux' : 'Niveau'}</dt><dd>{g.type === 'montante' ? `${g.de} → ${g.a}` : g.niveau}</dd>
+          <dt>Hauteur</dt><dd>{g.hauteur} m au-dessus de la dalle</dd>
+        </dl>
+        <h3>Liens transportés ({g.contient.length})</h3>
+        <ul className="liste-liens">
+          {g.contient.map((id) => {
+            const l = donnees.liens.find((x) => x.id === id)
+            const nom = (i: string) => donnees.parId.get(i)?.nom ?? i
+            return <li key={id}>{l ? `${nom(l.de)} → ${l.vers.map(nom).join(', ')}` : id}<small>{l?.type}</small></li>
+          })}
+        </ul>
+        {g.preuves.length > 0 && <><h3>Preuves</h3><ul className="preuves">{g.preuves.map((p) => <BadgePreuve key={p} id={p} />)}</ul></>}
       </aside>
     )
   }

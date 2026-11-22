@@ -8,6 +8,7 @@ La référence est `src/schema/index.ts` (Zod). Résumé :
 | Zone | batiment.json | `id`, `niveau`, `type`, `effectif_max`, `detection_presence`, `rect [x, z, largeur, profondeur]` |
 | Équipement | domotique / cyber / ia.json | `id`, `equipe`, `categorie`, `type`, `niveau`, `zone`, `position`, `protocole`, `reseau`, `config`, `donnee`, `point_entree`, `risques`, `preuves` |
 | Lien | domotique / cyber / ia.json | `id`, `type`, `protocole`, `de`, `vers`, `autorise_par_firewall`, `minimum_vital` |
+| Gaine | cyber.json (`gaines`) | `id`, `type (horizontale / montante)`, `reseau (GTB / bureautique / fibre / mixte)`, `niveau` ou `de` + `a`, `chemin [[x, z], …]`, `hauteur`, `contient` (ids de liens) |
 | Nœud IA | ia.json | `id`, `heberge_sur`, `architecture (edge / central)`, `modele`, `entrees`, `sorties`, `conservation`, `mode_degrade` |
 | Preuve | preuves.json | `id`, `statut (sourcee / observee / simulee)`, `titre`, `document`, `lien` |
 | Risque | preuves.json | `id`, `nom`, `impact`, `probabilite`, `preventif`, `correctif` |

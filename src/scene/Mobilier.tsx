@@ -1,7 +1,7 @@
 // Meubles générés à partir des zones de batiment.json (effectif, type, aménagement).
 // Rien à dessiner à la main : changer l'effectif d'une zone change ses bureaux.
 import { useMemo } from 'react'
-import { donnees, decalageNiveau } from '../data'
+import { donnees, decalageNiveau, decalageZone } from '../data'
 import { useEtat } from '../store'
 import { usePalette, type Palette } from './palette'
 import { Boites, type Boite } from './Boites'
@@ -124,7 +124,7 @@ function amenagement(z: Zone): NonNullable<Zone['amenagement']> {
   }
 }
 
-type BoiteNiveau = Boite & { niveau: string }
+type BoiteNiveau = Boite & { niveau: string; zone: string }
 
 export function genererMobilier(c: Couleurs): BoiteNiveau[] {
   const [W, D] = donnees.batiment.emprise
@@ -134,7 +134,7 @@ export function genererMobilier(c: Couleurs): BoiteNiveau[] {
     if (!n) continue
     // x et zz en mètres dans le repère du bâtiment ; y0 = hauteur du bas au-dessus de la dalle
     const b: Poser = (x, y0, zz, sx, sy, sz, couleur) =>
-      sortie.push({ p: [x - W / 2, n.altitude + 0.02 + y0 + sy / 2, zz - D / 2], s: [sx, sy, sz], c: couleur, niveau: z.niveau })
+      sortie.push({ p: [x - W / 2, n.altitude + 0.02 + y0 + sy / 2, zz - D / 2], s: [sx, sy, sz], c: couleur, niveau: z.niveau, zone: z.id })
     switch (amenagement(z)) {
       case 'bureaux': openSpace(b, c, z); break
       case 'bureau_individuel': bureauIndividuel(b, c, z); break
@@ -149,14 +149,18 @@ export function genererMobilier(c: Couleurs): BoiteNiveau[] {
 
 export function Mobilier() {
   const meubles = useEtat((s) => s.deco.meubles)
-  const { niveau, coupe, vue, ecart } = useEtat()
+  const { niveau, coupe, vue, ecart, pieces } = useEtat()
   const p = usePalette()
   const tous = useMemo(() => genererMobilier(p.meuble), [p.meuble])
   const items = useMemo(
     () => tous
       .filter((m) => (!niveau || m.niveau === niveau) && niveauVisible(m.niveau, niveau, coupe))
-      .map((m) => (ecart ? { ...m, p: [m.p[0], m.p[1] + decalageNiveau(m.niveau, ecart), m.p[2]] as [number, number, number] } : m)),
-    [tous, niveau, coupe, ecart],
+      .map((m) => {
+        if (!ecart && !pieces) return m
+        const [dx, dz] = decalageZone(donnees.zoneParId.get(m.zone), pieces)
+        return { ...m, p: [m.p[0] + dx, m.p[1] + decalageNiveau(m.niveau, ecart), m.p[2] + dz] as [number, number, number] }
+      }),
+    [tous, niveau, coupe, ecart, pieces],
   )
   if (!meubles) return null
   // hors vue Architecture, les meubles s'effacent pour laisser lire les équipements

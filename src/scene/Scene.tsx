@@ -2,12 +2,13 @@ import { Suspense, useEffect, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Html, Line, Edges, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
-import { donnees, positionMonde, altitudeNiveau } from '../data'
+import { donnees, positionMonde, altitudeNiveau, decalageZone } from '../data'
 import { useEtat, CAMERA_DEFAUT } from '../store'
 import { useVisibles, niveauVisible } from './visibles'
 import { usePalette, type Palette } from './palette'
 import { Sol, Arbres, ImmeublesLointains } from './Decor'
 import { Mobilier } from './Mobilier'
+import { Gaines } from './Gaines'
 import { phraseOccupant, zoneNonAnonyme, COULEURS } from '../views'
 import type { Equipement, Zone } from '../schema'
 
@@ -43,6 +44,7 @@ export function Scene3D() {
       <Mobilier />
       <Zones />
       <VolumesReseau />
+      <Gaines />
       <Liens />
       <FluxIA />
       <CouvertureWifi />
@@ -180,7 +182,7 @@ function couleurZone(z: Zone, vue: string, seuil: number, mv: boolean, p: Palett
 }
 
 function Zones() {
-  const { vue, niveau, coupe, calquesMasques, seuilAnonymat, minimumVital, setSelection, ecart } = useEtat()
+  const { vue, niveau, coupe, calquesMasques, seuilAnonymat, minimumVital, setSelection, ecart, pieces } = useEtat()
   const p = usePalette()
   if (calquesMasques.has('zones')) return null
   const etiquettes = vue === 'architecture' || vue === 'occupant' || niveau !== null
@@ -192,8 +194,9 @@ function Zones() {
           const n = donnees.batiment.niveaux.find((x) => x.id === z.niveau)!
           const [x, zz, w, d] = z.rect
           const { couleur, opacite } = couleurZone(z, vue, seuilAnonymat, minimumVital, p)
-          const cx = x + w / 2 - W / 2
-          const cz = zz + d / 2 - D / 2
+          const [dx, dz] = decalageZone(z, pieces)
+          const cx = x + w / 2 - W / 2 + dx
+          const cz = zz + d / 2 - D / 2 + dz
           return (
             <group key={z.id} position={[cx, altitudeNiveau(n.id, ecart) + 0.02, cz]}>
               <mesh rotation={[-Math.PI / 2, 0, 0]} onClick={(ev) => { ev.stopPropagation(); setSelection(z.id) }}>
@@ -238,11 +241,11 @@ function Forme({ e }: { e: Equipement }) {
 
 function Equipements() {
   const { equipements, def, ctx } = useVisibles()
-  const { selection, survol, vue, setSelection, setSurvol, ecart } = useEtat()
+  const { selection, survol, vue, setSelection, setSurvol, ecart, pieces } = useEtat()
   return (
     <group>
       {equipements.map((e) => {
-        const pos = positionMonde(e, ecart)
+        const pos = positionMonde(e, ecart, pieces)
         const sel = selection === e.id
         const couleur = def.couleur(e, ctx)
         return (
@@ -304,6 +307,7 @@ function Liens() {
   const { liens, def, ids } = useVisibles()
   const selection = useEtat((s) => s.selection)
   const ecart = useEtat((s) => s.ecart)
+  const pieces = useEtat((s) => s.pieces)
   return (
     <group>
       {liens.flatMap((l) => {
@@ -316,8 +320,8 @@ function Liens() {
             return (
               <Trait
                 key={`${l.id}-${v}`}
-                a={positionMonde(de, ecart)}
-                b={positionMonde(vers, ecart)}
+                a={positionMonde(de, ecart, pieces)}
+                b={positionMonde(vers, ecart, pieces)}
                 couleur={def.couleurLien(l)}
                 pointille={l.autorise_par_firewall === false}
                 anime={l.type === 'flux_reseau' && l.autorise_par_firewall !== false}
@@ -333,7 +337,7 @@ function Liens() {
 
 /** Vue IA : flux animés des capteurs vers le nœud de calcul (Edge par étage ou central cloisonné). */
 function FluxIA() {
-  const { vue, architectureIA, niveau, selection, minimumVital, ecart } = useEtat()
+  const { vue, architectureIA, niveau, selection, minimumVital, ecart, pieces } = useEtat()
   const { ids } = useVisibles()
   if (vue !== 'ia') return null
   const noeuds = donnees.noeuds.filter((n) => n.architecture === architectureIA)
@@ -342,7 +346,7 @@ function FluxIA() {
       {noeuds.flatMap((n) => {
         const hote = donnees.parId.get(n.heberge_sur)
         if (!hote || (niveau && architectureIA === 'edge' && hote.niveau !== niveau)) return []
-        const ph = positionMonde(hote, ecart)
+        const ph = positionMonde(hote, ecart, pieces)
         return [
           <mesh key={`${n.id}-halo`} position={ph}>
             <sphereGeometry args={[1.1, 24, 16]} />
@@ -354,7 +358,7 @@ function FluxIA() {
             .map((id) => {
               const touche = !selection || selection === id || selection === n.heberge_sur
               return (
-                <Trait key={`${n.id}-${id}`} a={positionMonde(donnees.parId.get(id)!, ecart)} b={ph}
+                <Trait key={`${n.id}-${id}`} a={positionMonde(donnees.parId.get(id)!, ecart, pieces)} b={ph}
                   couleur={COULEURS.equipe.ia} anime opacite={touche ? 0.9 : 0.12} epaisseur={1.8} />
               )
             }),
@@ -366,7 +370,7 @@ function FluxIA() {
 
 /** Cyber (F-16) : périmètre de chaque réseau, un volume translucide par niveau autour de ses équipements affichés. */
 function VolumesReseau() {
-  const { vue, calquesMasques, niveau, coupe, ecart } = useEtat()
+  const { vue, calquesMasques, niveau, coupe, ecart, pieces } = useEtat()
   const { equipements } = useVisibles()
   if (vue !== 'cyber' || calquesMasques.has('volumes')) return null
   const reseaux = [
@@ -381,8 +385,9 @@ function VolumesReseau() {
           .flatMap((n) => {
             const eqs = equipements.filter((e) => e.reseau === r.id && e.niveau === n.id)
             if (eqs.length === 0) return []
-            const xs = eqs.map((e) => e.position[0])
-            const zs = eqs.map((e) => e.position[2])
+            const pts = eqs.map((e) => positionMonde(e, ecart, pieces))
+            const xs = pts.map((q) => q[0] + W / 2)
+            const zs = pts.map((q) => q[2] + D / 2)
             const largeur = Math.max(Math.max(...xs) - Math.min(...xs) + 3, 4)
             const profondeur = Math.max(Math.max(...zs) - Math.min(...zs) + 3, 4)
             const cx = (Math.max(...xs) + Math.min(...xs)) / 2 - W / 2
@@ -407,7 +412,7 @@ function VolumesReseau() {
 }
 
 function CouvertureWifi() {
-  const { vue, calquesMasques, ecart } = useEtat()
+  const { vue, calquesMasques, ecart, pieces } = useEtat()
   const { equipements } = useVisibles()
   if (vue !== 'cyber' || calquesMasques.has('couverture')) return null
   return (
@@ -415,7 +420,7 @@ function CouvertureWifi() {
       {equipements
         .filter((e) => e.categorie === 'borne_wifi')
         .map((e) => {
-          const [x, y, z] = positionMonde(e, ecart)
+          const [x, y, z] = positionMonde(e, ecart, pieces)
           const r = Number(e.config.portee_m ?? 10)
           return (
             <mesh key={`${e.id}-wifi`} position={[x, y - e.position[1] + 0.05, z]} rotation={[-Math.PI / 2, 0, 0]}>

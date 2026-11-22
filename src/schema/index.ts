@@ -121,7 +121,27 @@ export const Risque = z.object({
 })
 export type Risque = z.infer<typeof Risque>
 
+// Gaine, chemin de câbles ou montante technique (dessinés en vue Cyber).
+// Horizontale : `niveau` + `chemin` (points [x, z] dans le repère du bâtiment) à `hauteur` au-dessus de la dalle.
+// Montante : `de` → `a` (niveaux) + un seul point dans `chemin`.
+export const Gaine = z.object({
+  id: z.string(),
+  equipe: Equipe.default('cyber'),
+  nom: z.string(),
+  type: z.enum(['horizontale', 'montante']),
+  reseau: z.enum(['GTB', 'bureautique', 'fibre', 'mixte']),
+  niveau: z.string().optional(),
+  de: z.string().optional(),
+  a: z.string().optional(),
+  chemin: z.array(z.tuple([z.number(), z.number()])).min(1),
+  hauteur: z.number().default(3),
+  contient: z.array(z.string()).default([]), // ids de liens transportés
+  preuves: z.array(z.string()).default([]),
+})
+export type Gaine = z.infer<typeof Gaine>
+
 export const FichierEquipe = z.object({
+  gaines: z.array(Gaine).default([]),
   equipements: z.array(Equipement).default([]),
   liens: z.array(Lien).default([]),
 })
