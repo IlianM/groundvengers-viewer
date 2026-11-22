@@ -2,8 +2,9 @@ import { Fragment, useEffect, useRef, useState } from 'react'
 import { donnees, erreurs } from '../data'
 import { useEtat, CAMERA_DEFAUT, type Deco } from '../store'
 import { copierLien } from '../partage'
-import { VUES, LIBELLES, COULEURS, zoneNonAnonyme, phraseOccupant, type VueId } from '../views'
-import { useVisibles, indicateurs } from '../scene/visibles'
+import { VUES, LIBELLES, COULEURS, zoneNonAnonyme, phraseOccupant, criticite, classeCriticite, COULEUR_CRITICITE, NIVEAU_IMPACT, NIVEAU_PROBA, type VueId } from '../views'
+import { reveler } from '../navigation'
+import { useVisibles, indicateurs, POIDS_SURFACE } from '../scene/visibles'
 import type { Equipement } from '../schema'
 
 const OPTIONS_DECO: [Exclude<keyof Deco, 'structure'>, string][] = [
@@ -119,6 +120,7 @@ export function PanneauGauche() {
     <aside className="panneau gauche">
       <h2>{def.nom}</h2>
       <p className="discret">{def.description}</p>
+      {vue === 'risques' && <MatriceRisques />}
 
       <h3>Niveau</h3>
       <div className="niveaux">
@@ -152,7 +154,7 @@ export function PanneauGauche() {
         </label>
       ))}
       <label className="calque"><input type="checkbox" checked={!calquesMasques.has('zones')} onChange={() => basculerCalque('zones')} />Zones</label>
-      {vue !== 'architecture' && vue !== 'occupant' && vue !== 'ia' && (
+      {vue !== 'architecture' && vue !== 'occupant' && vue !== 'ia' && vue !== 'risques' && (
         <label className="calque"><input type="checkbox" checked={!calquesMasques.has('liens')} onChange={() => basculerCalque('liens')} />Liens</label>
       )}
       {vue === 'cyber' && (
@@ -162,6 +164,8 @@ export function PanneauGauche() {
           <label className="calque"><input type="checkbox" checked={!calquesMasques.has('gaines')} onChange={() => basculerCalque('gaines')} />Gaines et chemins de câbles</label>
         </>
       )}
+
+      {vue === 'cyber' && <ScoreSurface />}
 
       {vue === 'ia' && (
         <>
@@ -379,7 +383,7 @@ export function BandeauBas() {
   const items: [string, keyof typeof actuel][] = [
     ['Équipements', 'equipements'], ['Capteurs', 'capteurs'], ['Mesures / jour', 'mesuresJour'],
     ['Données identifiantes', 'identifiantes'], ['Points d’entrée réseau', 'pointsEntree'],
-    ['Flux vers Internet', 'fluxCloud'], ['Protocoles', 'protocoles'],
+    ['Flux vers Internet', 'fluxCloud'], ['Protocoles', 'protocoles'], ['Surface d’attaque (score)', 'surface'],
   ]
   return (
     <footer className="bandeau-bas">
@@ -462,5 +466,80 @@ export function ZoneDepot({ children }: { children: React.ReactNode }) {
         </div>
       )}
     </main>
+  )
+}
+
+/** Matrice impact × probabilité des risques (F-30) ; un clic isole les équipements concernés. */
+function MatriceRisques() {
+  const { risqueActif, setRisqueActif } = useEtat()
+  const impacts = (['Critique', 'Moyen', 'Faible'] as const)
+  const probas = (['Faible', 'Moyenne', 'Élevée'] as const)
+  const actif = donnees.risques.find((r) => r.id === risqueActif)
+  const concernes = actif ? donnees.equipements.filter((e) => e.risques.includes(actif.id)) : []
+  return (
+    <>
+      <h3>Matrice des risques</h3>
+      <p className="discret">Lignes : impact. Colonnes : probabilité.</p>
+      <div className="matrice" role="grid" aria-label="Matrice impact par probabilité">
+        {impacts.map((imp) => (
+          <Fragment key={imp}>
+            <span className="axe-lib">{imp}</span>
+            {probas.map((pr) => {
+              const c = NIVEAU_IMPACT[imp] * NIVEAU_PROBA[pr]
+              const risques = donnees.risques.filter((r) => r.impact === imp && r.probabilite === pr)
+              return (
+                <div key={pr} className="cellule" style={{ background: COULEUR_CRITICITE[classeCriticite(c)] + '33', borderColor: COULEUR_CRITICITE[classeCriticite(c)] }}>
+                  {risques.map((r) => (
+                    <button key={r.id} className={risqueActif === r.id ? 'actif' : ''} title={r.nom}
+                      onClick={() => setRisqueActif(risqueActif === r.id ? null : r.id)}>{r.nom}</button>
+                  ))}
+                </div>
+              )
+            })}
+          </Fragment>
+        ))}
+        <span />
+        {probas.map((pr) => <span key={pr} className="axe-lib">{pr}</span>)}
+      </div>
+      {!actif && <p className="discret">Cliquez un risque pour ne garder que les équipements concernés.</p>}
+      {actif && (
+        <div className="risque">
+          <b>{actif.nom}</b> <small>impact {actif.impact} · probabilité {actif.probabilite} · criticité {criticite(actif)}/9</small>
+          <p><b>Préventif :</b> {actif.preventif}</p>
+          <p><b>Correctif :</b> {actif.correctif}</p>
+          <b>{concernes.length} équipement(s) concerné(s)</b>
+          <ul className="liste-liens">
+            {concernes.map((e) => <li key={e.id}><button onClick={() => reveler({ id: e.id, vue: 'risques' })}>{e.nom}</button></li>)}
+          </ul>
+        </div>
+      )}
+    </>
+  )
+}
+
+/** Score de surface d'attaque (F-20) : détail du calcul, tout collecter contre minimum vital. */
+function ScoreSurface() {
+  const minimumVital = useEtat((s) => s.minimumVital)
+  const actuel = indicateurs(minimumVital)
+  const tout = indicateurs(false)
+  const vital = indicateurs(true)
+  const lignes: [string, keyof typeof POIDS_SURFACE][] = [
+    ['Points d’entrée réseau', 'pointsEntree'], ['Flux vers Internet', 'fluxCloud'],
+    ['Protocoles distincts', 'protocoles'], ['Équipements à donnée identifiante', 'identifiantes'],
+  ]
+  const baisse = tout.surface > 0 ? Math.round((1 - vital.surface / tout.surface) * 100) : 0
+  return (
+    <>
+      <h3>Surface d’attaque</h3>
+      <table className="comparatif">
+        <tbody>
+          {lignes.map(([lib, k]) => (
+            <tr key={k}><td>{lib}</td><td className="calcul">{actuel[k]} × {POIDS_SURFACE[k]} = <b>{actuel[k] * POIDS_SURFACE[k]}</b></td></tr>
+          ))}
+          <tr><td><b>Score ({minimumVital ? 'minimum vital' : 'tout collecter'})</b></td><td className="calcul"><b>{actuel.surface}</b></td></tr>
+        </tbody>
+      </table>
+      <p className="discret">Tout collecter : {tout.surface} · Minimum vital : {vital.surface} (−{baisse} %). Formule indicative, à valider avec l’équipe Cyber.</p>
+    </>
   )
 }

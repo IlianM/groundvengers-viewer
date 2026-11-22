@@ -336,10 +336,10 @@ function Equipements() {
               <Forme e={e} />
               <meshStandardMaterial color={couleur} emissive={sel ? couleur : '#000000'} emissiveIntensity={sel ? 0.5 : 0} />
             </mesh>
-            {vue === 'cyber' && e.point_entree && (
+            {((vue === 'cyber' && e.point_entree) || vue === 'risques') && (
               <mesh rotation={[Math.PI / 2, 0, 0]}>
-                <torusGeometry args={[0.75, 0.06, 8, 32]} />
-                <meshBasicMaterial color="#e03131" />
+                <torusGeometry args={[vue === 'risques' ? 1.1 : 0.75, vue === 'risques' ? 0.1 : 0.06, 8, 32]} />
+                <meshBasicMaterial color={vue === 'risques' ? couleur : '#e03131'} />
               </mesh>
             )}
             {survol === e.id && !sel && (

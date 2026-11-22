@@ -7,7 +7,7 @@ const sansAccent = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
 
 export type Resultat = {
   id: string // id à sélectionner (équipement ou zone)
-  genre: 'zone' | 'equipement' | 'noeud' | 'gaine'
+  genre: 'zone' | 'equipement' | 'noeud' | 'gaine' | 'risque'
   titre: string
   detail: string
   score: number
@@ -39,6 +39,10 @@ export function chercher(requete: string, max = 8): Resultat[] {
     const s = evalue(e.nom, autres)
     if (s >= 0) out.push({ id: e.id, genre: 'equipement', titre: e.nom, detail: `${e.type} · ${e.niveau} · ${e.id}`, score: s })
   }
+  for (const r of donnees.risques) {
+    const s = evalue(r.nom, `${r.id} ${r.impact} ${r.probabilite} ${r.preventif} ${r.correctif} risque risques`)
+    if (s >= 0) out.push({ id: r.id, genre: 'risque', vue: 'risques', score: s - 0.25, titre: r.nom, detail: `Risque · impact ${r.impact} · probabilité ${r.probabilite}` })
+  }
   for (const g of donnees.gaines) {
     const s = evalue(g.nom, `${g.id} ${g.reseau} ${g.niveau ?? ''} ${g.de ?? ''} ${g.a ?? ''} gaine gaines chemin cables cable montante`)
     if (s >= 0) {
@@ -65,6 +69,11 @@ const DECALAGE_ZONE: [number, number, number] = [16, 14, 20]
 export function reveler(cible: Cible) {
   const s = useEtat.getState()
   if (s.scene !== null) s.setScene(null)
+  if (donnees.risques.some((r) => r.id === cible.id)) {
+    if (s.vue !== 'risques') s.setVue('risques')
+    s.setRisqueActif(cible.id)
+    return
+  }
   const zone = donnees.zoneParId.get(cible.id)
   if (zone) {
     const [w, d] = donnees.batiment.emprise

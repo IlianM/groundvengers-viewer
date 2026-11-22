@@ -1,9 +1,9 @@
 // Une vue = quels équipements et liens on montre, et de quelle couleur.
 // Chaque équipe enrichit sa vue ici sans toucher au socle.
-import type { Equipement, Lien, Zone } from '../schema'
+import type { Equipement, Lien, Risque, Zone } from '../schema'
 import { donnees } from '../data'
 
-export type VueId = 'architecture' | 'domotique' | 'cyber' | 'ia' | 'donnees' | 'occupant'
+export type VueId = 'architecture' | 'domotique' | 'cyber' | 'ia' | 'donnees' | 'occupant' | 'risques'
 
 export const COULEURS = {
   equipe: { domotique: '#2f9e44', cyber: '#e8590c', ia: '#7048e8' },
@@ -48,12 +48,24 @@ export type DefVue = {
   legende: { couleur: string; libelle: string }[]
 }
 
-export type Ctx = { architectureIA: 'edge' | 'central' }
+export type Ctx = { architectureIA: 'edge' | 'central'; risque?: string | null }
 
 const entreesIA = (archi: 'edge' | 'central') =>
   new Set(donnees.noeuds.filter((n) => n.architecture === archi).flatMap((n) => n.entrees))
 const hotesIA = (archi: 'edge' | 'central') =>
   new Set(donnees.noeuds.filter((n) => n.architecture === archi).map((n) => n.heberge_sur))
+
+// Criticité d'un risque = niveau d'impact × niveau de probabilité (1 à 9), classée en 3 couleurs.
+export const NIVEAU_IMPACT = { Faible: 1, Moyen: 2, Critique: 3 } as const
+export const NIVEAU_PROBA = { Faible: 1, Moyenne: 2, Élevée: 3 } as const
+export const criticite = (r: Risque) => NIVEAU_IMPACT[r.impact] * NIVEAU_PROBA[r.probabilite]
+export const classeCriticite = (c: number) => (c >= 6 ? 'élevée' : c >= 3 ? 'moyenne' : 'faible')
+export const COULEUR_CRITICITE = { élevée: '#e03131', moyenne: '#f08c00', faible: '#fab005' } as const
+
+/** Criticité la plus haute des risques d'un équipement (limitée au risque choisi s'il y en a un). */
+export function criticiteEquipement(e: Equipement, risque?: string | null): number {
+  return Math.max(0, ...donnees.risques.filter((r) => e.risques.includes(r.id) && (!risque || r.id === risque)).map(criticite))
+}
 
 export const VUES: DefVue[] = [
   {
@@ -132,6 +144,20 @@ export const VUES: DefVue[] = [
     legende: [
       { couleur: '#37b24d', libelle: 'Ne permet pas de vous identifier' },
       { couleur: '#e03131', libelle: 'Peut vous identifier' },
+    ],
+  },
+  {
+    id: 'risques',
+    nom: 'Risques',
+    description: 'Où se trouvent les risques du projet. Cliquez un risque dans la matrice pour isoler ses équipements.',
+    montre: (e, ctx) => e.risques.length > 0 && (!ctx.risque || e.risques.includes(ctx.risque)),
+    couleur: (e, ctx) => COULEUR_CRITICITE[classeCriticite(criticiteEquipement(e, ctx.risque))],
+    lienVisible: () => false,
+    couleurLien: () => COULEURS.neutre,
+    legende: [
+      { couleur: COULEUR_CRITICITE.élevée, libelle: 'Criticité élevée (impact × probabilité ≥ 6)' },
+      { couleur: COULEUR_CRITICITE.moyenne, libelle: 'Criticité moyenne (3 à 4)' },
+      { couleur: COULEUR_CRITICITE.faible, libelle: 'Criticité faible (1 à 2)' },
     ],
   },
 ]

@@ -18,6 +18,7 @@ function versHash(): string {
   if (s.seuilAnonymat !== SEUIL_DEFAUT) p.set('seuil', String(s.seuilAnonymat))
   if (s.eclate) p.set('ecl', '1')
   if (s.eclatePieces) p.set('pcs', '1')
+  if (s.risqueActif) p.set('rsk', s.risqueActif)
   if (s.selection) p.set('sel', s.selection)
   return p.toString()
 }
@@ -37,6 +38,8 @@ export function appliquerHash(hash: string) {
   s.setSeuilAnonymat(Number.isFinite(seuil) && seuil >= 1 && seuil <= 50 ? Math.round(seuil) : SEUIL_DEFAUT)
   if (s.eclate !== (p.get('ecl') === '1')) s.setEclate(p.get('ecl') === '1')
   if (s.eclatePieces !== (p.get('pcs') === '1')) s.setEclatePieces(p.get('pcs') === '1')
+  const rsk = p.get('rsk')
+  if (rsk && useEtat.getState().vue === 'risques' && donnees.risques.some((r) => r.id === rsk)) useEtat.getState().setRisqueActif(rsk)
   const sel = p.get('sel')
   if (sel && (donnees.parId.has(sel) || donnees.zoneParId.has(sel) || donnees.gaineParId.has(sel))) reveler({ id: sel })
   else useEtat.getState().setSelection(null)

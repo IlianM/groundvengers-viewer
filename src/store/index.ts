@@ -15,6 +15,7 @@ type Etat = {
   coupe: boolean // masque les niveaux au-dessus du niveau sélectionné
   selection: string | null
   survol: string | null
+  risqueActif: string | null // vue Risques : risque isolé dans la matrice
   calquesMasques: Set<string>
   minimumVital: boolean
   architectureIA: 'edge' | 'central'
@@ -34,6 +35,7 @@ type Etat = {
   setCoupe: (b: boolean) => void
   setSelection: (id: string | null) => void
   setSurvol: (id: string | null) => void
+  setRisqueActif: (id: string | null) => void
   basculerCalque: (c: string) => void
   setMinimumVital: (b: boolean) => void
   setArchitectureIA: (a: 'edge' | 'central') => void
@@ -74,6 +76,7 @@ export const useEtat = create<Etat>((set, get) => ({
   coupe: false,
   selection: null,
   survol: null,
+  risqueActif: null,
   calquesMasques: new Set(),
   minimumVital: false,
   architectureIA: 'edge',
@@ -88,11 +91,12 @@ export const useEtat = create<Etat>((set, get) => ({
   eclatePieces: false,
   pieces: 0,
 
-  setVue: (vue) => set({ vue, selection: null, calquesMasques: new Set() }),
+  setVue: (vue) => set({ vue, selection: null, risqueActif: null, calquesMasques: new Set() }),
   setNiveau: (niveau) => set({ niveau }),
   setCoupe: (coupe) => set({ coupe }),
   setSelection: (selection) => set({ selection }),
   setSurvol: (survol) => set({ survol }),
+  setRisqueActif: (risqueActif) => set({ risqueActif, selection: null }),
   basculerCalque: (c) =>
     set((s) => {
       const m = new Set(s.calquesMasques)

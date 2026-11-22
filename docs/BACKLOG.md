@@ -23,7 +23,7 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-17 | Bornes Wi-Fi et couverture | Should | ✅ |
 | F-18 | Baies, gaines, chemins de câbles | Should | ✅ |
 | F-19 | Points d'entrée | Must | ✅ |
-| F-20 | Score de surface d'attaque | Should | ✅ partiel (indicateur points d'entrée) |
+| F-20 | Score de surface d'attaque | Should | ✅ score indicatif et détail du calcul (formule à valider avec Cyber) |
 | F-21 | Scénario d'intrusion animé | Could | ⬜ |
 | F-22 | Nœuds IA et fiche modèle | Must | ✅ |
 | F-23 | Bascule Edge / central | Must | ✅ |
@@ -33,6 +33,6 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-27 | Tout collecter / Minimum vital + indicateurs | Must | ✅ |
 | F-28 | Vue Occupant | Should | ✅ |
 | F-29 | Badges de preuve | Must | ✅ |
-| F-30 | Matrice de risques liée | Should | ✅ partiel (dans la fiche) |
+| F-30 | Matrice de risques liée | Should | ✅ vue Risques avec matrice impact × probabilité |
 | F-31 | Mode présentation | Must | ✅ |
 | F-32 | Glisser-déposer un modèle | Could | ✅ |
