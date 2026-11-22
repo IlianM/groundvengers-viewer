@@ -4,8 +4,7 @@ import { useEtat } from '../store'
 import { registre } from '../scene/personnage/registre'
 import { LIBELLE_POSE } from '../scene/personnage/comportement'
 import { profilDe, blocA, COULEUR_BLOC, LIBELLE_BLOC } from '../scene/personnage/profil'
-import { temperatureZone, luminositeZone, identifiableA, formatHeure } from '../simulation'
-import { HEURE_AMBIANTE } from '../scene/Personnages'
+import { temperatureZone, luminositeZone, identifiableA, formatHeure, HEURE_AMBIANTE } from '../simulation'
 
 const T_STANDARD = 21 // consigne unique appliquée quand le bâtiment ne connaît personne (Minimum vital)
 

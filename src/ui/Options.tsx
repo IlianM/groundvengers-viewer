@@ -3,6 +3,7 @@ import { useEtat, type Deco } from '../store'
 import { REGLAGES_DEFAUT, lireConfig, VUES_IDS, type Reglages } from '../reglages'
 import { VUES } from '../views'
 import { chargerModele } from './modele'
+import { effectifsZones, capaciteTotale, HEURE_AMBIANTE } from '../simulation'
 
 type Cle = keyof Reglages
 
@@ -74,6 +75,37 @@ function InterrupteurDeco({ k, libelle }: { k: keyof Deco; libelle: string }) {
   )
 }
 
+/** Nombre de personnes : brouillon réglé au curseur, appliqué seulement au clic sur le bouton. */
+function NombrePersonnes() {
+  const force = useEtat((s) => s.reglages.effectifForce)
+  const set = useEtat((s) => s.setReglage)
+  const sim = useEtat((s) => s.simulation)
+  const auto = [...effectifsZones(sim.actif ? sim.heure : HEURE_AMBIANTE, null).values()].reduce((a, b) => a + b, 0)
+  const max = capaciteTotale()
+  const [brouillon, setBrouillon] = useState(force ?? auto)
+  useEffect(() => { if (force !== null) setBrouillon(force) }, [force])
+  return (
+    <div className="option-bloc nombre-personnes">
+      <div className="option-ligne"><span>Nombre de personnes</span><b>{force === null ? `auto (${auto})` : force}</b></div>
+      <p className="discret">
+        {force === null
+          ? 'Le nombre suit la simulation d’une journée (matinée type si elle est éteinte).'
+          : 'Nombre imposé, réparti entre les zones selon l’occupation simulée. La simulation reste active pour les horaires et l’agenda.'}
+      </p>
+      <div className="option-ligne">
+        <input type="range" min={0} max={max} step={1} value={brouillon} aria-label="Nombre de personnes à appliquer" onChange={(e) => setBrouillon(Number(e.target.value))} />
+        <input type="number" className="nombre-saisie" min={0} max={max} value={brouillon}
+          onChange={(e) => setBrouillon(Math.min(max, Math.max(0, Math.round(Number(e.target.value) || 0))))} />
+      </div>
+      <div className="option-boutons">
+        <button className="bouton-menu" disabled={brouillon === force} onClick={() => set('effectifForce', brouillon as never)}>Appliquer</button>
+        <button className="bouton-menu" disabled={force === null} onClick={() => set('effectifForce', null as never)}>Revenir à la simulation</button>
+      </div>
+      <p className="discret">Maximum : {max} personnes (places de travail du bâtiment).</p>
+    </div>
+  )
+}
+
 function Onglet({ cles, children }: { cles: Cle[]; children: React.ReactNode }) {
   const reinit = useEtat((s) => s.reinitialiserReglages)
   return (
@@ -135,7 +167,7 @@ function Camera() {
 
 function Rendu() {
   return (
-    <Onglet cles={['qualite', 'brouillard', 'densiteBrouillard', 'couleurCiel', 'tailleEquipements', 'epaisseurLiens', 'opaciteZones', 'opaciteMeubles', 'anneaux', 'personnages', 'vitessePersonnages', 'ascenseurs']}>
+    <Onglet cles={['qualite', 'brouillard', 'densiteBrouillard', 'couleurCiel', 'tailleEquipements', 'epaisseurLiens', 'opaciteZones', 'opaciteMeubles', 'anneaux', 'personnages', 'vitessePersonnages', 'effectifForce', 'ascenseurs']}>
       <h4>Rendu</h4>
       <Choix k="qualite" libelle="Qualité" options={[['economique', 'Économique (ordinateur lent)'], ['normale', 'Normale'], ['haute', 'Haute (écran très net)']]} />
       <Interrupteur k="brouillard" libelle="Brouillard lointain" />
@@ -150,6 +182,7 @@ function Rendu() {
       <Interrupteur k="anneaux" libelle="Anneaux (points d’entrée, risques)" />
       <h4>Vie du bâtiment</h4>
       <Interrupteur k="personnages" libelle="Personnages (travail, réunions, café…)" aide="Leur nombre suit la simulation d’une journée ; sans simulation : matinée type." />
+      <NombrePersonnes />
       <Curseur k="vitessePersonnages" libelle="Vitesse des personnages" min={0.3} max={2.5} pas={0.1} unite=" ×" />
       <Interrupteur k="ascenseurs" libelle="Ascenseurs animés" />
     </Onglet>

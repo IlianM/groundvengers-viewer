@@ -1,5 +1,6 @@
 import { FichePersonne } from './FichePersonne'
-import { effectifSimule, identifiableA, formatHeure } from '../simulation'
+import { identifiableA, formatHeure } from '../simulation'
+import { useEffectifs } from '../effectifs'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { donnees, erreurs } from '../data'
 import { useEtat, CAMERA_DEFAUT, type Deco } from '../store'
@@ -548,6 +549,7 @@ function PanneauScenarios() {
 export function BarreSimulation() {
   const { simulation: sim, setSimulation, seuilAnonymat, minimumVital, niveau } = useEtat()
   const vitesse = useEtat((s) => s.reglages.vitesseJournee)
+  const effectifs = useEffectifs()
   useEffect(() => {
     if (!sim.actif || !sim.lecture) return
     let id = 0, t0 = performance.now()
@@ -561,7 +563,7 @@ export function BarreSimulation() {
   }, [sim.actif, sim.lecture, vitesse, setSimulation])
   if (!sim.actif) return null
   const zones = donnees.batiment.zones.filter((z) => !niveau || z.niveau === niveau)
-  const eff = zones.map((z) => [z, effectifSimule(z, sim.heure)] as const)
+  const eff = zones.map((z) => [z, effectifs.get(z.id) ?? 0] as const)
   const total = eff.reduce((a, [, n]) => a + n, 0)
   const ident = eff.filter(([z, n]) => identifiableA(z, n, seuilAnonymat, minimumVital))
   return (

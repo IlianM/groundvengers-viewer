@@ -1,5 +1,6 @@
 import type { Zone } from './schema'
 import { zoneNonAnonyme } from './views'
+import { donnees } from './data'
 
 /** Simulation d'une journée (F-26) : profils d'occupation FICTIFS, déterministes (pas d'aléa à l'exécution). */
 
@@ -56,4 +57,43 @@ export function temperatureZone(z: Zone, h: number, n: number): number {
 export function luminositeZone(h: number, n: number): number {
   const jour = Math.max(0, Math.sin((Math.PI * (h - 6.5)) / 12)) * 350
   return Math.round(n > 0 ? Math.max(450, jour + 250) : jour * 0.3)
+}
+
+/** Heure affichée quand la simulation d'une journée est éteinte : une matinée de travail type. */
+export const HEURE_AMBIANTE = 10.5
+
+/** Nombre de places de travail de tout le bâtiment : plafond du nombre de personnes affichables. */
+export const capaciteTotale = () => donnees.batiment.zones.reduce((a, z) => a + z.effectif_max, 0)
+
+/**
+ * Effectif de chaque zone à l'heure h. Avec `force`, le total est imposé : il est réparti entre les zones
+ * proportionnellement à l'occupation simulée (à la capacité si le bâtiment est vide), sans dépasser l'effectif max.
+ */
+export function effectifsZones(h: number, force: number | null): Map<string, number> {
+  const zones = donnees.batiment.zones
+  const simule = new Map(zones.map((z) => [z.id, effectifSimule(z, h)]))
+  if (force === null) return simule
+  const somme = [...simule.values()].reduce((a, b) => a + b, 0)
+  const poids = new Map(zones.map((z) => [z.id, z.effectif_max === 0 ? 0 : somme > 0 ? simule.get(z.id)! : z.effectif_max]))
+  const sortie = new Map(zones.map((z) => [z.id, 0]))
+  let reste = Math.min(Math.max(0, Math.round(force)), capaciteTotale())
+  while (reste > 0) {
+    const actives = zones.filter((z) => sortie.get(z.id)! < z.effectif_max && poids.get(z.id)! > 0)
+    // si les zones pondérées sont pleines, on complète dans les autres, au prorata de leur capacité
+    const candidates = actives.length ? actives : zones.filter((z) => sortie.get(z.id)! < z.effectif_max)
+    if (!candidates.length) break
+    const W = candidates.reduce((a, z) => a + (actives.length ? poids.get(z.id)! : z.effectif_max), 0)
+    const quotas = candidates.map((z) => ({ z, q: (reste * (actives.length ? poids.get(z.id)! : z.effectif_max)) / W }))
+    let donne = 0
+    for (const { z, q } of quotas) {
+      const n = Math.min(Math.floor(q), z.effectif_max - sortie.get(z.id)!)
+      sortie.set(z.id, sortie.get(z.id)! + n); donne += n
+    }
+    reste -= donne
+    if (donne === 0) { // plus petits restes : on distribue les dernières personnes une à une
+      quotas.sort((a, b) => (b.q - Math.floor(b.q)) - (a.q - Math.floor(a.q)))
+      for (const { z } of quotas) { if (reste <= 0) break; sortie.set(z.id, sortie.get(z.id)! + 1); reste-- }
+    }
+  }
+  return sortie
 }

@@ -54,6 +54,8 @@ export const Reglages = z.object({
   opaciteMeubles: nombre(0.4, 0.1, 1),
   anneaux: bool(true),
   personnages: bool(true),
+  // null = effectifs de la simulation ; sinon nombre total de personnes imposé (réparti selon l'occupation simulée)
+  effectifForce: z.number().finite().transform((v) => Math.round(Math.min(300, Math.max(0, v)))).nullable().catch(null),
   vitessePersonnages: nombre(1, 0.3, 2.5),
   ascenseurs: bool(true),
   // Éclatement

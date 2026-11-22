@@ -219,3 +219,6 @@ dd { margin: 0; display: flex; align-items: center; }
 .comparatif > div:nth-child(2) b { color: #2f9e44; }
 .mention-fiche { margin-top: 10px; font-size: calc(11px * var(--echelle, 1)); color: var(--discret); }
 .jauge { margin-bottom: 16px; }
+.nombre-saisie { width: 64px; padding: 3px 6px; border-radius: 6px; border: 1px solid var(--bord); background: var(--btn); color: var(--btn-texte); }
+.nombre-personnes .option-ligne input[type=range] { flex: 1; }
+.nombre-personnes .option-boutons { margin: 6px 0; }

@@ -1,6 +1,7 @@
 import { Ascenseurs } from './Ascenseurs'
 import { Personnages } from './Personnages'
-import { effectifSimule, identifiableA } from '../simulation'
+import { identifiableA } from '../simulation'
+import { useEffectifs } from '../effectifs'
 import { Suspense, useEffect, useMemo, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Html, Line, Edges, useGLTF } from '@react-three/drei'
@@ -295,6 +296,7 @@ function couleurZone(z: Zone, vue: string, seuil: number, mv: boolean, p: Palett
 
 function Zones() {
   const sim = useEtat((st) => st.simulation)
+  const effectifs = useEffectifs()
   const { vue, niveau, coupe, calquesMasques, seuilAnonymat, minimumVital, setSelection, ecart, pieces, reglages } = useEtat()
   const p = usePalette()
   if (calquesMasques.has('zones')) return null
@@ -307,7 +309,7 @@ function Zones() {
           const n = donnees.batiment.niveaux.find((x) => x.id === z.niveau)!
           const [x, zz, w, d] = z.rect
           let { couleur, opacite } = couleurZone(z, vue, seuilAnonymat, minimumVital, p)
-          const nSim = sim.actif ? effectifSimule(z, sim.heure) : null
+          const nSim = sim.actif ? effectifs.get(z.id) ?? 0 : null
           const identifiable = nSim !== null && identifiableA(z, nSim, seuilAnonymat, minimumVital)
           if (nSim !== null) {
             const t = z.effectif_max ? nSim / z.effectif_max : 0

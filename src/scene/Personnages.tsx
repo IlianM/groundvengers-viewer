@@ -4,15 +4,12 @@ import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { donnees, decalageZone, altitudeNiveau } from '../data'
 import { useEtat } from '../store'
-import { effectifSimule } from '../simulation'
+import { useEffectifs } from '../effectifs'
 import { usePalette, type Palette } from './palette'
 import { genererSieges, type Siege, type Voie } from './Mobilier'
 import { niveauVisible } from './visibles'
 import { hash, etatDe, cibleDe, routesDepuis, LIBELLE_POSE, type Occupant, type Pose } from './personnage/comportement'
 import { registre } from './personnage/registre'
-
-/** Heure affichée quand la simulation d'une journée est éteinte : une matinée de travail type. */
-export const HEURE_AMBIANTE = 10.5
 
 // Trajet des personnes qui traversent le hall : boucle le long des murs, hors banque d'accueil et canapés.
 const BOUCLE_HALL: [number, number][] = [[2.2, 17], [2.2, 2], [9.8, 2], [9.8, 17]]
@@ -187,19 +184,12 @@ export function Personnages() {
   const { niveau, coupe, ecart, pieces, reglages } = useEtat()
   const pal = usePalette()
   const { sieges, voies } = useMemo(() => genererSieges(pal.meuble), [pal.meuble])
-  // clé texte : le composant ne se met à jour que si un effectif change, pas à chaque image de la simulation
-  const cle = useEtat((s) => {
-    const h = s.simulation.actif ? s.simulation.heure : HEURE_AMBIANTE
-    return donnees.batiment.zones.map((z) => effectifSimule(z, h)).join(',')
-  })
+  const effectifs = useEffectifs()
   const occupants = useMemo(() => {
-    const m = new Map<string, number>()
-    const n = cle.split(',').map(Number)
-    donnees.batiment.zones.forEach((z, i) => m.set(z.id, n[i]))
-    const liste = repartir(sieges, voies, m)
+    const liste = repartir(sieges, voies, effectifs)
     registre.occupants = liste
     return liste
-  }, [cle, sieges, voies])
+  }, [effectifs, sieges, voies])
   useFrame((_, dt) => { if (reglages.animations) registre.horloge += Math.min(dt, 0.1) * reglages.vitessePersonnages })
   if (!actif) return null
   const [W, D] = donnees.batiment.emprise
