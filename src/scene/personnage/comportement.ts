@@ -1,15 +1,16 @@
 import type { Poi, Voie } from '../Mobilier'
+import { arretOuvert, arretApres, cycle, DWELL, TOUR } from './ascenseur'
 
 /** Ce que fait un personnage à un instant donné : fonction pure du temps, donc rejouable et sans état caché. */
 export type Pose =
   | 'taper' | 'souris' | 'croise' | 'penser' | 'telephone' | 'lire' | 'etire' | 'boire' | 'discute'
-  | 'reunion' | 'note' | 'presente' | 'attente' | 'accueil' | 'comptoir' | 'marche' | 'imprimante' | 'arpente'
+  | 'reunion' | 'note' | 'presente' | 'attente' | 'accueil' | 'comptoir' | 'marche' | 'imprimante' | 'arpente' | 'asc' | 'patiente'
 
 export const LIBELLE_POSE: Record<Pose, string> = {
   taper: 'Travaille sur son poste', souris: 'Travaille sur son poste', croise: 'Réfléchit, bras croisés', penser: 'Réfléchit à un problème',
   telephone: 'Au téléphone', lire: 'Lit un document', etire: 'S’étire', boire: 'Prend un café', discute: 'Discute avec un collègue',
   reunion: 'Écoute en réunion', note: 'Prend des notes', presente: 'Présente en réunion', attente: 'Attend à l’accueil',
-  accueil: 'Accueille les visiteurs', comptoir: 'Attend au comptoir', marche: 'Se déplace', imprimante: 'Récupère une impression', arpente: 'Téléphone en marchant',
+  accueil: 'Accueille les visiteurs', comptoir: 'Attend au comptoir', marche: 'Se déplace', imprimante: 'Récupère une impression', arpente: 'Téléphone en marchant', asc: 'Attend l’ascenseur', patiente: 'Consulte son téléphone',
 }
 
 export const hash = (s: string) => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) % 100003; return h }
@@ -27,9 +28,13 @@ export type Occupant = {
   boucle?: Pt[]
   decalageDepart?: number
   routes?: Route[] // sorties possibles depuis le poste (open space)
+  navette?: Navette // usager d'ascenseur : entre par le hall, monte, redescend et sort
 }
 
 export type Etat = {
+  niveau?: string // niveau où se trouve un usager d'ascenseur
+  visible?: boolean // faux dans la cabine
+  echelle?: number // 0–1 : apparition et disparition à l'entrée du bâtiment
   x: number; z: number; ry: number
   assis: boolean
   marche: boolean
@@ -78,7 +83,78 @@ function surChemin(pts: Pt[], d: number): { x: number; z: number; ry: number } {
   return { x: a[0] + (b[0] - a[0]) * f, z: a[1] + (b[1] - a[1]) * f, ry: Math.atan2(b[0] - a[0], b[1] - a[1]) }
 }
 
+// ---------- usagers d'ascenseur ----------
+type Seg = { t0: number; t1: number; kind: 'marche' | 'attend' | 'cache'; niveau: string; pts: Pt[]; ry?: number; pose?: Pose }
+export type Navette = { segs: Seg[]; periode: number; decalage: number }
+
+export type CageInfo = { x: number; z: number; profondeur: number; niveaux: string[]; dec: number }
+
+/**
+ * Scénario d'un usager : entre par la porte du hall, attend la cabine, monte au niveau `dest`, patiente un instant,
+ * redescend et ressort. Les temps d'attente sont calculés sur l'horaire exact de la cabine : on n'embarque que porte ouverte.
+ */
+export function construireNavette(cage: CageInfo, dest: number, decalage: number, xEntree: number, zEntree: number): Navette | null {
+  const n = cage.niveaux.length
+  if (n < 2) return null
+  // période et décalage multiples du cycle de la cabine : le scénario se rejoue à l'identique, calé sur ses arrêts
+  const cd = cycle(n) * TOUR
+  const periode = Math.ceil(120 / cd) * cd
+  decalage = Math.round(decalage / cd) * cd
+  const V = VITESSE_MARCHE
+  const zPorte = cage.z + cage.profondeur / 2 + 0.25
+  const zHall = cage.z + cage.profondeur / 2 + 0.9
+  const L: Pt = [cage.x, zHall], porte: Pt = [cage.x, zPorte], W: Pt = [cage.x, zHall + 2]
+  const segs: Seg[] = []
+  let u = 0
+  const marche = (niveau: string, pts: Pt[]) => {
+    const p = dedoublonner(pts)
+    const d = longueurs(p).reduce((a, b) => a + b, 0) / V
+    segs.push({ t0: u, t1: u + d, kind: 'marche', niveau, pts: p }); u += d
+  }
+  const attend = (niveau: string, jusqua: number, at: Pt, ry: number, pose: Pose) => {
+    if (jusqua > u) { segs.push({ t0: u, t1: jusqua, kind: 'attend', niveau, pts: [at], ry, pose }); u = jusqua }
+  }
+  const cache = (niveau: string, jusqua: number) => { segs.push({ t0: u, t1: jusqua, kind: 'cache', niveau, pts: [porte] }); u = jusqua }
+  const bas = cage.niveaux[0], haut = cage.niveaux[dest]
+  const dec = cage.dec
+  // montée
+  marche(bas, [[xEntree, zEntree], [xEntree, zHall], L])
+  const sUp = arretOuvert(0, n, dec, u)
+  attend(bas, sUp + 0.3, L, Math.PI, 'asc')
+  marche(bas, [L, porte])
+  const sDest = arretApres(dest, n, dec, sUp + DWELL)
+  cache(bas, sDest + 0.4)
+  // en haut : quelques mètres, un coup d'œil au téléphone, retour à l'ascenseur
+  marche(haut, [porte, L, W])
+  attend(haut, u + 6, W, 0, 'patiente')
+  marche(haut, [W, L])
+  const sDown = arretOuvert(dest, n, dec, u)
+  attend(haut, sDown + 0.3, L, Math.PI, 'asc')
+  marche(haut, [L, porte])
+  const sBas = arretApres(0, n, dec, sDown + DWELL)
+  cache(haut, sBas + 0.4)
+  // sortie du bâtiment
+  marche(bas, [porte, L, [xEntree, L[1]], [xEntree, zEntree]])
+  if (u > periode - 4) return null
+  return { segs, periode, decalage }
+}
+
+function etatNavette(o: Occupant, t: number): Etat {
+  const nv = o.navette!
+  const u = (((t + nv.decalage) % nv.periode) + nv.periode) % nv.periode
+  const dernier = nv.segs[nv.segs.length - 1]
+  const seg = nv.segs.find((s) => u >= s.t0 && u < s.t1)
+  if (!seg) return { niveau: dernier.niveau, visible: false, x: 0, z: 0, ry: 0, assis: false, marche: false, pose: 'attente' }
+  const premier = nv.segs[0]
+  const echelle = seg === premier ? Math.min(1, (u - seg.t0) / 1.2) : seg === dernier ? Math.min(1, (seg.t1 - u) / 1.5) : 1
+  if (seg.kind === 'cache') return { niveau: seg.niveau, visible: false, x: seg.pts[0][0], z: seg.pts[0][1], ry: 0, assis: false, marche: false, pose: 'attente' }
+  if (seg.kind === 'attend') return { niveau: seg.niveau, visible: true, echelle, x: seg.pts[0][0], z: seg.pts[0][1], ry: seg.ry ?? 0, assis: false, marche: false, pose: seg.pose ?? 'attente' }
+  const p = surChemin(seg.pts, (u - seg.t0) * VITESSE_MARCHE)
+  return { niveau: seg.niveau, visible: true, echelle, ...p, assis: false, marche: true, pose: 'marche' }
+}
+
 export function etatDe(o: Occupant, t: number): Etat {
+  if (o.navette) return etatNavette(o, t)
   const assis = o.y > 0
   const px = assis ? o.x - Math.sin(o.ry) * 0.1 : o.x
   const pz = assis ? o.z - Math.cos(o.ry) * 0.1 : o.z

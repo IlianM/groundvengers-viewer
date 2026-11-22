@@ -56,3 +56,7 @@ Options › Rendu › Vie du bâtiment : on règle un nombre (curseur ou saisie)
 ## Capture et rapport (fait)
 - **Capture** (boutons en haut de la vue 3D) : image PNG de la scène 3D, sans les étiquettes ni les panneaux.
 - **Rapport** (Options › Configuration) : fichier Markdown de l'état courant : indicateurs dans les deux modes avec écarts, zones non anonymes selon le seuil, occupation simulée, cinq risques les plus critiques, statut des preuves. Prévu pour être collé dans un compte rendu ; les données restent fictives et le rapport le rappelle.
+
+## Usagers d'ascenseur (fait)
+Jusqu'à 4 personnes en plus (une par tranche de 15 personnes présentes) entrent par la porte du hall, attendent devant l'ascenseur, montent à un autre niveau, patientent quelques secondes, redescendent et ressortent. Ils ne sont **pas** comptés dans l'effectif des zones, et leur fiche n'est pas ouverte au clic (survol seulement). Horaire des cabines et scénario des usagers : `src/scene/personnage/ascenseur.ts` et `comportement.ts` (`construireNavette`). Ils n'embarquent que porte ouverte (vérifié par calcul). Même horloge que les personnages : la vitesse des personnages règle aussi les cabines.
+Correctif au passage : les piétons du hall traversaient la cage d'ascenseur du rez-de-chaussée ; leur boucle est décalée vers l'ouest.

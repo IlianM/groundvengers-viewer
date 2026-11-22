@@ -1,6 +1,6 @@
 import { Capture } from './Capture'
 import { Ascenseurs } from './Ascenseurs'
-import { Personnages } from './Personnages'
+import { Personnages, Horloge } from './Personnages'
 import { identifiableA } from '../simulation'
 import { useEffectifs } from '../effectifs'
 import { Suspense, useEffect, useMemo, useRef } from 'react'
@@ -56,6 +56,7 @@ export function Scene3D() {
       />
       <CameraRig />
       <Capture />
+      <Horloge />
       {urlModele ? (
         <Suspense fallback={null}>
           <ModeleGLB url={urlModele} />

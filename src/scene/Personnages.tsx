@@ -2,17 +2,19 @@ import { useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
-import { donnees, decalageZone, altitudeNiveau } from '../data'
+import { donnees, decalageZone, altitudeNiveau, pointMonde } from '../data'
 import { useEtat } from '../store'
 import { useEffectifs } from '../effectifs'
 import { usePalette, type Palette } from './palette'
 import { genererSieges, type Siege, type Voie } from './Mobilier'
 import { niveauVisible } from './visibles'
-import { hash, etatDe, cibleDe, routesDepuis, LIBELLE_POSE, type Occupant, type Pose } from './personnage/comportement'
+import { hash, etatDe, cibleDe, routesDepuis, construireNavette, LIBELLE_POSE, type Occupant, type Pose } from './personnage/comportement'
+import { DEC_CABINE } from './personnage/ascenseur'
 import { registre } from './personnage/registre'
 
 // Trajet des personnes qui traversent le hall : boucle le long des murs, hors banque d'accueil et canapés.
-const BOUCLE_HALL: [number, number][] = [[2.2, 17], [2.2, 2], [9.8, 2], [9.8, 17]]
+// (le bord est reste à 8,6 m : au-delà, la cage des ascenseurs)
+const BOUCLE_HALL: [number, number][] = [[2.2, 17], [2.2, 2], [8.6, 2], [8.6, 17]]
 
 /** Qui est où : n personnes par zone, sur des sièges tirés dans un ordre stable (pas de saut quand n varie). */
 function repartir(sieges: Siege[], voies: Map<string, Voie>, effectifs: Map<string, number>): Occupant[] {
@@ -78,6 +80,7 @@ const mat = (c: string) => {
 const MAT_ANNEAU = new THREE.MeshBasicMaterial({ color: '#f08c00', side: THREE.DoubleSide, transparent: true, opacity: 0.9, depthTest: false })
 
 function Bonhomme({ o, p, animer, decal }: { o: Occupant; p: Palette['personnage']; animer: boolean; decal: [number, number, number] }) {
+  const ancre = useRef<THREE.Group>(null)
   const racine = useRef<THREE.Group>(null)
   const tete = useRef<THREE.Mesh>(null)
   const buste = useRef<THREE.Group>(null)
@@ -100,7 +103,19 @@ function Bonhomme({ o, p, animer, decal }: { o: Occupant; p: Palette['personnage
     if (!g) return
     const t = animer ? registre.horloge : 0
     const e = etatDe(o, t)
-    g.position.set(e.x, 0, e.z)
+    if (o.navette) {
+      // usager d'ascenseur : change de niveau, donc sa position monde est recalculée à chaque image
+      const st = useEtat.getState()
+      const a = ancre.current
+      if (a && e.niveau) {
+        const w = pointMonde(e.niveau, e.x, 0.02, e.z, st.ecart, st.pieces)
+        a.position.set(w[0], w[1], w[2])
+        const niveauOk = (!st.niveau || e.niveau === st.niveau) && niveauVisible(e.niveau, st.niveau, st.coupe)
+        a.visible = !!e.visible && niveauOk
+        g.scale.setScalar(Math.max(0.001, e.echelle ?? 1))
+      }
+      g.position.set(0, 0, 0)
+    } else g.position.set(e.x, 0, e.z)
     g.rotation.y = e.ry
     const hanche = e.assis ? o.y + 0.06 : 0.8
     const c = cur.current
@@ -127,7 +142,7 @@ function Bonhomme({ o, p, animer, decal }: { o: Occupant; p: Palette['personnage
     if (jambesAssis.current) { jambesAssis.current.visible = e.assis; jambesAssis.current.position.y = hanche }
     if (jambesDebout.current) jambesDebout.current.visible = !e.assis
     if (tasse.current) tasse.current.visible = e.pose === 'boire' || e.pose === 'comptoir'
-    registre.positions.set(o.cle, [decal[0] + e.x, decal[1] + 1.0, decal[2] + e.z])
+    if (!o.navette) registre.positions.set(o.cle, [decal[0] + e.x, decal[1] + 1.0, decal[2] + e.z])
     registre.poses.set(o.cle, e.pose)
     if (survol.current) {
       const l = LIBELLE_POSE[e.pose]
@@ -136,11 +151,11 @@ function Bonhomme({ o, p, animer, decal }: { o: Occupant; p: Palette['personnage
   })
 
   return (
-    <group position={decal}>
+    <group ref={ancre} position={decal}>
       <group ref={racine}
         onPointerOver={(e) => { e.stopPropagation(); survol.current = true; setEtiquette(LIBELLE_POSE[registre.poses.get(o.cle) as Pose] ?? '') }}
         onPointerOut={() => { survol.current = false; setEtiquette(null) }}
-        onClick={(e) => { e.stopPropagation(); setSelection(`pers:${o.cle}`) }}>
+        onClick={(e) => { e.stopPropagation(); if (!o.navette) setSelection(`pers:${o.cle}`) }}>
         <group ref={jambesAssis}>
           {[-0.08, 0.08].map((x) => (
             <group key={x} position={[x, 0, 0]}>
@@ -190,7 +205,25 @@ export function Personnages() {
     registre.occupants = liste
     return liste
   }, [effectifs, sieges, voies])
-  useFrame((_, dt) => { if (reglages.animations) registre.horloge += Math.min(dt, 0.1) * reglages.vitessePersonnages })
+  // usagers d'ascenseur : quelques personnes en plus, selon l'affluence, qui montent et redescendent
+  const total = [...effectifs.values()].reduce((a, b) => a + b, 0)
+  const nNavettes = Math.min(4, Math.floor(total / 15))
+  const navettes = useMemo(() => {
+    const cages = donnees.batiment.ascenseurs
+    const liste: Occupant[] = []
+    for (let j = 0; j < nNavettes && cages.length; j++) {
+      const a = cages[j % cages.length]
+      const niveaux = a.niveaux.map((id) => donnees.batiment.niveaux.find((n) => n.id === id)).filter((n): n is NonNullable<typeof n> => !!n)
+        .sort((x, y) => x.altitude - y.altitude).map((n) => n.id)
+      if (niveaux.length < 2) continue
+      const nav = construireNavette(
+        { x: a.position[0], z: a.position[1], profondeur: a.taille[1], niveaux, dec: (j % cages.length) * DEC_CABINE },
+        1 + (j % (niveaux.length - 1)), j * 100, BOUCLE_HALL[3][0], 24,
+      )
+      if (nav) liste.push({ cle: `NAV#${j}`, zone: 'ZONE-R0-HALL', niveau: niveaux[0], tache: 'marche', x: 0, z: 0, y: 0, ry: 0, phase: j, navette: nav })
+    }
+    return liste
+  }, [nNavettes])
   if (!actif) return null
   const [W, D] = donnees.batiment.emprise
   return (
@@ -201,6 +234,15 @@ export function Personnages() {
           const [dx, dz] = decalageZone(donnees.zoneParId.get(o.zone), pieces)
           return <Bonhomme key={o.cle} o={o} p={pal.personnage} animer={reglages.animations} decal={[-W / 2 + dx, altitudeNiveau(o.niveau, ecart) + 0.02, -D / 2 + dz]} />
         })}
+      {navettes.map((o) => <Bonhomme key={o.cle} o={o} p={pal.personnage} animer={reglages.animations} decal={[0, 0, 0]} />)}
     </group>
   )
+}
+
+/** Horloge d'animation commune aux personnages et aux cabines : mêmes arrêts, mêmes portes, mêmes embarquements. */
+export function Horloge() {
+  const animations = useEtat((s) => s.reglages.animations)
+  const vitesse = useEtat((s) => s.reglages.vitessePersonnages)
+  useFrame((_, dt) => { if (animations) registre.horloge += Math.min(dt, 0.1) * vitesse })
+  return null
 }
