@@ -4,6 +4,7 @@ import { donnees } from './data'
 import { useEtat } from './store'
 import { VUES, type VueId } from './views'
 import { reveler } from './navigation'
+import { encoderConfig, decoderConfig } from './lienConfig'
 
 const SEUIL_DEFAUT = 5
 
@@ -50,6 +51,11 @@ export function appliquerHash(hash: string) {
     const etp = Math.min(Math.max(Number(p.get('etp') ?? 1), 1), sc.etapes.length) - 1
     useEtat.setState({ scenarioActif: { id: sc.id, etape: Number.isFinite(etp) ? etp : 0, lecture: false } })
   }
+  const cfg = p.get('cfg')
+  if (cfg) {
+    const c = decoderConfig(cfg, s.theme)
+    s.proposerConfig(c && c.nb > 0 ? c : null)
+  }
   const h = Number(p.get('h') ?? 8.5)
   s.setSimulation({ actif: p.get('sim') === '1', heure: Number.isFinite(h) ? Math.min(Math.max(h, 0), 24) % 24 : 8.5, lecture: false })
   const sel = p.get('sel')
@@ -71,6 +77,16 @@ export function installerPartage() {
   window.addEventListener('hashchange', () => {
     if (window.location.hash.replace(/^#/, '') !== versHash()) appliquerHash(window.location.hash)
   })
+}
+
+/** Lien qui rouvre la vue courante avec les réglages de personnalisation actuels (la personne qui l'ouvre choisit de les appliquer). */
+export function lienAvecConfig(): string {
+  const s = useEtat.getState()
+  const cfg = encoderConfig(s.reglages, s.deco)
+  const h = new URLSearchParams(versHash())
+  if (cfg) h.set('cfg', cfg)
+  const fragment = h.toString()
+  return window.location.origin + window.location.pathname + window.location.search + (fragment ? `#${fragment}` : '')
 }
 
 export async function copierLien(): Promise<boolean> {

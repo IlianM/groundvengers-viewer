@@ -1,3 +1,5 @@
+import { encoderConfig, decoderConfig } from '../lienConfig'
+import { lienAvecConfig } from '../partage'
 import { useEffect, useRef, useState } from 'react'
 import { useEtat, type Deco } from '../store'
 import { REGLAGES_DEFAUT, lireConfig, VUES_IDS, type Reglages } from '../reglages'
@@ -251,6 +253,13 @@ function Configuration() {
     URL.revokeObjectURL(url)
     setMessage({ ok: true, texte: 'Configuration téléchargée (groundvengers-config.json).' })
   }
+  const copierLienConfig = async () => {
+    const nb = decoderConfig(encoderConfig(s.reglages, s.deco), s.theme)?.nb ?? 0
+    try {
+      await navigator.clipboard.writeText(lienAvecConfig())
+      setMessage({ ok: true, texte: nb ? `Lien copié, avec ${nb} réglage${nb > 1 ? 's' : ''} modifié${nb > 1 ? 's' : ''}. Le thème clair/sombre n’est pas transmis.` : 'Lien copié (réglages par défaut : rien à appliquer pour la personne qui l’ouvre).' })
+    } catch { setMessage({ ok: false, texte: 'Copie impossible depuis ce navigateur.' }) }
+  }
   const copier = async () => {
     try { await navigator.clipboard.writeText(exporter()); setMessage({ ok: true, texte: 'Configuration copiée dans le presse-papiers.' }) }
     catch { setMessage({ ok: false, texte: 'Copie impossible ici : utilisez le téléchargement.' }) }
@@ -270,6 +279,7 @@ function Configuration() {
       <div className="option-boutons">
         <button className="bouton-menu" onClick={telecharger}>Télécharger (.json)</button>
         <button className="bouton-menu" onClick={copier}>Copier</button>
+        <button className="bouton-menu" onClick={copierLienConfig} title="Un lien qui rouvre la vue actuelle ; la personne qui l'ouvre choisit d'appliquer ou non tes réglages">Copier le lien</button>
       </div>
       <button className="bouton-menu" onClick={() => telechargerTexte('groundvengers-rapport.md', construireRapport())}>
         Rapport de l’état actuel (.md)

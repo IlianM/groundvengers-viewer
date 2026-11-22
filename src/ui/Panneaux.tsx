@@ -601,3 +601,16 @@ export function BarreSimulation() {
     </div>
   )
 }
+
+/** Bandeau affiché quand un lien contient une configuration : rien n'est appliqué sans accord, pour ne pas écraser les réglages de la personne. */
+export function BandeauConfigPartagee() {
+  const { configEnAttente: c, proposerConfig, appliquerConfig } = useEtat()
+  if (!c) return null
+  return (
+    <div className="bandeau-config" role="status">
+      <span>Ce lien propose une configuration ({c.nb} réglage{c.nb > 1 ? 's' : ''} modifié{c.nb > 1 ? 's' : ''}). Tes réglages actuels seront remplacés.</span>
+      <button onClick={() => { appliquerConfig({ ...c.config, theme: useEtat.getState().theme }); proposerConfig(null) }}>Appliquer</button>
+      <button className="secondaire" onClick={() => proposerConfig(null)}>Ignorer</button>
+    </div>
+  )
+}

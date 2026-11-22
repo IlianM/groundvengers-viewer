@@ -240,3 +240,7 @@ dd { margin: 0; display: flex; align-items: center; }
 .duo-chiffres { display: flex; flex-wrap: wrap; gap: 2px 12px; }
 .duo-chiffres em { color: #37b24d; font-style: normal; font-weight: 600; }
 .interrupteur.grise { opacity: .6; }
+
+.bandeau-config { position: absolute; z-index: 30; top: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; align-items: center; padding: 8px 12px; border-radius: 10px; background: var(--panneau); color: var(--texte); border: 1px solid var(--accent-2); box-shadow: 0 6px 20px var(--ombre); font-size: 13px; max-width: 90%; }
+.bandeau-config button { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--accent-2); background: var(--accent-2); color: #fff; cursor: pointer; }
+.bandeau-config button.secondaire { background: transparent; color: var(--texte); border-color: var(--bord); }
