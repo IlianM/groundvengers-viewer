@@ -19,6 +19,7 @@ type Etat = {
   selection: string | null
   survol: string | null
   parcours3D: boolean
+  comparaison: boolean // deux vues 3D côte à côte : Tout collecter / Minimum vital
   risqueActif: string | null // vue Risques : risque isolé dans la matrice
   scenarioActif: { id: string; etape: number; lecture: boolean } | null // scénario d'intrusion (vue Cyber)
   simulation: { actif: boolean; heure: number; lecture: boolean } // F-26 : simulation d'une journée
@@ -44,6 +45,7 @@ type Etat = {
   setSurvol: (id: string | null) => void
   setRisqueActif: (id: string | null) => void
   setParcours3D: (b: boolean) => void
+  setComparaison: (b: boolean) => void
   setSimulation: (p: Partial<{ actif: boolean; heure: number; lecture: boolean }>) => void
   lancerScenario: (id: string | null) => void
   setEtapeScenario: (n: number) => void
@@ -92,6 +94,7 @@ export const useEtat = create<Etat>((set, get) => ({
   selection: null,
   survol: null,
   risqueActif: null,
+  comparaison: false,
   parcours3D: false, // dessine en 3D le chemin de la donnée de l'équipement sélectionné
   simulation: { actif: false, heure: 8.5, lecture: false },
   scenarioActif: null,
@@ -117,6 +120,7 @@ export const useEtat = create<Etat>((set, get) => ({
   setSurvol: (survol) => set({ survol }),
   setSimulation: (p) => set((s) => ({ simulation: { ...s.simulation, ...p } })),
   setParcours3D: (parcours3D) => set({ parcours3D }),
+  setComparaison: (comparaison) => set({ comparaison }),
   setRisqueActif: (risqueActif) => set({ risqueActif, selection: null }),
   lancerScenario: (id) => {
     set({ scenarioActif: id ? { id, etape: 0, lecture: true } : null, selection: null })

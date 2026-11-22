@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { donnees } from '../data'
 import { useEtat } from '../store'
 import { vueParId } from '../views'
+import { useMinimumVital } from './mode'
 import type { Equipement } from '../schema'
 
 /** Coupe horizontale : avec un niveau sélectionné et « coupe » actif, les niveaux au-dessus disparaissent. */
@@ -13,7 +14,8 @@ export function niveauVisible(id: string, niveau: string | null, coupe: boolean)
 
 /** Équipements et liens à dessiner pour l'état courant (vue, niveau, calques, minimum vital). */
 export function useVisibles() {
-  const { vue, niveau, calquesMasques, minimumVital, architectureIA, risqueActif } = useEtat()
+  const { vue, niveau, calquesMasques, architectureIA, risqueActif } = useEtat()
+  const minimumVital = useMinimumVital()
   return useMemo(() => {
     const def = vueParId(vue)
     const ctx = { architectureIA, risque: risqueActif }

@@ -1,3 +1,4 @@
+import { useMinimumVital } from './mode'
 import { useRef } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
@@ -10,7 +11,8 @@ type V3 = [number, number, number]
 
 /** Scénario d'intrusion rejoué pas à pas : une impulsion rouge suit le chemin de l'attaquant (vue Cyber). */
 export function ScenarioIntrusion() {
-  const { vue, scenarioActif, minimumVital, ecart, pieces } = useEtat()
+  const { vue, scenarioActif, ecart, pieces } = useEtat()
+  const minimumVital = useMinimumVital()
   const impulsion = useRef<THREE.Mesh>(null)
   const sc = donnees.scenarios.find((x) => x.id === scenarioActif?.id)
   const etape = scenarioActif?.etape ?? 0

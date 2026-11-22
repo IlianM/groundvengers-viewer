@@ -1,5 +1,7 @@
 import { parcoursDonnee } from '../parcours'
 import { Capture } from './Capture'
+import { ModeContexte, useMinimumVital } from './mode'
+import { SyncCamera } from './SyncCamera'
 import { Ascenseurs } from './Ascenseurs'
 import { Personnages, Horloge } from './Personnages'
 import { identifiableA } from '../simulation'
@@ -21,7 +23,8 @@ import type { Equipement, Zone } from '../schema'
 
 const [W, D] = donnees.batiment.emprise
 
-export function Scene3D() {
+/** `mode` force Tout collecter (false) ou Minimum vital (true) pour cette vue ; `secondaire` : 2e vue de la comparaison (pas d'horloge, ni de capture propre). */
+export function Scene3D({ mode = null, secondaire = false, nom = 'seule' }: { mode?: boolean | null; secondaire?: boolean; nom?: string }) {
   const setSelection = useEtat((s) => s.setSelection)
   const deco = useEtat((s) => s.deco)
   const r = useEtat((s) => s.reglages)
@@ -39,6 +42,7 @@ export function Scene3D() {
       dpr={dpr}
       gl={{ antialias: r.qualite !== 'economique' }}
     >
+      <ModeContexte.Provider value={mode}>
       <color attach="background" args={[fond]} />
       {(ciel || r.couleurCiel) && r.brouillard && <fogExp2 attach="fog" args={[fond, 0.0105 * r.densiteBrouillard]} />}
       <ambientLight intensity={p.lumiere.ambiante} />
@@ -56,8 +60,9 @@ export function Scene3D() {
         panSpeed={r.sensDeplacement}
       />
       <CameraRig />
-      <Capture />
-      <Horloge />
+      <SyncCamera nom={nom} />
+      <Capture nom={nom} libelle={mode === null ? null : mode ? 'Minimum vital' : 'Tout collecter'} />
+      {!secondaire && <Horloge />}
       {urlModele ? (
         <Suspense fallback={null}>
           <ModeleGLB url={urlModele} />
@@ -82,6 +87,7 @@ export function Scene3D() {
       <CouvertureWifi />
       <Equipements />
       {!ciel && <gridHelper args={[60, 30, p.grille[0], p.grille[1]]} position={[0, -0.11, 0]} />}
+      </ModeContexte.Provider>
     </Canvas>
   )
 }
@@ -302,7 +308,8 @@ function couleurZone(z: Zone, vue: string, seuil: number, mv: boolean, p: Palett
 function Zones() {
   const sim = useEtat((st) => st.simulation)
   const effectifs = useEffectifs()
-  const { vue, niveau, coupe, calquesMasques, seuilAnonymat, minimumVital, setSelection, ecart, pieces, reglages } = useEtat()
+  const { vue, niveau, coupe, calquesMasques, seuilAnonymat, setSelection, ecart, pieces, reglages } = useEtat()
+  const minimumVital = useMinimumVital()
   const p = usePalette()
   if (calquesMasques.has('zones')) return null
   const etiquettes = reglages.etiquettesZones && (vue === 'architecture' || vue === 'occupant' || niveau !== null)
@@ -469,7 +476,8 @@ function Liens() {
 
 /** Chemin de la donnée de l'équipement sélectionné : trait épais et paquet qui voyage jusqu'au serveur. */
 function ParcoursDonnee3D() {
-  const { selection, parcours3D, minimumVital, ecart, pieces } = useEtat()
+  const { selection, parcours3D, ecart, pieces } = useEtat()
+  const minimumVital = useMinimumVital()
   const paquet = useRef<THREE.Mesh>(null)
   const points = useMemo(() => {
     if (!parcours3D || !selection) return []
@@ -502,7 +510,8 @@ function ParcoursDonnee3D() {
 
 /** Vue IA : flux animés des capteurs vers le nœud de calcul (Edge par étage ou central cloisonné). */
 function FluxIA() {
-  const { vue, architectureIA, niveau, selection, minimumVital, ecart, pieces } = useEtat()
+  const { vue, architectureIA, niveau, selection, ecart, pieces } = useEtat()
+  const minimumVital = useMinimumVital()
   const { ids } = useVisibles()
   if (vue !== 'ia') return null
   const noeuds = donnees.noeuds.filter((n) => n.architecture === architectureIA)

@@ -229,3 +229,14 @@ dd { margin: 0; display: flex; align-items: center; }
 .cycle-vie li b { color: var(--discret); font-weight: 600; }
 .cycle-vie.coupe { opacity: .45; text-decoration: line-through; }
 .lien-bouton { border: 0; background: none; padding: 0; color: var(--lien); text-decoration: underline; cursor: pointer; font: inherit; }
+
+/* Comparaison côte à côte */
+.duo { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--bord, #888); }
+.duo-vue { position: relative; min-width: 0; min-height: 0; background: var(--fond, #fff); }
+.duo-vue canvas { display: block; }
+.duo-bandeau { position: absolute; z-index: 5; top: 46px; left: 8px; right: 8px; padding: 6px 10px; border-radius: 8px; background: color-mix(in srgb, var(--panneau, #fff) 92%, transparent); border: 1px solid var(--bord, #ccc); border-left: 5px solid #e8590c; pointer-events: none; font-size: 12px; }
+.duo-bandeau.vital { border-left-color: #37b24d; }
+.duo-bandeau strong { display: block; font-size: 14px; margin-bottom: 2px; }
+.duo-chiffres { display: flex; flex-wrap: wrap; gap: 2px 12px; }
+.duo-chiffres em { color: #37b24d; font-style: normal; font-weight: 600; }
+.interrupteur.grise { opacity: .6; }

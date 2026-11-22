@@ -16,7 +16,7 @@ import { useVisibles, indicateurs, POIDS_SURFACE } from '../scene/visibles'
 import type { Equipement } from '../schema'
 
 export function BarreHaut() {
-  const { vue, setVue, minimumVital, setMinimumVital, scene, setScene } = useEtat()
+  const { vue, setVue, minimumVital, setMinimumVital, scene, setScene, comparaison } = useEtat()
   return (
     <header className="barre-haut">
       <div className="titre-app">GroundVengers Viewer</div>
@@ -27,9 +27,9 @@ export function BarreHaut() {
           </button>
         ))}
       </nav>
-      <label className="interrupteur" title="Masque les capteurs et flux qui ne servent pas au pilotage">
-        <input type="checkbox" checked={minimumVital} onChange={(e) => setMinimumVital(e.target.checked)} />
-        <span>{minimumVital ? 'Minimum vital' : 'Tout collecter'}</span>
+      <label className={`interrupteur ${comparaison ? 'grise' : ''}`} title={comparaison ? 'Comparaison active : les deux modes sont affichés' : 'Masque les capteurs et flux qui ne servent pas au pilotage'}>
+        <input type="checkbox" checked={minimumVital} disabled={comparaison} onChange={(e) => setMinimumVital(e.target.checked)} />
+        <span>{comparaison ? 'Les deux modes' : minimumVital ? 'Minimum vital' : 'Tout collecter'}</span>
       </label>
       <Options />
       <button className="bouton-presentation" onClick={() => setScene(scene === null ? 0 : null)}>
@@ -48,6 +48,8 @@ export function OutilsCamera() {
     ['Façade', [0, 8, 40], [0, 5, 0]],
   ]
   const sim = useEtat((st) => st.simulation.actif)
+  const comparaison = useEtat((st) => st.comparaison)
+  const setComparaison = useEtat((st) => st.setComparaison)
   const setSim = useEtat((st) => st.setSimulation)
   const [etat, setEtat] = useState<'' | 'ok' | 'ko'>('')
   const capture = () => {
@@ -66,6 +68,7 @@ export function OutilsCamera() {
     <div className="outils-camera">
       {vues.map(([nom, pos, cible]) => <button key={nom} onClick={() => allerA(pos, cible)}>{nom}</button>)}
       <button className={sim ? 'actif' : ''} onClick={() => setSim({ actif: !sim, lecture: false })} title="Simule les présences au fil d’une journée (données fictives)">Journée</button>
+      <button className={comparaison ? 'actif' : ''} onClick={() => setComparaison(!comparaison)} title="Affiche côte à côte Tout collecter et Minimum vital, avec la même caméra">Comparer</button>
       <button onClick={capture} title="Enregistre l’image de la vue 3D (sans les étiquettes) en PNG">Capture</button>
       <button onClick={copier} title="Copie un lien qui rouvre cette vue, ce niveau et cette sélection">
         {etat === 'ok' ? 'Lien copié ✓' : etat === 'ko' ? 'Copie impossible' : 'Copier le lien'}
