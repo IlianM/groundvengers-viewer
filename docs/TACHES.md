@@ -23,7 +23,7 @@ Liste simple, à cocher à la main. Une tâche = une branche ou un commit. Les i
 
 ## À faire (Should / Could)
 - [ ] F-02 Import IFC
-- [ ] Faire valider les tracés de gaines (fictifs) par l'équipe Cyber, et ajouter les gaines du réseau GTB côté Domotique
+- [ ] (voir docs/VALIDATION.md) Faire valider les tracés de gaines (fictifs) par l'équipe Cyber, et ajouter les gaines du réseau GTB côté Domotique
 - [ ] Tester le chargeur `.glb` avec un vrai export de l'équipe Domotique (jusqu'ici testé avec `docs/exemples/test-batiment.glb`)
 - [ ] Faire valider par l'équipe Cyber les 3 scénarios d'intrusion (`scenarios` dans `data/cyber.json`, fictifs)
 - [ ] Faire valider par l'équipe Cyber les poids du score de surface d'attaque (`POIDS_SURFACE` dans `src/scene/visibles.ts`)
@@ -64,3 +64,5 @@ Correctif au passage : les piétons du hall traversaient la cage d'ascenseur du 
 Dans la fiche de chaque équipement : frise **Mesure → Transit → Supervision → Conservation → Effacement**, calculée en suivant les liens du réseau jusqu'au serveur le plus proche (Niagara en priorité). Exemple : Compteur TGBT → passerelle iSMA (M-Bus) → serveur Niagara (Ethernet), puis conservation 10 ans. Le bouton « Suivre la donnée en 3D » dessine ce chemin, avec un paquet qui voyage. En Minimum vital, une donnée non conservée est barrée. Code : `src/parcours.ts`, `src/ui/Parcours.tsx`.
 Limite : durées de conservation reprises des textes de `data/*.json`, non vérifiées juridiquement (RGPD, OPERAT).
 Aussi : les personnages ne s'affichent plus par défaut que dans les vues Architecture et Occupant (option « Personnages dans toutes les vues »). Correctif CSS : la classe de la fiche personne écrasait le tableau du score de surface.
+
+Checklist par équipe (Cyber, Domotique, IA, preuves) : `docs/VALIDATION.md`.

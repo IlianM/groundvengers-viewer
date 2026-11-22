@@ -6,7 +6,7 @@ Bouton **Options ▾** (barre verte) : tiroir à six onglets. Tout est enregistr
 |---|---|
 | Interface | mode sombre, couleur d'accent, taille du texte, panneaux gauche/droit/bandeau (affichage + largeur), recherche, boutons caméra, mention « fictif », aide clavier, noms des zones/niveaux, infobulles, taille des étiquettes |
 | Caméra | champ de vision, recul max, rotation auto (+ vitesse), sensibilité rotation/zoom/déplacement, vitesse des flèches, animations, vitesse des déplacements |
-| Rendu | qualité (économique/normale/haute), brouillard (+ densité), couleur du ciel, rectangles du bâtiment, taille des équipements, épaisseur des liens, opacité zones/meubles, anneaux, personnages (+ vitesse), **nombre de personnes** (curseur + bouton Appliquer, ou « auto » selon la simulation), ascenseurs animés |
+| Rendu | qualité (économique/normale/haute), brouillard (+ densité), couleur du ciel, rectangles du bâtiment, taille des équipements, épaisseur des liens, opacité zones/meubles, anneaux, personnages (+ vitesse), **nombre de personnes** (20 par défaut ; curseur + bouton Appliquer, ou « auto » selon la simulation), ascenseurs animés |
 | Décor | écart des niveaux et des pièces (vue éclatée), herbe/arbres/bâtiments lointains/meubles, quantité d'arbres, nombre d'immeubles, couleur de l'herbe, disposition aléatoire |
 | Démarrage | vue de départ, Minimum vital au démarrage, seuil d'anonymat de départ, durée d'étape des scénarios, vitesse de la simulation d'une journée |
 | Configuration | export / import, réinitialisation complète, chargement d'un .glb |
