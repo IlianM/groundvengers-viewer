@@ -52,3 +52,7 @@ Limite : profils fictifs et déterministes (`src/simulation.ts`), à remplacer p
 
 ## Réglage « Nombre de personnes » (fait)
 Options › Rendu › Vie du bâtiment : on règle un nombre (curseur ou saisie) puis on clique sur **Appliquer** ; **Revenir à la simulation** rétablit les effectifs automatiques. Le total imposé est réparti entre les zones au prorata de l'occupation simulée (à la capacité si le bâtiment est vide), plafonné à l'effectif max de chaque zone (114 au total). Il alimente les personnages, les étiquettes de zones, la barre de simulation et l'alerte d'anonymat. Réglage `effectifForce`, inclus dans l'export de configuration.
+
+## Capture et rapport (fait)
+- **Capture** (boutons en haut de la vue 3D) : image PNG de la scène 3D, sans les étiquettes ni les panneaux.
+- **Rapport** (Options › Configuration) : fichier Markdown de l'état courant : indicateurs dans les deux modes avec écarts, zones non anonymes selon le seuil, occupation simulée, cinq risques les plus critiques, statut des preuves. Prévu pour être collé dans un compte rendu ; les données restent fictives et le rapport le rappelle.

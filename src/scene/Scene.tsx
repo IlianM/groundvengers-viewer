@@ -1,3 +1,4 @@
+import { Capture } from './Capture'
 import { Ascenseurs } from './Ascenseurs'
 import { Personnages } from './Personnages'
 import { identifiableA } from '../simulation'
@@ -54,6 +55,7 @@ export function Scene3D() {
         panSpeed={r.sensDeplacement}
       />
       <CameraRig />
+      <Capture />
       {urlModele ? (
         <Suspense fallback={null}>
           <ModeleGLB url={urlModele} />

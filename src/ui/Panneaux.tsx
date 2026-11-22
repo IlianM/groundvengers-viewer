@@ -1,3 +1,4 @@
+import { capturerVue } from '../scene/Capture'
 import { FichePersonne } from './FichePersonne'
 import { identifiableA, formatHeure } from '../simulation'
 import { useEffectifs } from '../effectifs'
@@ -48,6 +49,14 @@ export function OutilsCamera() {
   const sim = useEtat((st) => st.simulation.actif)
   const setSim = useEtat((st) => st.setSimulation)
   const [etat, setEtat] = useState<'' | 'ok' | 'ko'>('')
+  const capture = () => {
+    const url = capturerVue()
+    if (!url) return
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `groundvengers-${useEtat.getState().vue}.png`
+    a.click()
+  }
   const copier = async () => {
     setEtat((await copierLien()) ? 'ok' : 'ko')
     setTimeout(() => setEtat(''), 2200)
@@ -56,6 +65,7 @@ export function OutilsCamera() {
     <div className="outils-camera">
       {vues.map(([nom, pos, cible]) => <button key={nom} onClick={() => allerA(pos, cible)}>{nom}</button>)}
       <button className={sim ? 'actif' : ''} onClick={() => setSim({ actif: !sim, lecture: false })} title="Simule les présences au fil d’une journée (données fictives)">Journée</button>
+      <button onClick={capture} title="Enregistre l’image de la vue 3D (sans les étiquettes) en PNG">Capture</button>
       <button onClick={copier} title="Copie un lien qui rouvre cette vue, ce niveau et cette sélection">
         {etat === 'ok' ? 'Lien copié ✓' : etat === 'ko' ? 'Copie impossible' : 'Copier le lien'}
       </button>

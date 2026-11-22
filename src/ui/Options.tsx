@@ -3,6 +3,7 @@ import { useEtat, type Deco } from '../store'
 import { REGLAGES_DEFAUT, lireConfig, VUES_IDS, type Reglages } from '../reglages'
 import { VUES } from '../views'
 import { chargerModele } from './modele'
+import { construireRapport, telechargerTexte } from '../rapport'
 import { effectifsZones, capaciteTotale, HEURE_AMBIANTE } from '../simulation'
 
 type Cle = keyof Reglages
@@ -269,6 +270,10 @@ function Configuration() {
         <button className="bouton-menu" onClick={telecharger}>Télécharger (.json)</button>
         <button className="bouton-menu" onClick={copier}>Copier</button>
       </div>
+      <button className="bouton-menu" onClick={() => telechargerTexte('groundvengers-rapport.md', construireRapport())}>
+        Rapport de l’état actuel (.md)
+      </button>
+      <p className="discret">Indicateurs dans les deux modes, zones non anonymes, occupation simulée, risques critiques : à coller dans un compte rendu.</p>
       <h4>Importer</h4>
       <button className="bouton-menu" onClick={() => fichier.current?.click()}>Choisir un fichier .json…</button>
       <input ref={fichier} type="file" accept=".json,application/json" hidden
