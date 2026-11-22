@@ -16,6 +16,7 @@ type Etat = {
   selection: string | null
   survol: string | null
   risqueActif: string | null // vue Risques : risque isolé dans la matrice
+  scenarioActif: { id: string; etape: number; lecture: boolean } | null // scénario d'intrusion (vue Cyber)
   calquesMasques: Set<string>
   minimumVital: boolean
   architectureIA: 'edge' | 'central'
@@ -36,6 +37,9 @@ type Etat = {
   setSelection: (id: string | null) => void
   setSurvol: (id: string | null) => void
   setRisqueActif: (id: string | null) => void
+  lancerScenario: (id: string | null) => void
+  setEtapeScenario: (n: number) => void
+  setLecture: (b: boolean) => void
   basculerCalque: (c: string) => void
   setMinimumVital: (b: boolean) => void
   setArchitectureIA: (a: 'edge' | 'central') => void
@@ -77,6 +81,7 @@ export const useEtat = create<Etat>((set, get) => ({
   selection: null,
   survol: null,
   risqueActif: null,
+  scenarioActif: null,
   calquesMasques: new Set(),
   minimumVital: false,
   architectureIA: 'edge',
@@ -91,12 +96,19 @@ export const useEtat = create<Etat>((set, get) => ({
   eclatePieces: false,
   pieces: 0,
 
-  setVue: (vue) => set({ vue, selection: null, risqueActif: null, calquesMasques: new Set() }),
+  setVue: (vue) => set({ vue, selection: null, risqueActif: null, scenarioActif: null, calquesMasques: new Set() }),
   setNiveau: (niveau) => set({ niveau }),
   setCoupe: (coupe) => set({ coupe }),
   setSelection: (selection) => set({ selection }),
   setSurvol: (survol) => set({ survol }),
   setRisqueActif: (risqueActif) => set({ risqueActif, selection: null }),
+  lancerScenario: (id) => {
+    set({ scenarioActif: id ? { id, etape: 0, lecture: true } : null, selection: null })
+    // on recule pour voir l'attaquant, qui part de devant le bâtiment
+    if (id) get().allerA([34, 26, 46], [0, 3, 6])
+  },
+  setEtapeScenario: (etape) => set((s) => (s.scenarioActif ? { scenarioActif: { ...s.scenarioActif, etape, lecture: false } } : {})),
+  setLecture: (lecture) => set((s) => (s.scenarioActif ? { scenarioActif: { ...s.scenarioActif, lecture } } : {})),
   basculerCalque: (c) =>
     set((s) => {
       const m = new Set(s.calquesMasques)

@@ -24,7 +24,7 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-18 | Baies, gaines, chemins de câbles | Should | ✅ |
 | F-19 | Points d'entrée | Must | ✅ |
 | F-20 | Score de surface d'attaque | Should | ✅ score indicatif et détail du calcul (formule à valider avec Cyber) |
-| F-21 | Scénario d'intrusion animé | Could | ⬜ |
+| F-21 | Scénario d'intrusion animé | Could | ✅ |
 | F-22 | Nœuds IA et fiche modèle | Must | ✅ |
 | F-23 | Bascule Edge / central | Must | ✅ |
 | F-24 | Cycle de vie de la donnée | Should | ✅ partiel (frise dans la fiche) |

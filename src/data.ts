@@ -7,7 +7,7 @@ import iaJson from '../data/ia.json'
 import preuvesJson from '../data/preuves.json'
 import scenesJson from '../data/scenes.json'
 import {
-  Batiment, FichierEquipe, type Gaine, FichierIA, FichierPreuves, FichierScenes,
+  Batiment, FichierEquipe, type Gaine, type Scenario, FichierIA, FichierPreuves, FichierScenes,
   type Equipement, type Lien, type NoeudIA, type Preuve, type Risque, type Scene, type Zone,
 } from './schema'
 import type { z } from 'zod'
@@ -17,6 +17,7 @@ export type Donnees = {
   equipements: Equipement[]
   liens: Lien[]
   gaines: Gaine[]
+  scenarios: Scenario[]
   noeuds: NoeudIA[]
   preuves: Preuve[]
   risques: Risque[]
@@ -39,15 +40,16 @@ export function chargerDonnees(): { donnees: Donnees; erreurs: string[] } {
   const erreurs: string[] = []
   const batiment = valider('batiment.json', Batiment, batimentJson, erreurs,
     { nom: '?', emprise: [10, 10], modele: null, niveaux: [], zones: [] })
-  const domo = valider('domotique.json', FichierEquipe, domotiqueJson, erreurs, { equipements: [], liens: [], gaines: [] })
-  const cyber = valider('cyber.json', FichierEquipe, cyberJson, erreurs, { equipements: [], liens: [], gaines: [] })
-  const ia = valider('ia.json', FichierIA, iaJson, erreurs, { equipements: [], liens: [], gaines: [], noeuds: [] })
+  const domo = valider('domotique.json', FichierEquipe, domotiqueJson, erreurs, { equipements: [], liens: [], gaines: [], scenarios: [] })
+  const cyber = valider('cyber.json', FichierEquipe, cyberJson, erreurs, { equipements: [], liens: [], gaines: [], scenarios: [] })
+  const ia = valider('ia.json', FichierIA, iaJson, erreurs, { equipements: [], liens: [], gaines: [], scenarios: [], noeuds: [] })
   const pr = valider('preuves.json', FichierPreuves, preuvesJson, erreurs, { preuves: [], risques: [] })
   const sc = valider('scenes.json', FichierScenes, scenesJson, erreurs, { scenes: [] })
 
   const equipements = [...domo.equipements, ...cyber.equipements, ...ia.equipements]
   const liens = [...domo.liens, ...cyber.liens, ...ia.liens]
   const gaines = [...domo.gaines, ...cyber.gaines, ...ia.gaines]
+  const scenarios = [...domo.scenarios, ...cyber.scenarios, ...ia.scenarios]
   const parId = new Map<string, Equipement>()
   for (const e of equipements) {
     if (parId.has(e.id)) erreurs.push(`Identifiant en double : ${e.id}`)
@@ -79,6 +81,13 @@ export function chargerDonnees(): { donnees: Donnees; erreurs: string[] } {
     for (const l of g.contient) if (!lienIds.has(l)) erreurs.push(`${g.id} : lien inconnu « ${l} »`)
     for (const pr of g.preuves) if (!preuveIds.has(pr)) erreurs.push(`${g.id} : preuve inconnue « ${pr} »`)
   }
+  for (const sc of scenarios) {
+    for (const [i, et] of sc.etapes.entries()) {
+      for (const id of [et.de, et.vers]) if (id !== 'externe' && !parId.has(id)) erreurs.push(`${sc.id} étape ${i + 1} : équipement inconnu « ${id} »`)
+      if (et.vers === 'externe') erreurs.push(`${sc.id} étape ${i + 1} : « externe » ne peut être qu'au départ`)
+    }
+    for (const r of sc.risques) if (!risqueIds.has(r)) erreurs.push(`${sc.id} : risque inconnu « ${r} »`)
+  }
   for (const n of ia.noeuds) {
     if (!parId.has(n.heberge_sur)) erreurs.push(`${n.id} : hébergeur inconnu « ${n.heberge_sur} »`)
     for (const id of n.entrees) if (!parId.has(id)) erreurs.push(`${n.id} : entrée inconnue « ${id} »`)
@@ -86,7 +95,7 @@ export function chargerDonnees(): { donnees: Donnees; erreurs: string[] } {
 
   return {
     donnees: {
-      batiment, equipements, liens, gaines, noeuds: ia.noeuds, preuves: pr.preuves, risques: pr.risques,
+      batiment, equipements, liens, gaines, scenarios, noeuds: ia.noeuds, preuves: pr.preuves, risques: pr.risques,
       scenes: sc.scenes, parId, zoneParId, gaineParId,
     },
     erreurs,

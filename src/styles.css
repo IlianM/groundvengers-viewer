@@ -143,3 +143,13 @@ dd { margin: 0; display: flex; align-items: center; }
 .cellule { min-width: 0; }
 .cellule button { overflow-wrap: break-word; hyphens: auto; }
 .comparatif td.calcul { white-space: nowrap; text-align: right; }
+
+.scenarios { display: grid; gap: 4px; }
+.scenarios button { text-align: left; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--bord); background: var(--btn); color: var(--btn-texte); }
+.scenarios button.actif { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+.scenario-etape { margin-top: 8px; background: var(--risque); border-radius: 8px; padding: 8px 10px; font-size: 13px; }
+.scenario-etape p { margin: 6px 0; }
+.scenario-boutons { display: flex; gap: 4px; margin-top: 6px; }
+.scenario-boutons button { flex: 1; padding: 5px 6px; border-radius: 6px; border: 1px solid var(--bord); background: var(--panneau); color: var(--texte); }
+.scenario-boutons button:disabled { opacity: .4; cursor: default; }
+.croix-blocage { color: #fff; background: #e03131; font-weight: 700; padding: 2px 8px; border-radius: 6px; font-size: 12px; white-space: nowrap; }

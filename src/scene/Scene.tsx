@@ -9,6 +9,7 @@ import { usePalette, type Palette } from './palette'
 import { Sol, Arbres, ImmeublesLointains } from './Decor'
 import { Mobilier } from './Mobilier'
 import { Gaines } from './Gaines'
+import { ScenarioIntrusion } from './ScenarioIntrusion'
 import { phraseOccupant, zoneNonAnonyme, COULEURS } from '../views'
 import type { Equipement, Zone } from '../schema'
 
@@ -48,6 +49,7 @@ export function Scene3D() {
       <Zones />
       <VolumesReseau />
       <Gaines />
+      <ScenarioIntrusion />
       <Liens />
       <FluxIA />
       <CouvertureWifi />

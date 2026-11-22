@@ -140,7 +140,25 @@ export const Gaine = z.object({
 })
 export type Gaine = z.infer<typeof Gaine>
 
+// Scénario d'intrusion rejoué pas à pas en vue Cyber. `de: 'externe'` = l'attaquant, hors du bâtiment.
+export const EtapeScenario = z.object({
+  de: z.string(),
+  vers: z.string(),
+  texte: z.string(),
+  bloque: z.boolean().default(false), // l'attaquant s'arrête devant `vers` (firewall, etc.)
+})
+export const Scenario = z.object({
+  id: z.string(),
+  nom: z.string(),
+  resume: z.string(),
+  etapes: z.array(EtapeScenario).min(1),
+  conclusion: z.string(),
+  risques: z.array(z.string()).default([]),
+})
+export type Scenario = z.infer<typeof Scenario>
+
 export const FichierEquipe = z.object({
+  scenarios: z.array(Scenario).default([]),
   gaines: z.array(Gaine).default([]),
   equipements: z.array(Equipement).default([]),
   liens: z.array(Lien).default([]),

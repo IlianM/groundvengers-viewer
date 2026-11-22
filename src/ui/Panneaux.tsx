@@ -4,6 +4,7 @@ import { useEtat, CAMERA_DEFAUT, type Deco } from '../store'
 import { copierLien } from '../partage'
 import { VUES, LIBELLES, COULEURS, zoneNonAnonyme, phraseOccupant, criticite, classeCriticite, COULEUR_CRITICITE, NIVEAU_IMPACT, NIVEAU_PROBA, type VueId } from '../views'
 import { reveler } from '../navigation'
+import { etapeCoupee } from '../scenario'
 import { useVisibles, indicateurs, POIDS_SURFACE } from '../scene/visibles'
 import type { Equipement } from '../schema'
 
@@ -121,6 +122,7 @@ export function PanneauGauche() {
       <h2>{def.nom}</h2>
       <p className="discret">{def.description}</p>
       {vue === 'risques' && <MatriceRisques />}
+      {vue === 'cyber' && <PanneauScenarios />}
 
       <h3>Niveau</h3>
       <div className="niveaux">
@@ -540,6 +542,59 @@ function ScoreSurface() {
         </tbody>
       </table>
       <p className="discret">Tout collecter : {tout.surface} · Minimum vital : {vital.surface} (−{baisse} %). Formule indicative, à valider avec l’équipe Cyber.</p>
+    </>
+  )
+}
+
+/** Scénarios d'intrusion (F-21) : liste, lecture pas à pas et lecture automatique. */
+function PanneauScenarios() {
+  const { scenarioActif, lancerScenario, setEtapeScenario, setLecture, minimumVital } = useEtat()
+  const sc = donnees.scenarios.find((x) => x.id === scenarioActif?.id)
+  const etape = scenarioActif?.etape ?? 0
+  const lecture = scenarioActif?.lecture ?? false
+  const coupe = sc ? etapeCoupee(sc, minimumVital) : null
+  const derniere = sc ? sc.etapes.length - 1 : 0
+
+  // lecture automatique : une étape toutes les 3 secondes, puis arrêt sur la dernière
+  useEffect(() => {
+    if (!lecture || !sc) return
+    const t = setTimeout(() => {
+      const st = useEtat.getState().scenarioActif
+      if (!st) return
+      if (st.etape >= derniere || (coupe && st.etape >= coupe.index)) useEtat.getState().setLecture(false)
+      else useEtat.setState({ scenarioActif: { ...st, etape: st.etape + 1 } })
+    }, 3000)
+    return () => clearTimeout(t)
+  }, [lecture, etape, sc, derniere, coupe])
+
+  if (donnees.scenarios.length === 0) return null
+  const fini = sc && (etape >= derniere || (coupe !== null && etape >= coupe.index))
+  return (
+    <>
+      <h3>Scénarios d’intrusion</h3>
+      <div className="scenarios">
+        {donnees.scenarios.map((x) => (
+          <button key={x.id} className={scenarioActif?.id === x.id ? 'actif' : ''} onClick={() => lancerScenario(scenarioActif?.id === x.id ? null : x.id)}>{x.nom}</button>
+        ))}
+      </div>
+      {sc && (
+        <div className="scenario-etape">
+          <p className="discret">{sc.resume}</p>
+          <b>Étape {etape + 1} / {sc.etapes.length}</b>
+          <p>{sc.etapes[etape].texte}</p>
+          {coupe && etape >= coupe.index && (
+            <p className="alerte-bloc">Chemin coupé en Minimum vital : « {coupe.equipement} » n’est pas collecté. L’attaque s’arrête ici.</p>
+          )}
+          {fini && !(coupe && etape >= coupe.index) && <p className="phrase-occupant">{sc.conclusion}</p>}
+          <div className="scenario-boutons">
+            <button disabled={etape === 0} onClick={() => setEtapeScenario(etape - 1)}>←</button>
+            <button onClick={() => (fini ? useEtat.setState({ scenarioActif: { id: sc.id, etape: 0, lecture: true } }) : setLecture(!lecture))}>{lecture ? 'Pause' : fini ? 'Rejouer' : 'Lecture'}</button>
+            <button disabled={etape >= derniere} onClick={() => setEtapeScenario(etape + 1)}>→</button>
+            <button onClick={() => lancerScenario(null)}>Arrêter</button>
+          </div>
+          {!minimumVital && sc.id !== 'SCN-WIFI' && <p className="discret">Astuce : activez « Minimum vital » (barre du haut) pour voir ce chemin disparaître.</p>}
+        </div>
+      )}
     </>
   )
 }

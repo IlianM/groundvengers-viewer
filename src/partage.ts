@@ -19,6 +19,7 @@ function versHash(): string {
   if (s.eclate) p.set('ecl', '1')
   if (s.eclatePieces) p.set('pcs', '1')
   if (s.risqueActif) p.set('rsk', s.risqueActif)
+  if (s.scenarioActif) { p.set('scn', s.scenarioActif.id); if (s.scenarioActif.etape > 0) p.set('etp', String(s.scenarioActif.etape + 1)) }
   if (s.selection) p.set('sel', s.selection)
   return p.toString()
 }
@@ -40,6 +41,12 @@ export function appliquerHash(hash: string) {
   if (s.eclatePieces !== (p.get('pcs') === '1')) s.setEclatePieces(p.get('pcs') === '1')
   const rsk = p.get('rsk')
   if (rsk && useEtat.getState().vue === 'risques' && donnees.risques.some((r) => r.id === rsk)) useEtat.getState().setRisqueActif(rsk)
+  const scn = p.get('scn')
+  const sc = donnees.scenarios.find((x) => x.id === scn)
+  if (sc && useEtat.getState().vue === 'cyber') {
+    const etp = Math.min(Math.max(Number(p.get('etp') ?? 1), 1), sc.etapes.length) - 1
+    useEtat.setState({ scenarioActif: { id: sc.id, etape: Number.isFinite(etp) ? etp : 0, lecture: false } })
+  }
   const sel = p.get('sel')
   if (sel && (donnees.parId.has(sel) || donnees.zoneParId.has(sel) || donnees.gaineParId.has(sel))) reveler({ id: sel })
   else useEtat.getState().setSelection(null)

@@ -7,7 +7,7 @@ const sansAccent = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toL
 
 export type Resultat = {
   id: string // id à sélectionner (équipement ou zone)
-  genre: 'zone' | 'equipement' | 'noeud' | 'gaine' | 'risque'
+  genre: 'zone' | 'equipement' | 'noeud' | 'gaine' | 'risque' | 'scenario'
   titre: string
   detail: string
   score: number
@@ -39,6 +39,10 @@ export function chercher(requete: string, max = 8): Resultat[] {
     const s = evalue(e.nom, autres)
     if (s >= 0) out.push({ id: e.id, genre: 'equipement', titre: e.nom, detail: `${e.type} · ${e.niveau} · ${e.id}`, score: s })
   }
+  for (const sc of donnees.scenarios) {
+    const s = evalue(sc.nom, `${sc.id} ${sc.resume} scenario scenarios intrusion attaque`)
+    if (s >= 0) out.push({ id: sc.id, genre: 'scenario', vue: 'cyber', score: s - 0.25, titre: sc.nom, detail: `Scénario d'intrusion · ${sc.etapes.length} étapes` })
+  }
   for (const r of donnees.risques) {
     const s = evalue(r.nom, `${r.id} ${r.impact} ${r.probabilite} ${r.preventif} ${r.correctif} risque risques`)
     if (s >= 0) out.push({ id: r.id, genre: 'risque', vue: 'risques', score: s - 0.25, titre: r.nom, detail: `Risque · impact ${r.impact} · probabilité ${r.probabilite}` })
@@ -69,6 +73,11 @@ const DECALAGE_ZONE: [number, number, number] = [16, 14, 20]
 export function reveler(cible: Cible) {
   const s = useEtat.getState()
   if (s.scene !== null) s.setScene(null)
+  if (donnees.scenarios.some((x) => x.id === cible.id)) {
+    if (s.vue !== 'cyber') s.setVue('cyber')
+    s.lancerScenario(cible.id)
+    return
+  }
   if (donnees.risques.some((r) => r.id === cible.id)) {
     if (s.vue !== 'risques') s.setVue('risques')
     s.setRisqueActif(cible.id)

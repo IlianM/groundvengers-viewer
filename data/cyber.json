@@ -707,5 +707,93 @@
         "LNK-NET-BUR-AP"
       ]
     }
+  ],
+  "scenarios": [
+    {
+      "id": "SCN-WIFI",
+      "nom": "Rebond depuis une borne Wi-Fi",
+      "resume": "Un attaquant se connecte au Wi-Fi depuis l'extérieur et tente d'atteindre la GTB.",
+      "etapes": [
+        {
+          "de": "externe",
+          "vers": "AP-WIFI-R1-01",
+          "texte": "Depuis le parking, l'attaquant se connecte à la borne Wi-Fi de l'open space A."
+        },
+        {
+          "de": "AP-WIFI-R1-01",
+          "vers": "SW-BUR-01",
+          "texte": "Il est maintenant dans le réseau bureautique."
+        },
+        {
+          "de": "SW-BUR-01",
+          "vers": "FW-01",
+          "texte": "Il cherche un chemin vers le réseau GTB, qui passe par le firewall."
+        },
+        {
+          "de": "FW-01",
+          "vers": "SW-GTB-01",
+          "texte": "Le firewall refuse : tout est interdit par défaut entre bureautique et GTB.",
+          "bloque": true
+        }
+      ],
+      "conclusion": "Le réseau GTB isolé tient : l'attaquant reste dans le bureautique.",
+      "risques": [
+        "RSK-INTRUSION"
+      ]
+    },
+    {
+      "id": "SCN-CLOUD",
+      "nom": "Passerelle cloud du constructeur",
+      "resume": "Un accès prévu pour la maintenance à distance devient une porte d'entrée vers la GTB.",
+      "etapes": [
+        {
+          "de": "externe",
+          "vers": "GW-CLOUD-01",
+          "texte": "L'attaquant compromet le service cloud du constructeur, qui parle à la passerelle."
+        },
+        {
+          "de": "GW-CLOUD-01",
+          "vers": "SRV-NIAGARA",
+          "texte": "Le flux du constructeur est autorisé : il arrive jusqu'au serveur de supervision."
+        },
+        {
+          "de": "SRV-NIAGARA",
+          "vers": "SW-GTB-01",
+          "texte": "Depuis le serveur, il voit tout le réseau GTB."
+        }
+      ],
+      "conclusion": "Le chemin est ouvert. En mode Minimum vital, la passerelle cloud n'existe plus : ce chemin disparaît.",
+      "risques": [
+        "RSK-INTRUSION"
+      ]
+    },
+    {
+      "id": "SCN-CAMERA",
+      "nom": "Caméra IP du hall",
+      "resume": "Une caméra connectée expose des images de personnes.",
+      "etapes": [
+        {
+          "de": "externe",
+          "vers": "CAM-R0-01",
+          "texte": "L'attaquant devine le mot de passe par défaut de la caméra du hall."
+        },
+        {
+          "de": "CAM-R0-01",
+          "vers": "SW-BUR-01",
+          "texte": "Il rebondit sur le réseau bureautique, avec l'accès aux images du hall (donnée identifiante)."
+        },
+        {
+          "de": "SW-BUR-01",
+          "vers": "FW-01",
+          "texte": "Il tente de monter vers la GTB : le firewall le refuse.",
+          "bloque": true
+        }
+      ],
+      "conclusion": "La GTB est protégée, mais les images du hall sont exposées. En Minimum vital, la caméra n'est pas collectée.",
+      "risques": [
+        "RSK-INTRUSION",
+        "RSK-IDENTIFICATION"
+      ]
+    }
   ]
 }

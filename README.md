@@ -53,6 +53,10 @@ Menu **Options** : mode sombre, rectangles du bâtiment (dalles et enveloppe, ma
 
 La vue **Risques** affiche la matrice impact × probabilité (données de `preuves.json`). Un clic sur un risque isole les équipements concernés, entourés d'un anneau selon la criticité (impact × probabilité : élevée à partir de 6). Le **score de surface d'attaque** est dans le bandeau du bas, et son détail en vue Cyber : 3 × points d'entrée + 2 × flux vers Internet + 1 × protocoles distincts + 2 × équipements à donnée identifiante. La formule est indicative ; changer les poids se fait dans `POIDS_SURFACE`.
 
+## Scénarios d'intrusion
+
+En vue Cyber, le panneau **Scénarios d'intrusion** rejoue une attaque pas à pas : une impulsion rouge suit le chemin de l'attaquant, un « ✖ bloqué » s'affiche quand le firewall l'arrête. Avec **Minimum vital**, un chemin qui passe par un équipement non collecté (passerelle cloud, caméra) est coupé : l'équipement apparaît en fantôme. Les scénarios sont des données (`scenarios` dans `data/cyber.json`) ; l'URL partagée garde le scénario et l'étape.
+
 ## Caméra
 
 Souris : clic gauche tourner, clic droit déplacer, molette zoom. Clavier : **flèches** pour se déplacer, **Maj + flèches** pour tourner et incliner, **+ / −** pour zoomer. Boutons Recentrer, Dessus, Façade. La case **Vue éclatée** (panneau de gauche) écarte les niveaux les uns des autres, et **Éclater aussi les pièces** écarte chaque pièce de son voisin ; les deux se combinent.
