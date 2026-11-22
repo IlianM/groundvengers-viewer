@@ -12,11 +12,12 @@ import { chargerModele } from './modele'
 import { VUES, LIBELLES, COULEURS, zoneNonAnonyme, phraseOccupant, criticite, classeCriticite, COULEUR_CRITICITE, NIVEAU_IMPACT, NIVEAU_PROBA, type VueId } from '../views'
 import { reveler } from '../navigation'
 import { etapeCoupee } from '../scenario'
+import { demarrerVisite, arreterVisite } from '../visite'
 import { useVisibles, indicateurs, POIDS_SURFACE } from '../scene/visibles'
 import type { Equipement } from '../schema'
 
 export function BarreHaut() {
-  const { vue, setVue, minimumVital, setMinimumVital, scene, setScene, comparaison } = useEtat()
+  const { vue, setVue, minimumVital, setMinimumVital, scene, setScene, comparaison, visite } = useEtat()
   return (
     <header className="barre-haut">
       <div className="titre-app">GroundVengers Viewer</div>
@@ -32,7 +33,10 @@ export function BarreHaut() {
         <span>{comparaison ? 'Les deux modes' : minimumVital ? 'Minimum vital' : 'Tout collecter'}</span>
       </label>
       <Options />
-      <button className="bouton-presentation" onClick={() => setScene(scene === null ? 0 : null)}>
+      <button className="bouton-visite" onClick={() => (visite ? arreterVisite() : demarrerVisite())} title="Visite guidée de toute l’application, en lecture automatique">
+        {visite ? 'Quitter la visite' : 'Visite guidée'}
+      </button>
+      <button className="bouton-presentation" onClick={() => { if (visite) arreterVisite(); setScene(scene === null ? 0 : null) }}>
         {scene === null ? 'Présentation' : 'Quitter'}
       </button>
     </header>

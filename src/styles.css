@@ -244,3 +244,20 @@ dd { margin: 0; display: flex; align-items: center; }
 .bandeau-config { position: absolute; z-index: 30; top: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; align-items: center; padding: 8px 12px; border-radius: 10px; background: var(--panneau); color: var(--texte); border: 1px solid var(--accent-2); box-shadow: 0 6px 20px var(--ombre); font-size: 13px; max-width: 90%; }
 .bandeau-config button { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--accent-2); background: var(--accent-2); color: #fff; cursor: pointer; }
 .bandeau-config button.secondaire { background: transparent; color: var(--texte); border-color: var(--bord); }
+
+/* Visite guidée */
+.bouton-visite { padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,.55); background: transparent; color: #fff; font-weight: 600; cursor: pointer; }
+.bouton-visite:hover { background: rgba(255,255,255,.14); }
+.visite { position: fixed; z-index: 16000000; top: 150px; left: calc(var(--w-gauche, 300px) + 14px); width: min(400px, 40vw); padding: 12px 14px 12px; border-radius: 12px; background: var(--panneau); color: var(--texte); border: 1px solid var(--accent-2); box-shadow: 0 10px 34px var(--ombre); }
+.visite-tete { display: flex; justify-content: space-between; align-items: center; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--discret); }
+.visite-x { border: 0; background: transparent; color: var(--texte); font-size: 20px; line-height: 1; cursor: pointer; }
+.visite h3 { margin: 4px 0 4px; font-size: 16px; }
+.visite p { margin: 0 0 10px; font-size: 13px; line-height: 1.45; }
+.visite-progres { height: 3px; border-radius: 2px; background: var(--chip); overflow: hidden; margin-bottom: 10px; }
+.visite-progres div { height: 100%; background: var(--accent-2); }
+.visite-progres .etape { transition: width .1s linear; }
+.visite-nav { display: flex; gap: 6px; justify-content: space-between; }
+.visite-nav button { flex: 1; padding: 6px 8px; border-radius: 7px; border: 1px solid var(--bord); background: var(--btn); color: var(--btn-texte); cursor: pointer; font-size: 12px; }
+.visite-nav button:disabled { opacity: .4; cursor: default; }
+.visite-halo { position: fixed; z-index: 15999999; pointer-events: none; border-radius: 10px; border: 3px solid var(--accent-2); box-shadow: 0 0 0 9999px rgba(10, 16, 24, .38), 0 0 18px var(--accent-2); animation: visite-pouls 1.6s ease-in-out infinite; }
+@keyframes visite-pouls { 50% { box-shadow: 0 0 0 9999px rgba(10, 16, 24, .38), 0 0 4px var(--accent-2); } }

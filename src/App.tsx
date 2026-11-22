@@ -3,6 +3,7 @@ import { Scene3D } from './scene/Scene'
 import { Comparaison } from './ui/Comparaison'
 import { Recherche } from './ui/Recherche'
 import { BarreHaut, PanneauGauche, FicheDetail, BandeauBas, Presentation, BandeauErreurs, OutilsCamera, ZoneDepot, BarreSimulation, BandeauConfigPartagee } from './ui/Panneaux'
+import { Visite } from './ui/Visite'
 
 export default function App() {
   const r = useEtat((s) => s.reglages)
@@ -18,6 +19,7 @@ export default function App() {
           {r.boutonsCamera && <OutilsCamera />}
           <BarreSimulation />
           <Presentation />
+          <Visite />
           <BandeauErreurs />
           <BandeauConfigPartagee />
           {r.mentionFictif && <div className="mention-fictif">Entreprise, personnes et données fictives · maquette temporaire</div>}
