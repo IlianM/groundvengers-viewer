@@ -6,6 +6,7 @@ La référence est `src/schema/index.ts` (Zod). Résumé :
 | --- | --- | --- |
 | Niveau | batiment.json | `id`, `altitude`, `hauteur` |
 | Zone | batiment.json | `id`, `niveau`, `type`, `effectif_max`, `detection_presence`, `rect [x, z, largeur, profondeur]` |
+| Ascenseur | batiment.json | `id`, `nom`, `position [x, z]`, `taille [largeur, profondeur]`, `niveaux` desservis |
 | Équipement | domotique / cyber / ia.json | `id`, `equipe`, `categorie`, `type`, `niveau`, `zone`, `position`, `protocole`, `reseau`, `config`, `donnee`, `point_entree`, `risques`, `preuves` |
 | Lien | domotique / cyber / ia.json | `id`, `type`, `protocole`, `de`, `vers`, `autorise_par_firewall`, `minimum_vital` |
 | Gaine | cyber.json (`gaines`) | `id`, `type (horizontale / montante)`, `reseau (GTB / bureautique / fibre / mixte)`, `niveau` ou `de` + `a`, `chemin [[x, z], …]`, `hauteur`, `contient` (ids de liens) |
