@@ -47,7 +47,7 @@ docs/            contribuer, schéma, export 3D, glossaire, backlog
 
 ## Options (barre verte, en haut)
 
-Menu **Options** : mode sombre, et décor activable séparément (herbe/route, arbres, bâtiments au loin, meubles). Les choix sont gardés dans le navigateur. Le décor est grossier et n'influe pas sur les indicateurs. Le panneau de gauche propose aussi la **coupe** (masquer les niveaux au-dessus du niveau choisi) ; en vue Cyber, le calque **Volumes réseau** montre les réseaux GTB isolé et bureautique par niveau.
+Menu **Options** : mode sombre, rectangles du bâtiment (dalles et enveloppe, masqués automatiquement quand les pièces s'écartent), chargement d'un `.glb` local (ou glisser-déposer sur la vue 3D), et décor activable séparément (herbe/route, arbres, bâtiments au loin, meubles). Les choix sont gardés dans le navigateur. Le décor est grossier et n'influe pas sur les indicateurs. Le panneau de gauche propose aussi la **coupe** (masquer les niveaux au-dessus du niveau choisi) ; en vue Cyber, le calque **Volumes réseau** montre les réseaux GTB isolé et bureautique par niveau.
 
 ## Caméra
 

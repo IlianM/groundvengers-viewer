@@ -6,7 +6,7 @@ import { VUES, LIBELLES, COULEURS, zoneNonAnonyme, phraseOccupant, type VueId } 
 import { useVisibles, indicateurs } from '../scene/visibles'
 import type { Equipement } from '../schema'
 
-const OPTIONS_DECO: [keyof Deco, string][] = [
+const OPTIONS_DECO: [Exclude<keyof Deco, 'structure'>, string][] = [
   ['herbe', 'Herbe, parvis et route'],
   ['arbres', 'Arbres'],
   ['batiments', 'Bâtiments au loin'],
@@ -17,6 +17,7 @@ function MenuOptions() {
   const { theme, setTheme, deco, setDeco } = useEtat()
   const [ouvert, setOuvert] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const entree = useRef<HTMLInputElement>(null)
   useEffect(() => {
     if (!ouvert) return
     const dehors = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOuvert(false) }
@@ -37,6 +38,16 @@ function MenuOptions() {
             <input type="checkbox" checked={theme === 'sombre'} onChange={(e) => setTheme(e.target.checked ? 'sombre' : 'clair')} />
             Mode sombre
           </label>
+          <h4>Bâtiment</h4>
+          <label className="calque">
+            <input type="checkbox" checked={deco.structure} onChange={(e) => setDeco('structure', e.target.checked)} />
+            Rectangles du bâtiment (dalles, enveloppe)
+          </label>
+          <h4>Modèle 3D</h4>
+          <button className="bouton-menu" onClick={() => entree.current?.click()}>Charger un fichier .glb…</button>
+          <input ref={entree} type="file" accept=".glb,model/gltf-binary" hidden
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) chargerModele(f); e.target.value = '' }} />
+          <p className="discret">Ou glissez-déposez un .glb sur la vue 3D. Les objets nommés comme un identifiant ouvrent leur fiche.</p>
           <h4>Décor</h4>
           {OPTIONS_DECO.map(([k, libelle]) => (
             <label key={k} className="calque">
@@ -422,5 +433,34 @@ export function BandeauErreurs() {
       <strong>{erreurs.length} problème(s) dans les fichiers data/ :</strong>
       <ul>{erreurs.slice(0, 8).map((e) => <li key={e}>{e}</li>)}</ul>
     </div>
+  )
+}
+
+/** Charge un .glb choisi par la personne ; message dans la console de l'appli si le fichier n'est pas un .glb. */
+export function chargerModele(f: File): boolean {
+  if (!/\.glb$/i.test(f.name)) { alert('Seuls les fichiers .glb sont acceptés (glTF binaire). Voir docs/EXPORT-3D.md.'); return false }
+  useEtat.getState().setModeleLocal(f)
+  return true
+}
+
+/** Bandeau « modèle local » + zone de dépôt sur la vue 3D. */
+export function ZoneDepot({ children }: { children: React.ReactNode }) {
+  const { modeleLocal, setModeleLocal } = useEtat()
+  const [survol, setSurvol] = useState(false)
+  return (
+    <main
+      className={`viewer ${survol ? 'depot' : ''}`}
+      onDragOver={(e) => { e.preventDefault(); setSurvol(true) }}
+      onDragLeave={() => setSurvol(false)}
+      onDrop={(e) => { e.preventDefault(); setSurvol(false); const f = e.dataTransfer.files[0]; if (f) chargerModele(f) }}
+    >
+      {children}
+      {survol && <div className="depot-message">Déposez un fichier .glb pour l'afficher</div>}
+      {modeleLocal && (
+        <div className="bandeau-modele">
+          Modèle local : {modeleLocal.nom} <button onClick={() => setModeleLocal(null)}>Retirer</button>
+        </div>
+      )}
+    </main>
   )
 }

@@ -4,7 +4,7 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 
 | ID | Fonctionnalité | Priorité | État |
 | --- | --- | --- | --- |
-| F-01 | Charger le bâtiment (glTF / GLB) | Must | ✅ chargeur prêt, bâtiment temporaire généré en attendant le .glb |
+| F-01 | Charger le bâtiment (glTF / GLB) | Must | ✅ chargeur testé avec un .glb de test (docs/exemples), clic sur les objets nommés comme un id ; reste à tester avec le vrai export |
 | F-02 | Import IFC | Should | ⬜ |
 | F-03 | Navigation 3D | Must | ✅ |
 | F-04 | Sélecteur d'étage | Must | ✅ |
@@ -35,4 +35,4 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-29 | Badges de preuve | Must | ✅ |
 | F-30 | Matrice de risques liée | Should | ✅ partiel (dans la fiche) |
 | F-31 | Mode présentation | Must | ✅ |
-| F-32 | Glisser-déposer un modèle | Could | ⬜ |
+| F-32 | Glisser-déposer un modèle | Could | ✅ |

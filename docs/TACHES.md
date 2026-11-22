@@ -12,16 +12,17 @@ Liste simple, à cocher à la main. Une tâche = une branche ou un commit. Les i
 - [x] Vue éclatée : les niveaux s'écartent avec animation (F-05)
 - [x] Option « Éclater aussi les pièces » : chaque pièce s'écarte du centre, avec ses meubles, équipements et gaines
 - [x] Gaines, chemins de câbles et montante en vue Cyber, avec fiche détail et recherche (F-18)
+- [x] Rectangles du bâtiment : option permanente dans Options, et masqués automatiquement quand les pièces s'écartent
+- [x] Modèle 3D : chargeur .glb testé, objets nommés comme un id cliquables avec surbrillance (NIV-xx, zones, équipements, gaines), glisser-déposer / bouton de chargement (F-32)
 - [x] Caméra au clavier : flèches = déplacer, Maj + flèches = tourner, + / − = zoom
 - [x] Recherche d'un équipement, d'une zone ou d'un modèle IA, avec saut de caméra (F-11, touche `/`)
 - [x] URL partageable : vue, niveau, coupe, minimum vital, architecture IA, seuil et sélection dans le hash (F-12, bouton « Copier le lien »)
 
 ## À faire (Should / Could)
 - [ ] F-02 Import IFC
-- [ ] F-15, F-20, F-21, F-24, F-26, F-30, F-32 : voir `BACKLOG.md`
-- [ ] Relier les noms d'objets du `.glb` aux fiches (équipements, zones)
+- [ ] F-15, F-20, F-21, F-24, F-26, F-30 : voir `BACKLOG.md`
 - [ ] Faire valider les tracés de gaines (fictifs) par l'équipe Cyber, et ajouter les gaines du réseau GTB côté Domotique
-- [ ] Tester le chargeur `.glb` avec un vrai export de l'équipe Domotique
+- [ ] Tester le chargeur `.glb` avec un vrai export de l'équipe Domotique (jusqu'ici testé avec `docs/exemples/test-batiment.glb`)
 - [ ] Remplacer les données fictives par les données réelles des équipes
 
 ## Règles

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { VueId } from '../views'
 
-export type Deco = { herbe: boolean; arbres: boolean; batiments: boolean; meubles: boolean }
+export type Deco = { herbe: boolean; arbres: boolean; batiments: boolean; meubles: boolean; structure: boolean }
 export type Theme = 'clair' | 'sombre'
 type Vec3 = [number, number, number]
 
@@ -23,6 +23,7 @@ type Etat = {
   theme: Theme
   deco: Deco
   cameraCible: { n: number; position: Vec3; cible: Vec3 }
+  modeleLocal: { url: string; nom: string } | null // .glb chargé par la personne (glisser-déposer), prioritaire sur batiment.json
   eclate: boolean // vue éclatée demandée
   ecart: number // écart actuel entre niveaux (animé de 0 à ECART_ECLATE)
   eclatePieces: boolean // pièces écartées horizontalement
@@ -43,11 +44,12 @@ type Etat = {
   allerA: (position: Vec3, cible: Vec3) => void
   setEclate: (b: boolean) => void
   setEclatePieces: (b: boolean) => void
+  setModeleLocal: (fichier: File | null) => void
 }
 
 // Options d'apparence gardées dans le navigateur (aucune donnée envoyée nulle part).
 const CLE = 'gv-options-v1'
-const DECO_DEFAUT: Deco = { herbe: true, arbres: true, batiments: true, meubles: true }
+const DECO_DEFAUT: Deco = { herbe: true, arbres: true, batiments: true, meubles: true, structure: true }
 
 function lireOptions(): { theme?: Theme; deco?: Partial<Deco> } {
   try {
@@ -80,6 +82,7 @@ export const useEtat = create<Etat>((set, get) => ({
   theme: sauvegarde.theme === 'sombre' || sauvegarde.theme === 'clair' ? sauvegarde.theme : themeSysteme(),
   deco: { ...DECO_DEFAUT, ...sauvegarde.deco },
   cameraCible: { n: 0, ...CAMERA_DEFAUT },
+  modeleLocal: null,
   eclate: false,
   ecart: 0,
   eclatePieces: false,
@@ -107,6 +110,11 @@ export const useEtat = create<Etat>((set, get) => ({
     set({ eclate })
     animerEcart()
     recadrer(get, set)
+  },
+  setModeleLocal: (fichier) => {
+    const ancien = get().modeleLocal
+    if (ancien) URL.revokeObjectURL(ancien.url)
+    set({ modeleLocal: fichier ? { url: URL.createObjectURL(fichier), nom: fichier.name } : null })
   },
   setEclatePieces: (eclatePieces) => {
     set({ eclatePieces })

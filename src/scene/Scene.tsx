@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useRef } from 'react'
+import { Suspense, useEffect, useMemo, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Html, Line, Edges, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
@@ -17,6 +17,8 @@ const [W, D] = donnees.batiment.emprise
 export function Scene3D() {
   const setSelection = useEtat((s) => s.setSelection)
   const deco = useEtat((s) => s.deco)
+  const modeleLocal = useEtat((s) => s.modeleLocal)
+  const urlModele = modeleLocal?.url ?? (donnees.batiment.modele ? `./models/${donnees.batiment.modele}` : null)
   const p = usePalette()
   const ciel = deco.herbe || deco.arbres || deco.batiments
   return (
@@ -31,17 +33,18 @@ export function Scene3D() {
       <directionalLight position={[20, 40, 10]} intensity={p.lumiere.directe} />
       <OrbitControls makeDefault target={CAMERA_DEFAUT.cible} maxPolarAngle={Math.PI / 2.05} minDistance={6} maxDistance={120} />
       <CameraRig />
-      {donnees.batiment.modele ? (
+      {urlModele ? (
         <Suspense fallback={null}>
-          <ModeleGLB url={`./models/${donnees.batiment.modele}`} />
+          <ModeleGLB url={urlModele} />
         </Suspense>
       ) : (
         <BatimentTemporaire />
       )}
+      <EtiquettesNiveaux />
       <Sol />
       <Arbres />
       <ImmeublesLointains />
-      <Mobilier />
+      {!urlModele && <Mobilier />}
       <Zones />
       <VolumesReseau />
       <Gaines />
@@ -135,16 +138,89 @@ function CameraRig() {
   return null
 }
 
-/** Mode F-01 : modèle exporté par l'équipe Domotique (public/models/*.glb). */
+/** Mode F-01 : modèle exporté par l'équipe Domotique (.glb). Les objets nommés comme un id (équipement, zone, gaine) ouvrent leur fiche. */
 function ModeleGLB({ url }: { url: string }) {
   const { scene } = useGLTF(url)
-  return <primitive object={scene} />
+  const { selection, setSelection, setNiveau } = useEtat()
+  const [W, D] = donnees.batiment.emprise
+  // Chaque instance a ses propres matériaux, pour pouvoir surligner sans toucher au cache de useGLTF
+  const racine = useMemo(() => {
+    const c = scene.clone(true)
+    c.traverse((o) => {
+      const m = o as THREE.Mesh
+      if (m.isMesh) m.material = Array.isArray(m.material) ? m.material.map((x) => x.clone()) : m.material.clone()
+    })
+    return c
+  }, [scene])
+  const ids = useMemo(() => {
+    const m = new Map<string, string>()
+    for (const id of [...donnees.parId.keys(), ...donnees.zoneParId.keys(), ...donnees.gaineParId.keys(), ...donnees.batiment.niveaux.map((n) => `NIV-${n.id}`)]) m.set(id.toLowerCase(), id)
+    return m
+  }, [])
+  // GLTFLoader retire les points des noms : « FW-01.001 » (doublon Blender) arrive en « FW-01001 ». On essaie le nom exact, puis sans ce suffixe.
+  const idDe = (o: THREE.Object3D | null): string | null => {
+    for (let x: THREE.Object3D | null = o; x; x = x.parent) {
+      const nom = x.name.toLowerCase()
+      const id = ids.get(nom) ?? ids.get(nom.replace(/\d{3}$/, ''))
+      if (id) return id
+    }
+    return null
+  }
+  // surbrillance de l'objet sélectionné
+  useEffect(() => {
+    racine.traverse((o) => {
+      const m = o as THREE.Mesh
+      if (!m.isMesh) return
+      const actif = selection !== null && idDe(m) === selection
+      for (const mat of Array.isArray(m.material) ? m.material : [m.material]) {
+        const std = mat as THREE.MeshStandardMaterial
+        if (std.emissive) { std.emissive.set(actif ? '#e8590c' : '#000000'); std.emissiveIntensity = actif ? 0.7 : 0 }
+      }
+    })
+  }, [racine, selection]) // eslint-disable-line react-hooks/exhaustive-deps
+  return (
+    <primitive
+      object={racine}
+      position={[-W / 2, 0, -D / 2]}
+      onClick={(e: { object: THREE.Object3D; stopPropagation: () => void }) => {
+        const id = idDe(e.object)
+        if (!id) return
+        e.stopPropagation()
+        if (id.startsWith('NIV-')) setNiveau(id.slice(4))
+        else setSelection(id)
+      }}
+      onPointerOver={(e: { object: THREE.Object3D }) => { if (idDe(e.object)) document.body.style.cursor = 'pointer' }}
+      onPointerOut={() => { document.body.style.cursor = '' }}
+    />
+  )
+}
+
+/** Noms des niveaux (R0, R1…) : toujours montés, que le bâtiment soit le modèle temporaire ou un .glb (évite de démonter des <Html> dans le même rendu). */
+function EtiquettesNiveaux() {
+  const { niveau: niveauActif, coupe, ecart } = useEtat()
+  return (
+    <group>
+      {donnees.batiment.niveaux
+        .filter((n) => niveauVisible(n.id, niveauActif, coupe))
+        .map((n) => (
+          <group key={n.id} position={[0, altitudeNiveau(n.id, ecart), 0]}>
+            <Html position={[W / 2 + 1.5, 0.1, D / 2 + 1.5]} center style={{ pointerEvents: 'none' }}>
+              <span className={`etiquette-niveau ${!niveauActif || niveauActif === n.id ? '' : 'inactif'}`}>{n.id}</span>
+            </Html>
+          </group>
+        ))}
+    </group>
+  )
 }
 
 /** Bâtiment temporaire du MVP, généré à partir de batiment.json (emprise + niveaux). */
 function BatimentTemporaire() {
-  const { niveau: niveauActif, coupe, ecart } = useEtat()
+  const { niveau: niveauActif, coupe, ecart, pieces } = useEtat()
+  const structure = useEtat((s) => s.deco.structure)
   const p = usePalette()
+  // Rectangles du bâtiment (dalles et enveloppe) : désactivables dans les options, et masqués quand les pièces s'écartent
+  const f = structure ? 1 - pieces : 0
+  const montrer = f > 0.15
   return (
     <group>
       {donnees.batiment.niveaux
@@ -153,19 +229,20 @@ function BatimentTemporaire() {
           const actif = !niveauActif || niveauActif === n.id
           return (
             <group key={n.id} position={[0, altitudeNiveau(n.id, ecart), 0]}>
-              <mesh position={[0, -0.1, 0]}>
-                <boxGeometry args={[W, 0.2, D]} />
-                <meshStandardMaterial color={p.dalle} transparent opacity={niveauActif === n.id ? 0.9 : actif ? 0.3 : 0.05} depthWrite={niveauActif === n.id} />
-                <Edges color={p.dalleBord} />
-              </mesh>
-              <mesh position={[0, n.hauteur / 2, 0]}>
-                <boxGeometry args={[W, n.hauteur, D]} />
-                <meshStandardMaterial color="#ffffff" transparent opacity={actif ? 0.06 : 0.02} depthWrite={false} />
-                <Edges color={actif ? p.enveloppeBord : p.enveloppeBordInactif} />
-              </mesh>
-              <Html position={[W / 2 + 1.5, 0.1, D / 2 + 1.5]} center style={{ pointerEvents: 'none' }}>
-                <span className={`etiquette-niveau ${actif ? '' : 'inactif'}`}>{n.id}</span>
-              </Html>
+              {montrer && (
+                <>
+                  <mesh position={[0, -0.1, 0]}>
+                    <boxGeometry args={[W, 0.2, D]} />
+                    <meshStandardMaterial color={p.dalle} transparent opacity={(niveauActif === n.id ? 0.9 : actif ? 0.3 : 0.05) * f} depthWrite={niveauActif === n.id && f > 0.95} />
+                    <Edges color={p.dalleBord} />
+                  </mesh>
+                  <mesh position={[0, n.hauteur / 2, 0]}>
+                    <boxGeometry args={[W, n.hauteur, D]} />
+                    <meshStandardMaterial color="#ffffff" transparent opacity={(actif ? 0.06 : 0.02) * f} depthWrite={false} />
+                    <Edges color={actif ? p.enveloppeBord : p.enveloppeBordInactif} />
+                  </mesh>
+                </>
+              )}
             </group>
           )
         })}

@@ -1,6 +1,6 @@
 import { Scene3D } from './scene/Scene'
 import { Recherche } from './ui/Recherche'
-import { BarreHaut, PanneauGauche, FicheDetail, BandeauBas, Presentation, BandeauErreurs, OutilsCamera } from './ui/Panneaux'
+import { BarreHaut, PanneauGauche, FicheDetail, BandeauBas, Presentation, BandeauErreurs, OutilsCamera, ZoneDepot } from './ui/Panneaux'
 
 export default function App() {
   return (
@@ -8,14 +8,14 @@ export default function App() {
       <BarreHaut />
       <div className="corps">
         <PanneauGauche />
-        <main className="viewer">
+        <ZoneDepot>
           <Scene3D />
           <Recherche />
           <OutilsCamera />
           <Presentation />
           <BandeauErreurs />
           <div className="mention-fictif">Entreprise, personnes et données fictives · maquette temporaire</div>
-        </main>
+        </ZoneDepot>
         <FicheDetail />
       </div>
       <BandeauBas />
