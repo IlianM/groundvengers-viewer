@@ -1,10 +1,13 @@
-import { Suspense, useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Suspense, useEffect, useRef } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Html, Line, Edges, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { donnees, positionMonde } from '../data'
-import { useEtat } from '../store'
-import { useVisibles } from './visibles'
+import { useEtat, CAMERA_DEFAUT } from '../store'
+import { useVisibles, niveauVisible } from './visibles'
+import { usePalette, type Palette } from './palette'
+import { Sol, Arbres, ImmeublesLointains } from './Decor'
+import { Mobilier } from './Mobilier'
 import { phraseOccupant, zoneNonAnonyme, COULEURS } from '../views'
 import type { Equipement, Zone } from '../schema'
 
@@ -12,16 +15,21 @@ const [W, D] = donnees.batiment.emprise
 
 export function Scene3D() {
   const setSelection = useEtat((s) => s.setSelection)
+  const deco = useEtat((s) => s.deco)
+  const p = usePalette()
+  const ciel = deco.herbe || deco.arbres || deco.batiments
   return (
     <Canvas
-      camera={{ position: [26, 20, 28], fov: 42 }}
+      camera={{ position: CAMERA_DEFAUT.position, fov: 42 }}
       onPointerMissed={() => setSelection(null)}
       dpr={[1, 2]}
     >
-      <color attach="background" args={['#f5f1ea']} />
-      <ambientLight intensity={0.8} />
-      <directionalLight position={[20, 40, 10]} intensity={1.2} />
-      <OrbitControls makeDefault target={[0, 4, 0]} maxPolarAngle={Math.PI / 2.05} />
+      <color attach="background" args={[ciel ? p.ciel : p.fond]} />
+      {ciel && <fogExp2 attach="fog" args={[p.ciel, 0.0105]} />}
+      <ambientLight intensity={p.lumiere.ambiante} />
+      <directionalLight position={[20, 40, 10]} intensity={p.lumiere.directe} />
+      <OrbitControls makeDefault target={CAMERA_DEFAUT.cible} maxPolarAngle={Math.PI / 2.05} minDistance={6} maxDistance={120} />
+      <CameraRig />
       {donnees.batiment.modele ? (
         <Suspense fallback={null}>
           <ModeleGLB url={`./models/${donnees.batiment.modele}`} />
@@ -29,14 +37,54 @@ export function Scene3D() {
       ) : (
         <BatimentTemporaire />
       )}
+      <Sol />
+      <Arbres />
+      <ImmeublesLointains />
+      <Mobilier />
       <Zones />
+      <VolumesReseau />
       <Liens />
       <FluxIA />
       <CouvertureWifi />
       <Equipements />
-      <gridHelper args={[60, 30, '#d9d2c5', '#e8e2d6']} position={[0, -0.11, 0]} />
+      {!ciel && <gridHelper args={[60, 30, p.grille[0], p.grille[1]]} position={[0, -0.11, 0]} />}
     </Canvas>
   )
+}
+
+/** Déplace la caméra en douceur vers la cible demandée (scène de présentation, boutons de vue). */
+function CameraRig() {
+  const cible = useEtat((s) => s.cameraCible)
+  const controls = useThree((s) => s.controls) as unknown as {
+    target: THREE.Vector3; update: () => void
+    addEventListener: (t: string, f: () => void) => void; removeEventListener: (t: string, f: () => void) => void
+  } | null
+  const camera = useThree((s) => s.camera)
+  const anim = useRef<{ pos: THREE.Vector3; tgt: THREE.Vector3; t: number } | null>(null)
+
+  useEffect(() => {
+    if (cible.n === 0) return // état initial : la caméra est déjà bien placée
+    anim.current = { pos: new THREE.Vector3(...cible.position), tgt: new THREE.Vector3(...cible.cible), t: 0 }
+  }, [cible])
+
+  useEffect(() => {
+    if (!controls) return
+    const arreter = () => { anim.current = null } // la personne reprend la main : on s'arrête
+    controls.addEventListener('start', arreter)
+    return () => controls.removeEventListener('start', arreter)
+  }, [controls])
+
+  useFrame((_, dt) => {
+    const a = anim.current
+    if (!a || !controls) return
+    a.t += dt
+    const k = 1 - Math.exp(-dt * 3.5)
+    camera.position.lerp(a.pos, k)
+    controls.target.lerp(a.tgt, k)
+    controls.update()
+    if (a.t > 3 || (camera.position.distanceTo(a.pos) < 0.05 && controls.target.distanceTo(a.tgt) < 0.05)) anim.current = null
+  })
+  return null
 }
 
 /** Mode F-01 : modèle exporté par l'équipe Domotique (public/models/*.glb). */
@@ -47,56 +95,57 @@ function ModeleGLB({ url }: { url: string }) {
 
 /** Bâtiment temporaire du MVP, généré à partir de batiment.json (emprise + niveaux). */
 function BatimentTemporaire() {
-  const niveauActif = useEtat((s) => s.niveau)
+  const { niveau: niveauActif, coupe } = useEtat()
+  const p = usePalette()
   return (
     <group>
-      {donnees.batiment.niveaux.map((n) => {
-        const actif = !niveauActif || niveauActif === n.id
-        return (
-          <group key={n.id} position={[0, n.altitude, 0]}>
-            <mesh position={[0, -0.1, 0]}>
-              <boxGeometry args={[W, 0.2, D]} />
-              <meshStandardMaterial color="#e9e4da" transparent opacity={niveauActif === n.id ? 0.9 : actif ? 0.3 : 0.05} depthWrite={niveauActif === n.id} />
-              <Edges color="#8d8577" />
-            </mesh>
-            <mesh position={[0, n.hauteur / 2, 0]}>
-              <boxGeometry args={[W, n.hauteur, D]} />
-              <meshStandardMaterial color="#ffffff" transparent opacity={actif ? 0.06 : 0.02} depthWrite={false} />
-              <Edges color={actif ? '#b5ad9f' : '#e3ddd2'} />
-            </mesh>
-            <Html position={[W / 2 + 1.5, 0.1, D / 2 + 1.5]} center style={{ pointerEvents: 'none' }}>
-              <span className={`etiquette-niveau ${actif ? '' : 'inactif'}`}>{n.id}</span>
-            </Html>
-          </group>
-        )
-      })}
+      {donnees.batiment.niveaux
+        .filter((n) => niveauVisible(n.id, niveauActif, coupe))
+        .map((n) => {
+          const actif = !niveauActif || niveauActif === n.id
+          return (
+            <group key={n.id} position={[0, n.altitude, 0]}>
+              <mesh position={[0, -0.1, 0]}>
+                <boxGeometry args={[W, 0.2, D]} />
+                <meshStandardMaterial color={p.dalle} transparent opacity={niveauActif === n.id ? 0.9 : actif ? 0.3 : 0.05} depthWrite={niveauActif === n.id} />
+                <Edges color={p.dalleBord} />
+              </mesh>
+              <mesh position={[0, n.hauteur / 2, 0]}>
+                <boxGeometry args={[W, n.hauteur, D]} />
+                <meshStandardMaterial color="#ffffff" transparent opacity={actif ? 0.06 : 0.02} depthWrite={false} />
+                <Edges color={actif ? p.enveloppeBord : p.enveloppeBordInactif} />
+              </mesh>
+              <Html position={[W / 2 + 1.5, 0.1, D / 2 + 1.5]} center style={{ pointerEvents: 'none' }}>
+                <span className={`etiquette-niveau ${actif ? '' : 'inactif'}`}>{n.id}</span>
+              </Html>
+            </group>
+          )
+        })}
     </group>
   )
 }
 
-function couleurZone(z: Zone, vue: string, seuil: number, mv: boolean): { couleur: string; opacite: number } {
+function couleurZone(z: Zone, vue: string, seuil: number, mv: boolean, p: Palette): { couleur: string; opacite: number } {
   if (vue === 'ia' || vue === 'occupant') {
-    if (zoneNonAnonyme(z, seuil, mv)) return { couleur: '#e03131', opacite: 0.35 }
-    if (vue === 'occupant' && z.type === 'bureau') return { couleur: '#37b24d', opacite: 0.25 }
+    if (zoneNonAnonyme(z, seuil, mv)) return { couleur: '#e03131', opacite: 0.4 }
+    if (vue === 'occupant' && z.type === 'bureau') return { couleur: '#37b24d', opacite: 0.3 }
   }
-  const parType: Record<string, string> = {
-    open_space: '#a5d8ff', bureau: '#ffd8a8', reunion: '#d0bfff', hall: '#c3fae8', technique: '#dee2e6', circulation: '#f1f3f5',
-  }
-  return { couleur: parType[z.type] ?? '#dee2e6', opacite: vue === 'architecture' ? 0.55 : 0.25 }
+  return { couleur: p.zones[z.type] ?? p.zones.technique, opacite: vue === 'architecture' ? p.zoneOpacite.architecture : p.zoneOpacite.autre }
 }
 
 function Zones() {
-  const { vue, niveau, calquesMasques, seuilAnonymat, minimumVital, setSelection } = useEtat()
+  const { vue, niveau, coupe, calquesMasques, seuilAnonymat, minimumVital, setSelection } = useEtat()
+  const p = usePalette()
   if (calquesMasques.has('zones')) return null
   const etiquettes = vue === 'architecture' || vue === 'occupant' || niveau !== null
   return (
     <group>
       {donnees.batiment.zones
-        .filter((z) => !niveau || z.niveau === niveau)
+        .filter((z) => (!niveau || z.niveau === niveau) && niveauVisible(z.niveau, niveau, coupe))
         .map((z) => {
           const n = donnees.batiment.niveaux.find((x) => x.id === z.niveau)!
           const [x, zz, w, d] = z.rect
-          const { couleur, opacite } = couleurZone(z, vue, seuilAnonymat, minimumVital)
+          const { couleur, opacite } = couleurZone(z, vue, seuilAnonymat, minimumVital, p)
           const cx = x + w / 2 - W / 2
           const cz = zz + d / 2 - D / 2
           return (
@@ -104,7 +153,7 @@ function Zones() {
               <mesh rotation={[-Math.PI / 2, 0, 0]} onClick={(ev) => { ev.stopPropagation(); setSelection(z.id) }}>
                 <planeGeometry args={[w - 0.15, d - 0.15]} />
                 <meshStandardMaterial color={couleur} transparent opacity={opacite} side={THREE.DoubleSide} depthWrite={false} />
-                <Edges color="#9c9384" />
+                <Edges color={p.zoneBord} />
               </mesh>
               {etiquettes && (
                 <Html position={[0, 0.3, 0]} center style={{ pointerEvents: 'none' }}>
@@ -264,6 +313,48 @@ function FluxIA() {
             }),
         ]
       })}
+    </group>
+  )
+}
+
+/** Cyber (F-16) : périmètre de chaque réseau, un volume translucide par niveau autour de ses équipements affichés. */
+function VolumesReseau() {
+  const { vue, calquesMasques, niveau, coupe } = useEtat()
+  const { equipements } = useVisibles()
+  if (vue !== 'cyber' || calquesMasques.has('volumes')) return null
+  const reseaux = [
+    { id: 'GTB', libelle: 'GTB isolé', hauteur: 2.4, opacite: 0.16 },
+    { id: 'bureautique', libelle: 'Bureautique', hauteur: 3.4, opacite: 0.08 },
+  ] as const
+  return (
+    <group>
+      {reseaux.flatMap((r) =>
+        donnees.batiment.niveaux
+          .filter((n) => niveauVisible(n.id, niveau, coupe))
+          .flatMap((n) => {
+            const eqs = equipements.filter((e) => e.reseau === r.id && e.niveau === n.id)
+            if (eqs.length === 0) return []
+            const xs = eqs.map((e) => e.position[0])
+            const zs = eqs.map((e) => e.position[2])
+            const largeur = Math.max(Math.max(...xs) - Math.min(...xs) + 3, 4)
+            const profondeur = Math.max(Math.max(...zs) - Math.min(...zs) + 3, 4)
+            const cx = (Math.max(...xs) + Math.min(...xs)) / 2 - W / 2
+            const cz = (Math.max(...zs) + Math.min(...zs)) / 2 - D / 2
+            const couleur = COULEURS.reseau[r.id]
+            return [
+              <group key={`${r.id}-${n.id}`} position={[cx, n.altitude + r.hauteur / 2 + 0.03, cz]}>
+                <mesh>
+                  <boxGeometry args={[largeur, r.hauteur, profondeur]} />
+                  <meshBasicMaterial color={couleur} transparent opacity={r.opacite} depthWrite={false} />
+                  <Edges color={couleur} />
+                </mesh>
+                <Html position={[-largeur / 2, r.hauteur / 2, -profondeur / 2]} style={{ pointerEvents: 'none' }}>
+                  <span className="etiquette-reseau" style={{ borderColor: couleur, color: couleur }}>{r.libelle} · {n.id}</span>
+                </Html>
+              </group>,
+            ]
+          }),
+      )}
     </group>
   )
 }

@@ -1,9 +1,54 @@
-import { Fragment, useEffect } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { donnees, erreurs } from '../data'
-import { useEtat } from '../store'
+import { useEtat, CAMERA_DEFAUT, type Deco } from '../store'
 import { VUES, LIBELLES, COULEURS, zoneNonAnonyme, phraseOccupant, type VueId } from '../views'
 import { useVisibles, indicateurs } from '../scene/visibles'
 import type { Equipement } from '../schema'
+
+const OPTIONS_DECO: [keyof Deco, string][] = [
+  ['herbe', 'Herbe, parvis et route'],
+  ['arbres', 'Arbres'],
+  ['batiments', 'Bâtiments au loin'],
+  ['meubles', 'Meubles à l\u2019intérieur'],
+]
+
+function MenuOptions() {
+  const { theme, setTheme, deco, setDeco } = useEtat()
+  const [ouvert, setOuvert] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!ouvert) return
+    const dehors = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOuvert(false) }
+    const echap = (e: KeyboardEvent) => { if (e.key === 'Escape') setOuvert(false) }
+    document.addEventListener('mousedown', dehors)
+    document.addEventListener('keydown', echap)
+    return () => { document.removeEventListener('mousedown', dehors); document.removeEventListener('keydown', echap) }
+  }, [ouvert])
+  return (
+    <div className="options" ref={ref}>
+      <button className={`bouton-options ${ouvert ? 'ouvert' : ''}`} onClick={() => setOuvert(!ouvert)} aria-expanded={ouvert}>
+        Options ▾
+      </button>
+      {ouvert && (
+        <div className="options-menu" role="menu">
+          <h4>Apparence</h4>
+          <label className="calque">
+            <input type="checkbox" checked={theme === 'sombre'} onChange={(e) => setTheme(e.target.checked ? 'sombre' : 'clair')} />
+            Mode sombre
+          </label>
+          <h4>Décor</h4>
+          {OPTIONS_DECO.map(([k, libelle]) => (
+            <label key={k} className="calque">
+              <input type="checkbox" checked={deco[k]} onChange={(e) => setDeco(k, e.target.checked)} />
+              {libelle}
+            </label>
+          ))}
+          <p className="discret">Le décor est grossier et purement visuel. Il n’influe pas sur les indicateurs.</p>
+        </div>
+      )}
+    </div>
+  )
+}
 
 export function BarreHaut() {
   const { vue, setVue, minimumVital, setMinimumVital, scene, setScene } = useEtat()
@@ -21,6 +66,7 @@ export function BarreHaut() {
         <input type="checkbox" checked={minimumVital} onChange={(e) => setMinimumVital(e.target.checked)} />
         <span>{minimumVital ? 'Minimum vital' : 'Tout collecter'}</span>
       </label>
+      <MenuOptions />
       <button className="bouton-presentation" onClick={() => setScene(scene === null ? 0 : null)}>
         {scene === null ? 'Présentation' : 'Quitter'}
       </button>
@@ -28,8 +74,23 @@ export function BarreHaut() {
   )
 }
 
+/** Recentrer et vues prédéfinies (F-03), en haut à droite du viewer. */
+export function OutilsCamera() {
+  const allerA = useEtat((s) => s.allerA)
+  const vues: [string, [number, number, number], [number, number, number]][] = [
+    ['Recentrer', CAMERA_DEFAUT.position, CAMERA_DEFAUT.cible],
+    ['Dessus', [0.01, 46, 0.01], [0, 0, 0]],
+    ['Façade', [0, 8, 40], [0, 5, 0]],
+  ]
+  return (
+    <div className="outils-camera">
+      {vues.map(([nom, pos, cible]) => <button key={nom} onClick={() => allerA(pos, cible)}>{nom}</button>)}
+    </div>
+  )
+}
+
 export function PanneauGauche() {
-  const { vue, niveau, setNiveau, calquesMasques, basculerCalque, architectureIA, setArchitectureIA, seuilAnonymat, setSeuilAnonymat, minimumVital } = useEtat()
+  const { vue, niveau, setNiveau, coupe, setCoupe, calquesMasques, basculerCalque, architectureIA, setArchitectureIA, seuilAnonymat, setSeuilAnonymat, minimumVital } = useEtat()
   const def = VUES.find((v) => v.id === vue)!
   const ctx = { architectureIA }
   const categories = [...new Set(donnees.equipements.filter((e) => def.montre(e, ctx)).map((e) => e.categorie))]
@@ -47,6 +108,13 @@ export function PanneauGauche() {
         ))}
       </div>
 
+      {niveau !== null && (
+        <label className="calque" title="Masque les niveaux au-dessus du niveau choisi pour voir l'étage de dessus">
+          <input type="checkbox" checked={coupe} onChange={(e) => setCoupe(e.target.checked)} />
+          Coupe : masquer les niveaux au-dessus
+        </label>
+      )}
+
       <h3>Calques</h3>
       {categories.map((c) => (
         <label key={c} className="calque">
@@ -59,7 +127,10 @@ export function PanneauGauche() {
         <label className="calque"><input type="checkbox" checked={!calquesMasques.has('liens')} onChange={() => basculerCalque('liens')} />Liens</label>
       )}
       {vue === 'cyber' && (
-        <label className="calque"><input type="checkbox" checked={!calquesMasques.has('couverture')} onChange={() => basculerCalque('couverture')} />Couverture Wi-Fi</label>
+        <>
+          <label className="calque"><input type="checkbox" checked={!calquesMasques.has('couverture')} onChange={() => basculerCalque('couverture')} />Couverture Wi-Fi</label>
+          <label className="calque"><input type="checkbox" checked={!calquesMasques.has('volumes')} onChange={() => basculerCalque('volumes')} />Volumes réseau</label>
+        </>
       )}
 
       {vue === 'ia' && (
@@ -272,7 +343,7 @@ export function BandeauBas() {
 }
 
 export function Presentation() {
-  const { scene, setScene, setVue, setNiveau, setMinimumVital, setArchitectureIA, setSelection } = useEtat()
+  const { scene, setScene, setVue, setNiveau, setMinimumVital, setArchitectureIA, setSelection, allerA } = useEtat()
   const s = scene !== null ? donnees.scenes[scene] : null
   useEffect(() => {
     if (!s) return
@@ -281,7 +352,8 @@ export function Presentation() {
     if (s.minimum_vital !== undefined) setMinimumVital(s.minimum_vital)
     if (s.architecture_ia) setArchitectureIA(s.architecture_ia)
     setSelection(s.selection)
-  }, [s, setVue, setNiveau, setMinimumVital, setArchitectureIA, setSelection])
+    if (s.camera) allerA(s.camera.position, s.camera.cible)
+  }, [s, setVue, setNiveau, setMinimumVital, setArchitectureIA, setSelection, allerA])
   if (!s || scene === null) return null
   const n = donnees.scenes.length
   return (

@@ -1,5 +1,5 @@
 import { Scene3D } from './scene/Scene'
-import { BarreHaut, PanneauGauche, FicheDetail, BandeauBas, Presentation, BandeauErreurs } from './ui/Panneaux'
+import { BarreHaut, PanneauGauche, FicheDetail, BandeauBas, Presentation, BandeauErreurs, OutilsCamera } from './ui/Panneaux'
 
 export default function App() {
   return (
@@ -9,6 +9,7 @@ export default function App() {
         <PanneauGauche />
         <main className="viewer">
           <Scene3D />
+          <OutilsCamera />
           <Presentation />
           <BandeauErreurs />
           <div className="mention-fictif">Entreprise, personnes et données fictives · maquette temporaire</div>

@@ -87,8 +87,8 @@ export const VUES: DefVue[] = [
     couleurLien: (l) =>
       l.autorise_par_firewall === false ? '#e03131' : l.type === 'fibre' ? COULEURS.protocole.fibre : '#495057',
     legende: [
-      { couleur: COULEURS.reseau.GTB, libelle: 'Réseau GTB (isolé)' },
-      { couleur: COULEURS.reseau.bureautique, libelle: 'Réseau bureautique' },
+      { couleur: COULEURS.reseau.GTB, libelle: 'Réseau GTB isolé (volume vert)' },
+      { couleur: COULEURS.reseau.bureautique, libelle: 'Réseau bureautique (volume bleu)' },
       { couleur: COULEURS.reseau.internet, libelle: 'Internet' },
       { couleur: '#495057', libelle: 'Équipement de coupure (firewall, baie)' },
       { couleur: '#e03131', libelle: 'Flux bloqué / point d’entrée (anneau)' },

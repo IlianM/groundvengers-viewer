@@ -4,6 +4,13 @@ import { useEtat } from '../store'
 import { vueParId } from '../views'
 import type { Equipement } from '../schema'
 
+/** Coupe horizontale : avec un niveau sélectionné et « coupe » actif, les niveaux au-dessus disparaissent. */
+export function niveauVisible(id: string, niveau: string | null, coupe: boolean): boolean {
+  if (!coupe || !niveau) return true
+  const alt = (i: string) => donnees.batiment.niveaux.find((n) => n.id === i)?.altitude ?? 0
+  return alt(id) <= alt(niveau)
+}
+
 /** Équipements et liens à dessiner pour l'état courant (vue, niveau, calques, minimum vital). */
 export function useVisibles() {
   const { vue, niveau, calquesMasques, minimumVital, architectureIA } = useEtat()

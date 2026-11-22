@@ -45,6 +45,10 @@ src/ui/          panneaux, fiche détail, indicateurs, présentation
 docs/            contribuer, schéma, export 3D, glossaire, backlog
 ```
 
+## Options (barre verte, en haut)
+
+Menu **Options** : mode sombre, et décor activable séparément (herbe/route, arbres, bâtiments au loin, meubles). Les choix sont gardés dans le navigateur. Le décor est grossier et n'influe pas sur les indicateurs. Le panneau de gauche propose aussi la **coupe** (masquer les niveaux au-dessus du niveau choisi) ; en vue Cyber, le calque **Volumes réseau** montre les réseaux GTB isolé et bureautique par niveau.
+
 ## Bâtiment 3D
 
 Pour le MVP, `batiment.json` a `"modele": null` : le bâtiment est généré par le code à partir de l'emprise et des niveaux. Quand l'équipe Domotique fournit un `.glb`, le déposer dans `public/models/` et mettre `"modele": "siege.glb"`. Voir `docs/EXPORT-3D.md`.

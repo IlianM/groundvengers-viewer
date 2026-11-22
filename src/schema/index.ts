@@ -23,6 +23,8 @@ export const Zone = z.object({
   detection_presence: z.boolean(),
   // rectangle au sol en mètres, dans le repère du bâtiment : [x, z, largeur, profondeur]
   rect: z.tuple([z.number(), z.number(), z.number(), z.number()]),
+  // aménagement intérieur dessiné par l'appli ; par défaut déduit du type de zone
+  amenagement: z.enum(['bureaux', 'bureau_individuel', 'reunion', 'accueil', 'technique', 'cafeteria', 'aucun']).optional(),
   preuves: z.array(z.string()).default([]),
 })
 export type Zone = z.infer<typeof Zone>
@@ -141,6 +143,11 @@ export const Scene = z.object({
   minimum_vital: z.boolean().optional(),
   architecture_ia: z.enum(['edge', 'central']).optional(),
   selection: z.string().nullable().default(null),
+  // point de vue de la scène : position de la caméra et point regardé, en mètres
+  camera: z.object({
+    position: z.tuple([z.number(), z.number(), z.number()]),
+    cible: z.tuple([z.number(), z.number(), z.number()]),
+  }).optional(),
 })
 export type Scene = z.infer<typeof Scene>
 export const FichierScenes = z.object({ scenes: z.array(Scene) })

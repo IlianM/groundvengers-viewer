@@ -11,7 +11,7 @@
     { "id": "ZONE-R0-HALL", "niveau": "R0", "nom": "Hall d'accueil", "type": "hall", "effectif_max": 4, "detection_presence": false, "rect": [0, 0, 12, 18] },
     { "id": "ZONE-R0-TECH", "niveau": "R0", "nom": "Local technique", "type": "technique", "effectif_max": 0, "detection_presence": false, "rect": [12, 0, 6, 8] },
     { "id": "ZONE-R0-REU", "niveau": "R0", "nom": "Salle de réunion R0", "type": "reunion", "effectif_max": 10, "detection_presence": true, "rect": [18, 0, 12, 8] },
-    { "id": "ZONE-R0-CAFE", "niveau": "R0", "nom": "Cafétéria", "type": "open_space", "effectif_max": 15, "detection_presence": true, "rect": [12, 8, 18, 10] },
+    { "id": "ZONE-R0-CAFE", "niveau": "R0", "nom": "Cafétéria", "type": "open_space", "amenagement": "cafeteria", "effectif_max": 15, "detection_presence": true, "rect": [12, 8, 18, 10] },
 
     { "id": "ZONE-R1-OPEN-A", "niveau": "R1", "nom": "Open space A", "type": "open_space", "effectif_max": 20, "detection_presence": true, "rect": [0, 0, 15, 12], "preuves": ["PRV-DPO-01"] },
     { "id": "ZONE-R1-OPEN-B", "niveau": "R1", "nom": "Open space B", "type": "open_space", "effectif_max": 16, "detection_presence": true, "rect": [15, 0, 15, 12] },
