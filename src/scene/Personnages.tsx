@@ -224,7 +224,8 @@ export function Personnages() {
     }
     return liste
   }, [nNavettes])
-  if (!actif) return null
+  const vue = useEtat((st) => st.vue)
+  if (!actif || (!reglages.personnagesToutesVues && vue !== 'architecture' && vue !== 'occupant')) return null
   const [W, D] = donnees.batiment.emprise
   return (
     <group>

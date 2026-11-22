@@ -122,7 +122,7 @@ export function FichePersonne({ cle }: { cle: string }) {
 
       <h3>Ce que coûte le minimalisme</h3>
       <p className="discret">Pour les {n} personne{n > 1 ? 's' : ''} présente{n > 1 ? 's' : ''} dans cette zone, part qui trouve la température acceptable (±1 °C) :</p>
-      <div className="comparatif">
+      <div className="comparatif-confort">
         <div className={minimumVital ? 'actif' : ''}>
           <b>{Math.round((contents(collectif) / n) * 100)} %</b>
           <span>Tout collecter<br />consigne {collectif.toFixed(1)} °C, calculée sur les préférences</span>

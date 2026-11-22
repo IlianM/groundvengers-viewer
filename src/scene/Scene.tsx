@@ -1,3 +1,4 @@
+import { parcoursDonnee } from '../parcours'
 import { Capture } from './Capture'
 import { Ascenseurs } from './Ascenseurs'
 import { Personnages, Horloge } from './Personnages'
@@ -76,6 +77,7 @@ export function Scene3D() {
       <Gaines />
       <ScenarioIntrusion />
       <Liens />
+      <ParcoursDonnee3D />
       <FluxIA />
       <CouvertureWifi />
       <Equipements />
@@ -461,6 +463,39 @@ function Liens() {
             )
           })
       })}
+    </group>
+  )
+}
+
+/** Chemin de la donnée de l'équipement sélectionné : trait épais et paquet qui voyage jusqu'au serveur. */
+function ParcoursDonnee3D() {
+  const { selection, parcours3D, minimumVital, ecart, pieces } = useEtat()
+  const paquet = useRef<THREE.Mesh>(null)
+  const points = useMemo(() => {
+    if (!parcours3D || !selection) return []
+    const e = donnees.parId.get(selection)
+    if (!e || (minimumVital && !e.donnee.minimum_vital)) return []
+    return parcoursDonnee(selection).map((et) => positionMonde(et.equipement, ecart, pieces))
+  }, [selection, parcours3D, minimumVital, ecart, pieces])
+  const animations = useEtat((s) => s.reglages.animations)
+  useFrame(({ clock }) => {
+    const m = paquet.current
+    if (!m || points.length < 2) return
+    const longs = points.slice(1).map((p, i) => Math.hypot(p[0] - points[i][0], p[1] - points[i][1], p[2] - points[i][2]))
+    const total = longs.reduce((a, b) => a + b, 0)
+    let d = animations ? (clock.elapsedTime * 5) % (total + 2) : 0
+    d = Math.min(d, total)
+    let i = 0
+    while (i < longs.length - 1 && d > longs[i]) { d -= longs[i]; i++ }
+    const f = longs[i] ? d / longs[i] : 1
+    m.position.set(points[i][0] + (points[i + 1][0] - points[i][0]) * f, points[i][1] + (points[i + 1][1] - points[i][1]) * f, points[i][2] + (points[i + 1][2] - points[i][2]) * f)
+  })
+  if (points.length < 2) return null
+  return (
+    <group>
+      <Line points={points} color="#f08c00" lineWidth={4} transparent opacity={0.95} depthTest={false} renderOrder={6} />
+      {points.map((p, i) => <mesh key={i} position={p} renderOrder={6}><sphereGeometry args={[0.28, 12, 10]} /><meshBasicMaterial color="#f08c00" depthTest={false} transparent opacity={0.9} /></mesh>)}
+      <mesh ref={paquet} renderOrder={7}><sphereGeometry args={[0.2, 12, 10]} /><meshBasicMaterial color="#ffffff" depthTest={false} /></mesh>
     </group>
   )
 }

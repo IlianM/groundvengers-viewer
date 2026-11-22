@@ -1,3 +1,4 @@
+import { ParcoursDonnee } from './Parcours'
 import { capturerVue } from '../scene/Capture'
 import { FichePersonne } from './FichePersonne'
 import { identifiableA, formatHeure } from '../simulation'
@@ -287,6 +288,8 @@ function FicheEquipement({ e, vue }: { e: Equipement; vue: string }) {
         <dt>Minimum vital</dt><dd>{e.donnee.minimum_vital ? 'oui, conservé' : 'non, retiré'}</dd>
         {e.point_entree && <><dt>Point d'entrée</dt><dd className="rouge">oui</dd></>}
       </dl>
+
+      <ParcoursDonnee e={e} />
 
       {noeuds.map((n) => (
         <div key={n.id} className="bloc-ia">

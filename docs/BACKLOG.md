@@ -18,7 +18,7 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-12 | URL partageable | Should | ✅ |
 | F-13 | Équipements Domotique | Must | ✅ données d'exemple |
 | F-14 | Liaisons par protocole | Must | ✅ |
-| F-15 | Compteurs et chemin Niagara | Should | ✅ partiel |
+| F-15 | Compteurs et chemin Niagara | Should | ✅ chemin de la donnée suivi en 3D jusqu'au serveur |
 | F-16 | Réseaux et firewall | Must | ✅ |
 | F-17 | Bornes Wi-Fi et couverture | Should | ✅ |
 | F-18 | Baies, gaines, chemins de câbles | Should | ✅ |
@@ -27,7 +27,7 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-21 | Scénario d'intrusion animé | Could | ✅ |
 | F-22 | Nœuds IA et fiche modèle | Must | ✅ |
 | F-23 | Bascule Edge / central | Must | ✅ |
-| F-24 | Cycle de vie de la donnée | Should | ✅ partiel (frise dans la fiche) |
+| F-24 | Cycle de vie de la donnée | Should | ✅ frise dans la fiche de chaque équipement |
 | F-25 | Alerte zones < N personnes | Must | ✅ |
 | F-26 | Simulation d'une journée | Could | ✅ |
 | F-27 | Tout collecter / Minimum vital + indicateurs | Must | ✅ |

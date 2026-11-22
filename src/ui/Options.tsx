@@ -168,7 +168,7 @@ function Camera() {
 
 function Rendu() {
   return (
-    <Onglet cles={['qualite', 'brouillard', 'densiteBrouillard', 'couleurCiel', 'tailleEquipements', 'epaisseurLiens', 'opaciteZones', 'opaciteMeubles', 'anneaux', 'personnages', 'vitessePersonnages', 'effectifForce', 'ascenseurs']}>
+    <Onglet cles={['qualite', 'brouillard', 'densiteBrouillard', 'couleurCiel', 'tailleEquipements', 'epaisseurLiens', 'opaciteZones', 'opaciteMeubles', 'anneaux', 'personnages', 'personnagesToutesVues', 'vitessePersonnages', 'effectifForce', 'ascenseurs']}>
       <h4>Rendu</h4>
       <Choix k="qualite" libelle="Qualité" options={[['economique', 'Économique (ordinateur lent)'], ['normale', 'Normale'], ['haute', 'Haute (écran très net)']]} />
       <Interrupteur k="brouillard" libelle="Brouillard lointain" />
@@ -183,6 +183,7 @@ function Rendu() {
       <Interrupteur k="anneaux" libelle="Anneaux (points d’entrée, risques)" />
       <h4>Vie du bâtiment</h4>
       <Interrupteur k="personnages" libelle="Personnages (travail, réunions, café…)" aide="Leur nombre suit la simulation d’une journée ; sans simulation : matinée type." />
+      <Interrupteur k="personnagesToutesVues" libelle="Personnages dans toutes les vues" aide="Par défaut, ils n’apparaissent que dans les vues Architecture et Occupant, pour ne pas masquer les équipements." />
       <NombrePersonnes />
       <Curseur k="vitessePersonnages" libelle="Vitesse des personnages" min={0.3} max={2.5} pas={0.1} unite=" ×" />
       <Interrupteur k="ascenseurs" libelle="Ascenseurs animés" />

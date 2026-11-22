@@ -23,7 +23,6 @@ Liste simple, à cocher à la main. Une tâche = une branche ou un commit. Les i
 
 ## À faire (Should / Could)
 - [ ] F-02 Import IFC
-- [ ] F-15 (chemin Niagara, partiel), F-24 (cycle de vie, partiel), F-26 : voir `BACKLOG.md`
 - [ ] Faire valider les tracés de gaines (fictifs) par l'équipe Cyber, et ajouter les gaines du réseau GTB côté Domotique
 - [ ] Tester le chargeur `.glb` avec un vrai export de l'équipe Domotique (jusqu'ici testé avec `docs/exemples/test-batiment.glb`)
 - [ ] Faire valider par l'équipe Cyber les 3 scénarios d'intrusion (`scenarios` dans `data/cyber.json`, fictifs)
@@ -60,3 +59,8 @@ Options › Rendu › Vie du bâtiment : on règle un nombre (curseur ou saisie)
 ## Usagers d'ascenseur (fait)
 Jusqu'à 4 personnes en plus (une par tranche de 15 personnes présentes) entrent par la porte du hall, attendent devant l'ascenseur, montent à un autre niveau, patientent quelques secondes, redescendent et ressortent. Ils ne sont **pas** comptés dans l'effectif des zones, et leur fiche n'est pas ouverte au clic (survol seulement). Horaire des cabines et scénario des usagers : `src/scene/personnage/ascenseur.ts` et `comportement.ts` (`construireNavette`). Ils n'embarquent que porte ouverte (vérifié par calcul). Même horloge que les personnages : la vitesse des personnages règle aussi les cabines.
 Correctif au passage : les piétons du hall traversaient la cage d'ascenseur du rez-de-chaussée ; leur boucle est décalée vers l'ouest.
+
+## F-15 / F-24 — Cycle de vie et chemin de la donnée (fait)
+Dans la fiche de chaque équipement : frise **Mesure → Transit → Supervision → Conservation → Effacement**, calculée en suivant les liens du réseau jusqu'au serveur le plus proche (Niagara en priorité). Exemple : Compteur TGBT → passerelle iSMA (M-Bus) → serveur Niagara (Ethernet), puis conservation 10 ans. Le bouton « Suivre la donnée en 3D » dessine ce chemin, avec un paquet qui voyage. En Minimum vital, une donnée non conservée est barrée. Code : `src/parcours.ts`, `src/ui/Parcours.tsx`.
+Limite : durées de conservation reprises des textes de `data/*.json`, non vérifiées juridiquement (RGPD, OPERAT).
+Aussi : les personnages ne s'affichent plus par défaut que dans les vues Architecture et Occupant (option « Personnages dans toutes les vues »). Correctif CSS : la classe de la fiche personne écrasait le tableau du score de surface.
