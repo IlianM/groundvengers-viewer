@@ -2,62 +2,17 @@ import { useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
-import { donnees, decalageZone, altitudeNiveau, pointMonde } from '../data'
+import { donnees, decalageZone, altitudeNiveau, pointMonde, zoneContenant } from '../data'
 import { useEtat } from '../store'
 import { useEffectifs } from '../effectifs'
 import { usePalette, type Palette } from './palette'
-import { genererSieges, type Siege, type Voie } from './Mobilier'
+import { genererSieges } from './Mobilier'
 import { niveauVisible } from './visibles'
-import { hash, etatDe, cibleDe, routesDepuis, construireNavette, LIBELLE_POSE, type Occupant, type Pose } from './personnage/comportement'
+import { hash, etatDe, cibleDe, construireNavette, LIBELLE_POSE, type Occupant, type Pose } from './personnage/comportement'
 import { DEC_CABINE } from './personnage/ascenseur'
+import { planifierDeplacements } from './personnage/deplacements'
+import { repartir, BOUCLE_HALL } from './personnage/repartition'
 import { registre } from './personnage/registre'
-
-// Trajet des personnes qui traversent le hall : boucle le long des murs, hors banque d'accueil et canapés.
-// (le bord est reste à 8,6 m : au-delà, la cage des ascenseurs)
-const BOUCLE_HALL: [number, number][] = [[2.2, 17], [2.2, 2], [8.6, 2], [8.6, 17]]
-
-/** Qui est où : n personnes par zone, sur des sièges tirés dans un ordre stable (pas de saut quand n varie). */
-function repartir(sieges: Siege[], voies: Map<string, Voie>, effectifs: Map<string, number>): Occupant[] {
-  const sortie: Occupant[] = []
-  for (const z of donnees.batiment.zones) {
-    const n = effectifs.get(z.id) ?? 0
-    if (n <= 0) continue
-    const siegesZ = sieges.filter((s) => s.zone === z.id)
-    const voie = voies.get(z.id)
-    const fixe = (t: Siege['tache']) => siegesZ.filter((s) => s.tache === t)
-    const assis = siegesZ
-      .filter((s) => s.tache !== 'accueil' && s.tache !== 'presente' && s.tache !== 'comptoir' && !(z.type === 'hall' && s.tache === 'attente'))
-      .map((s, i) => ({ s, k: hash(`${z.id}:${i}`) }))
-      .sort((a, b) => a.k - b.k)
-      .map((o) => o.s)
-    const sofas = z.type === 'hall' ? siegesZ.filter((s) => s.tache === 'attente') : []
-    const liste: Occupant[] = []
-    const poser = (s: Siege, i: number) => {
-      const o: Occupant = { cle: `${z.id}#${liste.length}`, zone: z.id, niveau: z.niveau, tache: s.tache, x: s.x, z: s.z, y: s.y, ry: s.ry, phase: ((hash(z.id) + i * 7) % 100) / 16 }
-      if (s.tache === 'bureau') o.routes = routesDepuis({ x: s.x, z: s.z, ry: s.ry, acces: s.acces }, voie)
-      liste.push(o)
-    }
-    const accueil = fixe('accueil')[0], presente = fixe('presente')[0]
-    if (accueil) poser(accueil, 0)
-    if (presente && n >= 3) poser(presente, 1)
-    const comptoir = fixe('comptoir')
-    let ci = 0, si = 0, ai = 0
-    while (liste.length < n) {
-      const i = liste.length
-      if (z.type === 'hall') {
-        // alternance : une personne traverse le hall, la suivante s'assoit sur un canapé
-        if (i % 2 === 1 && si < sofas.length) { poser(sofas[si++], i); continue }
-        liste.push({ cle: `${z.id}#${i}`, zone: z.id, niveau: z.niveau, tache: 'marche', x: 0, z: 0, y: 0, ry: 0, phase: i, boucle: BOUCLE_HALL, decalageDepart: (hash(z.id) % 7) + i * 11 })
-        continue
-      }
-      if (z.amenagement === 'cafeteria' && i % 5 === 4 && ci < comptoir.length) { poser(comptoir[ci++], i); continue }
-      if (ai < assis.length) { poser(assis[ai++], i); continue }
-      break
-    }
-    sortie.push(...liste)
-  }
-  return sortie
-}
 
 // géométries et matériaux partagés par tous les personnages
 const G = {
@@ -103,18 +58,26 @@ function Bonhomme({ o, p, animer, decal }: { o: Occupant; p: Palette['personnage
     if (!g) return
     const t = animer ? registre.horloge : 0
     const e = etatDe(o, t)
-    if (o.navette) {
-      // usager d'ascenseur : change de niveau, donc sa position monde est recalculée à chaque image
+    const mobile = !!(o.navette || o.deplacement)
+    let monde: [number, number, number] | null = null
+    if (mobile) {
+      // usager d'ascenseur ou occupant en déplacement : il change de niveau, donc sa position monde est recalculée à chaque image
       const st = useEtat.getState()
       const a = ancre.current
-      if (a && e.niveau) {
-        const w = pointMonde(e.niveau, e.x, 0.02, e.z, st.ecart, st.pieces)
-        a.position.set(w[0], w[1], w[2])
-        const niveauOk = (!st.niveau || e.niveau === st.niveau) && niveauVisible(e.niveau, st.niveau, st.coupe)
-        a.visible = !!e.visible && niveauOk
+      const niv = e.niveau ?? o.niveau
+      if (a) {
+        const niveauOk = (!st.niveau || niv === st.niveau) && niveauVisible(niv, st.niveau, st.coupe)
+        a.visible = (e.visible ?? true) && niveauOk
+        if (e.libre) {
+          monde = pointMonde(niv, e.x, 0.02, e.z, st.ecart, st.pieces)
+          a.position.set(monde[0], monde[1], monde[2])
+          g.position.set(0, 0, 0)
+        } else {
+          a.position.set(decal[0], decal[1], decal[2])
+          g.position.set(e.x, 0, e.z)
+        }
         g.scale.setScalar(Math.max(0.001, e.echelle ?? 1))
       }
-      g.position.set(0, 0, 0)
     } else g.position.set(e.x, 0, e.z)
     g.rotation.y = e.ry
     const hanche = e.assis ? o.y + 0.06 : 0.8
@@ -142,7 +105,14 @@ function Bonhomme({ o, p, animer, decal }: { o: Occupant; p: Palette['personnage
     if (jambesAssis.current) { jambesAssis.current.visible = e.assis; jambesAssis.current.position.y = hanche }
     if (jambesDebout.current) jambesDebout.current.visible = !e.assis
     if (tasse.current) tasse.current.visible = e.pose === 'boire' || e.pose === 'comptoir'
-    if (!o.navette) registre.positions.set(o.cle, [decal[0] + e.x, decal[1] + 1.0, decal[2] + e.z])
+    if (!o.navette) {
+      registre.positions.set(o.cle, monde ? [monde[0], monde[1] + 1.0, monde[2]] : [decal[0] + e.x, decal[1] + 1.0, decal[2] + e.z])
+      if (o.deplacement) {
+        const niv = e.niveau ?? o.niveau
+        const lieu = e.visible === false ? 'Dans l’ascenseur' : (e.libre ? zoneContenant(niv, e.x, e.z)?.nom : undefined) ?? null
+        registre.lieux.set(o.cle, { niveau: niv, lieu, ailleurs: !!e.libre })
+      }
+    }
     registre.poses.set(o.cle, e.pose)
     if (survol.current) {
       const l = LIBELLE_POSE[e.pose]
@@ -202,6 +172,7 @@ export function Personnages() {
   const effectifs = useEffectifs()
   const occupants = useMemo(() => {
     const liste = repartir(sieges, voies, effectifs)
+    planifierDeplacements(liste, voies, sieges)
     registre.occupants = liste
     return liste
   }, [effectifs, sieges, voies])
@@ -230,7 +201,7 @@ export function Personnages() {
   return (
     <group>
       {occupants
-        .filter((o) => (!niveau || o.niveau === niveau) && niveauVisible(o.niveau, niveau, coupe))
+        .filter((o) => o.deplacement || ((!niveau || o.niveau === niveau) && niveauVisible(o.niveau, niveau, coupe)))
         .map((o) => {
           const [dx, dz] = decalageZone(donnees.zoneParId.get(o.zone), pieces)
           return <Bonhomme key={o.cle} o={o} p={pal.personnage} animer={reglages.animations} decal={[-W / 2 + dx, altitudeNiveau(o.niveau, ecart) + 0.02, -D / 2 + dz]} />

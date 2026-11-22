@@ -30,7 +30,7 @@ export type Palette = {
   personnage: { peau: string; pantalon: string; hauts: string[] }
 }
 
-const CLAIR: Palette = {
+export const CLAIR: Palette = {
   theme: 'clair',
   fond: '#f5f1ea', ciel: '#d4e6f0', herbe: '#93c46d', solNeutre: '#e8e2d6', chemin: '#d3ccbc', route: '#70767a', marquage: '#f1ede2',
   dalle: '#e9e4da', dalleBord: '#8d8577', enveloppeBord: '#b5ad9f', enveloppeBordInactif: '#e3ddd2', zoneBord: '#9c9384',

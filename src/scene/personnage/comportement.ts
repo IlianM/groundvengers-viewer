@@ -29,6 +29,8 @@ export type Occupant = {
   decalageDepart?: number
   routes?: Route[] // sorties possibles depuis le poste (open space)
   navette?: Navette // usager d'ascenseur : entre par le hall, monte, redescend et sort
+  acces?: [number, number] // point d'allée devant le siège (open space)
+  deplacement?: Navette // occupant qui quitte son poste, change d'étage (café, imprimante) puis revient
 }
 
 export type Etat = {
@@ -39,6 +41,7 @@ export type Etat = {
   assis: boolean
   marche: boolean
   pose: Pose
+  libre?: boolean // vrai : x, z sont des coordonnées du bâtiment (usager en déplacement) ; faux : relatives à l'ancre de la zone
 }
 
 const VITESSE_MARCHE = 1.15 // m/s
@@ -84,7 +87,7 @@ function surChemin(pts: Pt[], d: number): { x: number; z: number; ry: number } {
 }
 
 // ---------- usagers d'ascenseur ----------
-type Seg = { t0: number; t1: number; kind: 'marche' | 'attend' | 'cache'; niveau: string; pts: Pt[]; ry?: number; pose?: Pose }
+type Seg = { t0: number; t1: number; kind: 'marche' | 'attend' | 'cache' | 'poste'; niveau: string; pts: Pt[]; ry?: number; pose?: Pose }
 export type Navette = { segs: Seg[]; periode: number; decalage: number }
 
 export type CageInfo = { x: number; z: number; profondeur: number; niveaux: string[]; dec: number }
@@ -139,14 +142,87 @@ export function construireNavette(cage: CageInfo, dest: number, decalage: number
   return { segs, periode, decalage }
 }
 
+
+export type Destination = { niveau: string; pts: Pt[]; ry: number; pose: Pose; nom: string }
+
+/**
+ * Déplacement d'un occupant : il quitte son poste, rejoint l'ascenseur de son étage, monte ou descend, va jusqu'au point
+ * de destination (machine à café, imprimante, comptoir), y reste un moment, puis refait le trajet à l'envers pour se rasseoir.
+ * `aller` va du siège à la porte de la cabine (point L, premier élément exclu) ; `chemin` va de L au point de destination.
+ * Même principe que les usagers d'ascenseur : les attentes sont calées sur l'horaire exact de la cabine.
+ */
+export function construireDeplacement(
+  cage: CageInfo, idxDepart: number, aller: Pt[], dest: Destination, idxDest: number, debut: number, sejour: number, periode: number, decalage: number,
+): Navette | null {
+  const n = cage.niveaux.length
+  if (n < 2 || idxDepart === idxDest) return null
+  const cd = cycle(n) * TOUR
+  if (periode % cd > 1e-6) return null
+  decalage = Math.round(decalage / cd) * cd
+  const V = VITESSE_MARCHE
+  const zPorte = cage.z + cage.profondeur / 2 + 0.25
+  const zHall = cage.z + cage.profondeur / 2 + 0.9
+  const L: Pt = [cage.x, zHall], porte: Pt = [cage.x, zPorte]
+  const segs: Seg[] = []
+  let u = 0
+  const depart = cage.niveaux[idxDepart], arrivee = cage.niveaux[idxDest]
+  const poste = (jusqua: number) => { segs.push({ t0: u, t1: jusqua, kind: 'poste', niveau: depart, pts: [aller[0]] }); u = jusqua }
+  const marche = (niveau: string, pts: Pt[]) => {
+    const p = dedoublonner(pts)
+    const d = longueurs(p).reduce((a, b) => a + b, 0) / V
+    segs.push({ t0: u, t1: u + d, kind: 'marche', niveau, pts: p }); u += d
+  }
+  const attend = (niveau: string, jusqua: number, at: Pt, ry: number, pose: Pose) => {
+    if (jusqua > u) { segs.push({ t0: u, t1: jusqua, kind: 'attend', niveau, pts: [at], ry, pose }); u = jusqua }
+  }
+  const cache = (niveau: string, jusqua: number) => { segs.push({ t0: u, t1: jusqua, kind: 'cache', niveau, pts: [porte] }); u = jusqua }
+  const dec = cage.dec
+  const versL = [...aller, L]
+  const versDest = dest.pts // commence à L
+  // au poste jusqu'au départ, puis vers l'ascenseur
+  poste(debut)
+  marche(depart, versL)
+  const s1 = arretOuvert(idxDepart, n, dec, u)
+  attend(depart, s1 + 0.3, L, Math.PI, 'asc')
+  marche(depart, [L, porte])
+  const s2 = arretApres(idxDest, n, dec, s1 + DWELL)
+  cache(depart, s2 + 0.4)
+  // à destination
+  marche(arrivee, [porte, ...versDest])
+  attend(arrivee, u + sejour, versDest[versDest.length - 1], dest.ry, dest.pose)
+  marche(arrivee, [...versDest].reverse())
+  const s3 = arretOuvert(idxDest, n, dec, u)
+  attend(arrivee, s3 + 0.3, L, Math.PI, 'asc')
+  marche(arrivee, [L, porte])
+  const s4 = arretApres(idxDepart, n, dec, s3 + DWELL)
+  cache(arrivee, s4 + 0.4)
+  // retour au poste
+  marche(depart, [porte, ...[...versL].reverse()])
+  if (u > periode - 2) return null
+  segs.push({ t0: u, t1: periode, kind: 'poste', niveau: depart, pts: [aller[0]] })
+  return { segs, periode, decalage }
+}
+
+/** État d'un occupant en déplacement ; null quand il est à son poste (le comportement habituel s'applique alors). */
+function etatDeplacement(o: Occupant, t: number): Etat | null {
+  const nv = o.deplacement!
+  const u = (((t + nv.decalage) % nv.periode) + nv.periode) % nv.periode
+  const seg = nv.segs.find((s) => u >= s.t0 && u < s.t1)
+  if (!seg || seg.kind === 'poste') return null
+  return { ...etatNavetteBrut(o, nv, t), libre: true }
+}
+
 function etatNavette(o: Occupant, t: number): Etat {
-  const nv = o.navette!
+  return { ...etatNavetteBrut(o, o.navette!, t), libre: true }
+}
+
+function etatNavetteBrut(o: Occupant, nv: Navette, t: number): Etat {
   const u = (((t + nv.decalage) % nv.periode) + nv.periode) % nv.periode
   const dernier = nv.segs[nv.segs.length - 1]
   const seg = nv.segs.find((s) => u >= s.t0 && u < s.t1)
   if (!seg) return { niveau: dernier.niveau, visible: false, x: 0, z: 0, ry: 0, assis: false, marche: false, pose: 'attente' }
   const premier = nv.segs[0]
-  const echelle = seg === premier ? Math.min(1, (u - seg.t0) / 1.2) : seg === dernier ? Math.min(1, (seg.t1 - u) / 1.5) : 1
+  const echelle = nv !== o.navette ? 1 : seg === premier ? Math.min(1, (u - seg.t0) / 1.2) : seg === dernier ? Math.min(1, (seg.t1 - u) / 1.5) : 1
   if (seg.kind === 'cache') return { niveau: seg.niveau, visible: false, x: seg.pts[0][0], z: seg.pts[0][1], ry: 0, assis: false, marche: false, pose: 'attente' }
   if (seg.kind === 'attend') return { niveau: seg.niveau, visible: true, echelle, x: seg.pts[0][0], z: seg.pts[0][1], ry: seg.ry ?? 0, assis: false, marche: false, pose: seg.pose ?? 'attente' }
   const p = surChemin(seg.pts, (u - seg.t0) * VITESSE_MARCHE)
@@ -155,6 +231,7 @@ function etatNavette(o: Occupant, t: number): Etat {
 
 export function etatDe(o: Occupant, t: number): Etat {
   if (o.navette) return etatNavette(o, t)
+  if (o.deplacement) { const e = etatDeplacement(o, t); if (e) return e }
   const assis = o.y > 0
   const px = assis ? o.x - Math.sin(o.ry) * 0.1 : o.x
   const pz = assis ? o.z - Math.cos(o.ry) * 0.1 : o.z
@@ -169,7 +246,7 @@ export function etatDe(o: Occupant, t: number): Etat {
   }
 
   // sorties périodiques depuis un poste de l'open space : café, imprimante, discussion
-  if (o.routes && o.routes.length) {
+  if (o.routes && o.routes.length && !o.deplacement) {
     const h = hash(o.cle)
     const periode = 80 + (h % 40)
     const decalage = o.phase * 3
@@ -195,7 +272,7 @@ export function etatDe(o: Occupant, t: number): Etat {
   }
 
   // bureau individuel : de temps en temps, se lève pour téléphoner en marchant ou s'étirer
-  if (o.tache === 'bureau' && !o.routes?.length) {
+  if (o.tache === 'bureau' && !o.routes?.length && !o.deplacement) {
     const h = hash(o.cle)
     const periode = 70 + (h % 40)
     const k = Math.floor((t + o.phase * 3) / periode)

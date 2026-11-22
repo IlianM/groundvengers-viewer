@@ -57,6 +57,8 @@ export function FichePersonne({ cle }: { cle: string }) {
   const vT = verdict(T - profil.temperature, '°C', 0.8, 'Un peu chaud', 'Un peu frais')
   const vL = verdict(L - profil.luminosite, 'lux', 120, 'Trop lumineux', 'Pas assez lumineux')
   const p = registre.positions.get(cle)
+  const ou = registre.lieux.get(cle)
+  const ailleurs = ou?.ailleurs ? ou : null
   const D0 = 8, D1 = 19
 
   return (
@@ -65,7 +67,8 @@ export function FichePersonne({ cle }: { cle: string }) {
       <span className="badge" style={{ background: minimumVital ? '#37b24d' : '#e8590c' }}>{minimumVital ? 'Minimum vital' : 'Tout collecter'}</span>
       <h2>{minimumVital ? 'Personne dans la zone' : profil.nom}</h2>
       <p className="id">{minimumVital ? zone.nom : `${profil.poste} · équipe ${profil.equipe} · ${zone.nom}`}</p>
-      <p className="phrase-occupant"><b>{pose ? LIBELLE_POSE[pose] : '…'}</b>{!minimumVital && bloc ? ` · agenda : ${LIBELLE_BLOC[bloc.type].toLowerCase()}` : ''}</p>
+      <p className="phrase-occupant"><b>{pose ? LIBELLE_POSE[pose] : '…'}</b>{!minimumVital && bloc && !ailleurs ? ` · agenda : ${LIBELLE_BLOC[bloc.type].toLowerCase()}` : ''}</p>
+      {ailleurs && <p className="phrase-occupant">Se trouve actuellement : <b>{ailleurs.lieu ?? 'en déplacement'}{ailleurs.lieu === 'Dans l’ascenseur' ? '' : ` · ${ailleurs.niveau}`}</b></p>}
       {identifiable && <p className="alerte-bloc">Seule dans une zone de moins de {seuilAnonymat} personnes avec détection de présence : cette présence est identifiable.</p>}
       {p && <button className="bouton-menu" onClick={() => allerA([p[0] + 5, p[1] + 3.5, p[2] + 7], p)}>Centrer la caméra sur elle</button>}
 

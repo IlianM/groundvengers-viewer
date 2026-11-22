@@ -6,4 +6,5 @@ export const registre = {
   horloge: 0, // secondes d'animation écoulées (déjà multipliées par la vitesse)
   positions: new Map<string, [number, number, number]>(), // position monde de chaque personnage
   poses: new Map<string, Pose>(),
+  lieux: new Map<string, { niveau: string; lieu: string | null; ailleurs: boolean }>(), // où se trouve un occupant en déplacement
 }
