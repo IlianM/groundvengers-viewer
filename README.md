@@ -1,6 +1,8 @@
 # GroundVengers Viewer
 
-Application web du projet **Bâtiment intelligent par minimalisme** (Project Lab). Elle montre le siège fictif GroundVengers en 3D avec six vues : Architecture, Domotique, Cyber, IA, Données et Occupant.
+Application web du projet **Bâtiment intelligent par minimalisme** (Project Lab). Elle montre le siège fictif GroundVengers en 3D avec sept vues : Architecture, Domotique, Cyber, IA, Données, Occupant et Risques.
+
+Pour découvrir l'appli : le bouton **Visite guidée** (en haut) parcourt toutes les fonctions en lecture automatique ; **Comparer** affiche côte à côte Tout collecter et Minimum vital.
 
 Site statique : pas de serveur, pas de cookie, pas de traceur. Toutes les personnes et données sont fictives.
 
@@ -11,6 +13,9 @@ npm install
 npm run dev          # http://localhost:5173
 npm run check-data   # vérifie les fichiers data/*.json
 npm run build        # produit dist/
+npm test             # tests unitaires (voir docs/TESTS.md)
+npm run test:e2e     # test de fumée dans un navigateur (après un build)
+npm run test:visuel  # captures de référence (local)
 ```
 
 ## Relier le dépôt à GitHub (une seule fois)
@@ -24,7 +29,7 @@ npm run build        # produit dist/
 3. Sur GitHub : **Settings → Pages → Source : GitHub Actions**.
 4. Ajouter Léo : **Settings → Collaborators → Add people**.
 
-À chaque push sur `main`, l'action vérifie les données, construit et publie le site sur `https://<ton-compte>.github.io/groundvengers-viewer/`. Sur une pull request, elle vérifie seulement.
+À chaque push sur `main`, l'action vérifie les données, lance les tests (`docs/TESTS.md`), construit et publie le site sur `https://<ton-compte>.github.io/groundvengers-viewer/`. Sur une pull request, elle vérifie seulement.
 
 ## Où est quoi
 

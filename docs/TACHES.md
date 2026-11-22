@@ -66,3 +66,11 @@ Limite : durées de conservation reprises des textes de `data/*.json`, non véri
 Aussi : les personnages ne s'affichent plus par défaut que dans les vues Architecture et Occupant (option « Personnages dans toutes les vues »). Correctif CSS : la classe de la fiche personne écrasait le tableau du score de surface.
 
 Checklist par équipe (Cyber, Domotique, IA, preuves) : `docs/VALIDATION.md`.
+
+## Visite, comparaison, déplacements, partage, tests
+
+- **Visite guidée** (bouton en haut) : 26 étapes qui règlent la vue, le niveau, le mode, la caméra et la sélection, avec un halo sur l'élément d'interface expliqué. Lecture automatique, ← → pour naviguer, Espace pour la pause, Échap pour quitter ; la vue d'avant est restituée. Les étapes sont dans `src/visite.ts`.
+- **Comparer** : deux vues 3D (Tout collecter à gauche, Minimum vital à droite), même heure et même caméra, chiffres de chaque mode en tête. Le bouton Capture assemble les deux images.
+- **Déplacements d'étage** : une partie des occupants d'open space (ceux dont une allée mène à un ascenseur) va chercher un café ou une impression à un autre étage, par la cabine porte ouverte. Limites : seuls les open spaces A et C et la cafétéria sont reliés ; ces personnes restent comptées dans leur zone d'origine.
+- **Lien de configuration** : Options › Configuration › « Copier le lien ». Seuls les réglages modifiés voyagent ; le thème reste personnel ; rien n'est appliqué sans accord.
+- **Tests** : voir `docs/TESTS.md`. Les captures de référence se régénèrent sur chaque machine.

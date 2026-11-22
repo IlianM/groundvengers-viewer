@@ -110,13 +110,15 @@ function CameraRig() {
 
   useEffect(() => {
     if (cible.n === 0) return // état initial : la caméra est déjà bien placée
-    if (!useEtat.getState().reglages.animations) { // animations coupées : saut direct
+    if (!useEtat.getState().reglages.animations) { // animations coupées : saut direct (une fois les contrôles prêts, sinon la cible serait perdue)
+      if (!controls) return
       camera.position.set(...cible.position)
-      if (controls) { controls.target.set(...cible.cible); controls.update() }
+      controls.target.set(...cible.cible)
+      controls.update()
       return
     }
     anim.current = { pos: new THREE.Vector3(...cible.position), tgt: new THREE.Vector3(...cible.cible), t: 0 }
-  }, [cible])
+  }, [cible, controls]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!controls) return

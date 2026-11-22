@@ -21,11 +21,27 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check-data   # schéma + identifiants orphelins
+      - run: npm test             # tests unitaires (simulation, ascenseurs, réglages, liens, déplacements…)
       - run: npm run build
       - if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
+  # Test de fumée dans un vrai navigateur : chaque vue s'ouvre et dessine, les fonctions principales répondent.
+  # Séparé du déploiement : un navigateur capricieux ne doit pas empêcher de publier, mais l'échec reste visible sur la PR.
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright-core install --with-deps chromium
+      - run: npm run test:e2e
 
   deploy:
     if: github.ref == 'refs/heads/main'

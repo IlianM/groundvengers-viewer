@@ -40,3 +40,8 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-34 | Ascenseurs (cages vitrées, cabines animées) | Could | ✅ données dans `batiment.json` › `ascenseurs` |
 | F-35 | Open space en îlots, écrans variés, cafétéria en quinconce | Could | ✅ |
 | F-36 | Fiche personne (agenda, préférences, confort, ce que le bâtiment sait) | Could | ✅ |
+| F-37 | Comparaison côte à côte Tout collecter / Minimum vital | Should | ✅ bouton « Comparer » : deux vues 3D, caméra synchronisée, chiffres par mode, capture assemblée |
+| F-38 | Déplacements d'étage des occupants (café, imprimante) | Could | ✅ par l'ascenseur, porte ouverte ; la fiche indique où se trouve la personne |
+| F-39 | Visite guidée de toute l'application | Should | ✅ bouton « Visite guidée » : 26 étapes, lecture automatique, halo sur l'interface, état restauré à la sortie |
+| F-40 | Partage de configuration par lien | Could | ✅ Options › Configuration › « Copier le lien » ; la personne qui l'ouvre accepte ou ignore |
+| F-41 | Tests automatiques | Should | ✅ tests unitaires (CI), test de fumée navigateur (CI), captures de référence (local) — voir `docs/TESTS.md` |
