@@ -105,7 +105,8 @@ export function chargerDonnees(): { donnees: Donnees; erreurs: string[] } {
 export const { donnees, erreurs } = chargerDonnees()
 
 /** Écart horizontal des pièces en vue éclatée : part de la distance au centre du bâtiment (à pieces = 1). */
-export const ECART_PIECES = 0.5
+/** Paramètres modifiables à l'exécution (réglages) : écart horizontal des pièces à pieces = 1. */
+export const parametres = { ecartPieces: 0.5 }
 
 /** Zone d'un niveau contenant le point [x, z] (repère bâtiment), ou la plus proche. */
 export function zoneContenant(niveau: string, x: number, z: number): Zone | undefined {
@@ -126,7 +127,7 @@ export function zoneContenant(niveau: string, x: number, z: number): Zone | unde
 export function decalageZone(zn: Zone | undefined, pieces: number): [number, number] {
   if (!zn || !pieces) return [0, 0]
   const [w, d] = donnees.batiment.emprise
-  return [(zn.rect[0] + zn.rect[2] / 2 - w / 2) * ECART_PIECES * pieces, (zn.rect[1] + zn.rect[3] / 2 - d / 2) * ECART_PIECES * pieces]
+  return [(zn.rect[0] + zn.rect[2] / 2 - w / 2) * parametres.ecartPieces * pieces, (zn.rect[1] + zn.rect[3] / 2 - d / 2) * parametres.ecartPieces * pieces]
 }
 
 /** Décalage vertical d'un niveau en vue éclatée : chaque niveau monte de (rang × écart). */

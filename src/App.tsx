@@ -1,24 +1,26 @@
+import { useEtat } from './store'
 import { Scene3D } from './scene/Scene'
 import { Recherche } from './ui/Recherche'
 import { BarreHaut, PanneauGauche, FicheDetail, BandeauBas, Presentation, BandeauErreurs, OutilsCamera, ZoneDepot } from './ui/Panneaux'
 
 export default function App() {
+  const r = useEtat((s) => s.reglages)
   return (
     <div className="app">
       <BarreHaut />
       <div className="corps">
-        <PanneauGauche />
+        {r.panneauGauche && <PanneauGauche />}
         <ZoneDepot>
           <Scene3D />
-          <Recherche />
-          <OutilsCamera />
+          {r.recherche && <Recherche />}
+          {r.boutonsCamera && <OutilsCamera />}
           <Presentation />
           <BandeauErreurs />
-          <div className="mention-fictif">Entreprise, personnes et données fictives · maquette temporaire</div>
+          {r.mentionFictif && <div className="mention-fictif">Entreprise, personnes et données fictives · maquette temporaire</div>}
         </ZoneDepot>
-        <FicheDetail />
+        {r.panneauDroit && <FicheDetail />}
       </div>
-      <BandeauBas />
+      {r.bandeauBas && <BandeauBas />}
     </div>
   )
 }

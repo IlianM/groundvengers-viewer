@@ -149,7 +149,7 @@ export function genererMobilier(c: Couleurs): BoiteNiveau[] {
 
 export function Mobilier() {
   const meubles = useEtat((s) => s.deco.meubles)
-  const { niveau, coupe, vue, ecart, pieces } = useEtat()
+  const { niveau, coupe, vue, ecart, pieces, reglages } = useEtat()
   const p = usePalette()
   const tous = useMemo(() => genererMobilier(p.meuble), [p.meuble])
   const items = useMemo(
@@ -164,5 +164,5 @@ export function Mobilier() {
   )
   if (!meubles) return null
   // hors vue Architecture, les meubles s'effacent pour laisser lire les équipements
-  return <Boites items={items} opacite={vue === 'architecture' ? 1 : 0.4} />
+  return <Boites items={items} opacite={vue === 'architecture' ? 1 : reglages.opaciteMeubles} />
 }

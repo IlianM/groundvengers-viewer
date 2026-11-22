@@ -18,21 +18,37 @@ const [W, D] = donnees.batiment.emprise
 export function Scene3D() {
   const setSelection = useEtat((s) => s.setSelection)
   const deco = useEtat((s) => s.deco)
+  const r = useEtat((s) => s.reglages)
   const modeleLocal = useEtat((s) => s.modeleLocal)
   const urlModele = modeleLocal?.url ?? (donnees.batiment.modele ? `./models/${donnees.batiment.modele}` : null)
   const p = usePalette()
   const ciel = deco.herbe || deco.arbres || deco.batiments
+  const fond = r.couleurCiel ?? (ciel ? p.ciel : p.fond)
+  const dpr: [number, number] = r.qualite === 'economique' ? [1, 1] : r.qualite === 'haute' ? [1.5, 3] : [1, 2]
   return (
     <Canvas
-      camera={{ position: CAMERA_DEFAUT.position, fov: 42 }}
+      key={r.qualite}
+      camera={{ position: CAMERA_DEFAUT.position, fov: r.fov }}
       onPointerMissed={() => setSelection(null)}
-      dpr={[1, 2]}
+      dpr={dpr}
+      gl={{ antialias: r.qualite !== 'economique' }}
     >
-      <color attach="background" args={[ciel ? p.ciel : p.fond]} />
-      {ciel && <fogExp2 attach="fog" args={[p.ciel, 0.0105]} />}
+      <color attach="background" args={[fond]} />
+      {(ciel || r.couleurCiel) && r.brouillard && <fogExp2 attach="fog" args={[fond, 0.0105 * r.densiteBrouillard]} />}
       <ambientLight intensity={p.lumiere.ambiante} />
       <directionalLight position={[20, 40, 10]} intensity={p.lumiere.directe} />
-      <OrbitControls makeDefault target={CAMERA_DEFAUT.cible} maxPolarAngle={Math.PI / 2.05} minDistance={6} maxDistance={120} />
+      <OrbitControls
+        makeDefault
+        target={CAMERA_DEFAUT.cible}
+        maxPolarAngle={Math.PI / 2.05}
+        minDistance={6}
+        maxDistance={r.distanceMax}
+        autoRotate={r.rotationAuto}
+        autoRotateSpeed={2 * r.vitesseRotation}
+        rotateSpeed={r.sensRotation}
+        zoomSpeed={r.sensZoom}
+        panSpeed={r.sensDeplacement}
+      />
       <CameraRig />
       {urlModele ? (
         <Suspense fallback={null}>
@@ -67,10 +83,21 @@ function CameraRig() {
     addEventListener: (t: string, f: () => void) => void; removeEventListener: (t: string, f: () => void) => void
   } | null
   const camera = useThree((s) => s.camera)
+  const reglages = useEtat((s) => s.reglages)
   const anim = useRef<{ pos: THREE.Vector3; tgt: THREE.Vector3; t: number } | null>(null)
 
   useEffect(() => {
+    const c = camera as THREE.PerspectiveCamera
+    if (c.fov !== reglages.fov) { c.fov = reglages.fov; c.updateProjectionMatrix() }
+  }, [camera, reglages.fov])
+
+  useEffect(() => {
     if (cible.n === 0) return // état initial : la caméra est déjà bien placée
+    if (!useEtat.getState().reglages.animations) { // animations coupées : saut direct
+      camera.position.set(...cible.position)
+      if (controls) { controls.target.set(...cible.cible); controls.update() }
+      return
+    }
     anim.current = { pos: new THREE.Vector3(...cible.position), tgt: new THREE.Vector3(...cible.cible), t: 0 }
   }, [cible])
 
@@ -116,7 +143,7 @@ function CameraRig() {
         } else {
           const avant = new THREE.Vector3(-decal.x, 0, -decal.z).normalize()
           const droite = new THREE.Vector3().crossVectors(avant, new THREE.Vector3(0, 1, 0))
-          const v = Math.max(6, decal.length() * 0.9) * pas
+          const v = Math.max(6, decal.length() * 0.9) * pas * reglages.vitesseClavier
           const dep = new THREE.Vector3()
             .addScaledVector(avant, ((t.has('ArrowUp') ? 1 : 0) - (t.has('ArrowDown') ? 1 : 0)) * v)
             .addScaledVector(droite, ((t.has('ArrowRight') ? 1 : 0) - (t.has('ArrowLeft') ? 1 : 0)) * v)
@@ -131,7 +158,7 @@ function CameraRig() {
     const a = anim.current
     if (!a || !controls) return
     a.t += dt
-    const k = 1 - Math.exp(-dt * 3.5)
+    const k = 1 - Math.exp(-dt * 3.5 * reglages.vitesseCamera)
     camera.position.lerp(a.pos, k)
     controls.target.lerp(a.tgt, k)
     controls.update()
@@ -199,7 +226,8 @@ function ModeleGLB({ url }: { url: string }) {
 
 /** Noms des niveaux (R0, R1…) : toujours montés, que le bâtiment soit le modèle temporaire ou un .glb (évite de démonter des <Html> dans le même rendu). */
 function EtiquettesNiveaux() {
-  const { niveau: niveauActif, coupe, ecart } = useEtat()
+  const { niveau: niveauActif, coupe, ecart, reglages } = useEtat()
+  if (!reglages.etiquettesNiveaux) return null
   return (
     <group>
       {donnees.batiment.niveaux
@@ -261,10 +289,10 @@ function couleurZone(z: Zone, vue: string, seuil: number, mv: boolean, p: Palett
 }
 
 function Zones() {
-  const { vue, niveau, coupe, calquesMasques, seuilAnonymat, minimumVital, setSelection, ecart, pieces } = useEtat()
+  const { vue, niveau, coupe, calquesMasques, seuilAnonymat, minimumVital, setSelection, ecart, pieces, reglages } = useEtat()
   const p = usePalette()
   if (calquesMasques.has('zones')) return null
-  const etiquettes = vue === 'architecture' || vue === 'occupant' || niveau !== null
+  const etiquettes = reglages.etiquettesZones && (vue === 'architecture' || vue === 'occupant' || niveau !== null)
   return (
     <group>
       {donnees.batiment.zones
@@ -280,7 +308,7 @@ function Zones() {
             <group key={z.id} position={[cx, altitudeNiveau(n.id, ecart) + 0.02, cz]}>
               <mesh rotation={[-Math.PI / 2, 0, 0]} onClick={(ev) => { ev.stopPropagation(); setSelection(z.id) }}>
                 <planeGeometry args={[w - 0.15, d - 0.15]} />
-                <meshStandardMaterial color={couleur} transparent opacity={opacite} side={THREE.DoubleSide} depthWrite={false} />
+                <meshStandardMaterial color={couleur} transparent opacity={Math.min(1, opacite * reglages.opaciteZones)} side={THREE.DoubleSide} depthWrite={false} />
                 <Edges color={p.zoneBord} />
               </mesh>
               {etiquettes && (
@@ -320,7 +348,7 @@ function Forme({ e }: { e: Equipement }) {
 
 function Equipements() {
   const { equipements, def, ctx } = useVisibles()
-  const { selection, survol, vue, setSelection, setSurvol, ecart, pieces } = useEtat()
+  const { selection, survol, vue, setSelection, setSurvol, ecart, pieces, reglages } = useEtat()
   return (
     <group>
       {equipements.map((e) => {
@@ -330,7 +358,7 @@ function Equipements() {
         return (
           <group key={e.id} position={pos}>
             <mesh
-              scale={sel ? 1.5 : survol === e.id ? 1.25 : 1}
+              scale={(sel ? 1.5 : survol === e.id ? 1.25 : 1) * reglages.tailleEquipements}
               onPointerOver={(ev) => { ev.stopPropagation(); setSurvol(e.id); document.body.style.cursor = 'pointer' }}
               onPointerOut={() => { setSurvol(null); document.body.style.cursor = 'auto' }}
               onClick={(ev) => { ev.stopPropagation(); setSelection(e.id) }}
@@ -338,13 +366,13 @@ function Equipements() {
               <Forme e={e} />
               <meshStandardMaterial color={couleur} emissive={sel ? couleur : '#000000'} emissiveIntensity={sel ? 0.5 : 0} />
             </mesh>
-            {((vue === 'cyber' && e.point_entree) || vue === 'risques') && (
+            {reglages.anneaux && ((vue === 'cyber' && e.point_entree) || vue === 'risques') && (
               <mesh rotation={[Math.PI / 2, 0, 0]}>
                 <torusGeometry args={[vue === 'risques' ? 1.1 : 0.75, vue === 'risques' ? 0.1 : 0.06, 8, 32]} />
                 <meshBasicMaterial color={vue === 'risques' ? couleur : '#e03131'} />
               </mesh>
             )}
-            {survol === e.id && !sel && (
+            {reglages.infobulles && survol === e.id && !sel && (
               <Html position={[0, 0.9, 0]} center style={{ pointerEvents: 'none' }}>
                 <div className="infobulle">
                   <strong>{e.nom}</strong>
@@ -364,6 +392,9 @@ function Trait({ a, b, couleur, pointille, anime, opacite, epaisseur }: {
   pointille?: boolean; anime?: boolean; opacite: number; epaisseur: number
 }) {
   const ref = useRef<any>(null)
+  const reglages = useEtat((s) => s.reglages)
+  anime = anime && reglages.animations
+  epaisseur = epaisseur * reglages.epaisseurLiens
   useFrame((_, dt) => {
     if (anime && ref.current?.material) ref.current.material.dashOffset -= dt * 1.5
   })

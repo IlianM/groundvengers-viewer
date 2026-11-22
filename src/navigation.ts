@@ -1,6 +1,6 @@
 // Aller à un élément : règle l'état de l'appli pour qu'il soit visible, le sélectionne et place la caméra.
 import { donnees, positionMonde, altitudeNiveau, pointMonde, decalageZone } from './data'
-import { useEtat, ECART_ECLATE } from './store'
+import { useEtat, ecartNiveaux } from './store'
 import { VUES, type VueId } from './views'
 
 const sansAccent = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
@@ -86,7 +86,7 @@ export function reveler(cible: Cible) {
   const zone = donnees.zoneParId.get(cible.id)
   if (zone) {
     const [w, d] = donnees.batiment.emprise
-    const alt = altitudeNiveau(zone.niveau, s.eclate ? ECART_ECLATE : 0)
+    const alt = altitudeNiveau(zone.niveau, s.eclate ? ecartNiveaux() : 0)
     const [dx, dz] = decalageZone(zone, s.eclatePieces ? 1 : 0)
     const c: [number, number, number] = [zone.rect[0] + zone.rect[2] / 2 - w / 2 + dx, alt, zone.rect[1] + zone.rect[3] / 2 - d / 2 + dz]
     if (s.niveau && s.niveau !== zone.niveau) s.setNiveau(zone.niveau)
@@ -103,10 +103,10 @@ export function reveler(cible: Cible) {
     const niv = g.type === 'montante' ? g.de! : g.niveau!
     if (s.niveau && (g.type === 'horizontale' ? s.niveau !== niv : alt(s.niveau) < alt(g.de!) || alt(s.niveau) > alt(g.a!))) s.setNiveau(null)
     s.setSelection(g.id)
-    const pts = g.chemin.map(([x, z]) => pointMonde(niv, x, g.hauteur, z, s.eclate ? ECART_ECLATE : 0, s.eclatePieces ? 1 : 0))
+    const pts = g.chemin.map(([x, z]) => pointMonde(niv, x, g.hauteur, z, s.eclate ? ecartNiveaux() : 0, s.eclatePieces ? 1 : 0))
     const c: [number, number, number] = [
       pts.reduce((a, q) => a + q[0], 0) / pts.length,
-      g.type === 'montante' ? (altitudeNiveau(g.de!, s.eclate ? ECART_ECLATE : 0) + altitudeNiveau(g.a!, s.eclate ? ECART_ECLATE : 0)) / 2 : pts[0][1],
+      g.type === 'montante' ? (altitudeNiveau(g.de!, s.eclate ? ecartNiveaux() : 0) + altitudeNiveau(g.a!, s.eclate ? ecartNiveaux() : 0)) / 2 : pts[0][1],
       pts.reduce((a, q) => a + q[2], 0) / pts.length,
     ]
     s.allerA([c[0] + DECALAGE_ZONE[0], c[1] + DECALAGE_ZONE[1], c[2] + DECALAGE_ZONE[2]], c)
@@ -131,6 +131,6 @@ export function reveler(cible: Cible) {
   if (s.niveau && s.niveau !== e.niveau) s.setNiveau(e.niveau)
   if (useEtat.getState().calquesMasques.has(e.categorie)) s.basculerCalque(e.categorie)
   s.setSelection(e.id)
-  const c = positionMonde(e, s.eclate ? ECART_ECLATE : 0, s.eclatePieces ? 1 : 0)
+  const c = positionMonde(e, s.eclate ? ecartNiveaux() : 0, s.eclatePieces ? 1 : 0)
   s.allerA([c[0] + DECALAGE[0], c[1] + DECALAGE[1], c[2] + DECALAGE[2]], c)
 }

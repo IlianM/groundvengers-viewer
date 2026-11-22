@@ -35,7 +35,7 @@ function Troncon({ a, b, largeur, hauteur, couleur, surbrillance, onClick, onOve
 
 /** Gaines, chemins de câbles et montantes techniques (vue Cyber, calque « gaines »). */
 export function Gaines() {
-  const { vue, niveau, coupe, calquesMasques, selection, setSelection, ecart, pieces } = useEtat()
+  const { vue, niveau, coupe, calquesMasques, selection, setSelection, ecart, pieces, reglages } = useEtat()
   const [survol, setSurvol] = useState<string | null>(null)
   if (vue !== 'cyber' || calquesMasques.has('gaines')) return null
   const alt = (id: string) => donnees.batiment.niveaux.find((n) => n.id === id)?.altitude ?? 0
@@ -66,7 +66,7 @@ export function Gaines() {
               <Troncon key={i} a={points[i]} b={pt} largeur={largeur} hauteur={hauteur}
                 couleur={couleur} surbrillance={actif} onClick={() => setSelection(g.id)} onOver={() => setSurvol(g.id)} onOut={() => setSurvol(null)} />
             ))}
-            {survol === g.id && (
+            {survol === g.id && reglages.infobulles && (
               <Html position={milieu} center style={{ pointerEvents: 'none' }}>
                 <div className="infobulle"><b>{g.nom}</b><span>{g.type === 'montante' ? `Montante ${g.de} → ${g.a}` : `Chemin de câbles · ${g.niveau}`} · {g.reseau}</span></div>
               </Html>

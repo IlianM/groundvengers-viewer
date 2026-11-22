@@ -21,6 +21,7 @@ function alea(graine: number) {
 
 export function Sol() {
   const herbe = useEtat((s) => s.deco.herbe)
+  const couleurHerbe = useEtat((s) => s.reglages.couleurHerbe)
   const p = usePalette()
   const marquages = useMemo<Boite[]>(
     () => Array.from({ length: 25 }, (_, i) => ({ p: [-60 + i * 5, -0.215, ROUTE_Z], s: [2.4, 0.02, 0.18], c: p.marquage })),
@@ -30,7 +31,7 @@ export function Sol() {
     <group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.25, 0]}>
         <circleGeometry args={[170, 64]} />
-        <meshStandardMaterial color={herbe ? p.herbe : p.solNeutre} />
+        <meshStandardMaterial color={herbe ? couleurHerbe ?? p.herbe : p.solNeutre} />
       </mesh>
       {herbe && (
         <>
@@ -55,9 +56,10 @@ export function Sol() {
 
 export function Arbres() {
   const actif = useEtat((s) => s.deco.arbres)
+  const { densiteArbres, graineDecor } = useEtat((s) => s.reglages)
   const p = usePalette()
-  const arbres = useMemo(() => {
-    const r = alea(7)
+  const tous = useMemo(() => {
+    const r = alea(graineDecor)
     const pts: { x: number; z: number; s: number; conifere: boolean; couleur: string }[] = []
     for (let essais = 0; pts.length < 64 && essais < 3000; essais++) {
       const a = r() * Math.PI * 2
@@ -71,7 +73,8 @@ export function Arbres() {
       pts.push({ x, z, s: 0.8 + r() * 0.7, conifere: r() < 0.4, couleur: p.feuillage[Math.floor(r() * p.feuillage.length)] })
     }
     return pts
-  }, [p.feuillage])
+  }, [p.feuillage, graineDecor])
+  const arbres = useMemo(() => tous.slice(0, Math.round((tous.length * densiteArbres) / 100)), [tous, densiteArbres])
   const troncs = useMemo<Boite[]>(
     () => arbres.map((t) => {
       const h = (t.conifere ? 1.2 : 1.6) * t.s
@@ -102,9 +105,10 @@ export function Arbres() {
 
 export function ImmeublesLointains() {
   const actif = useEtat((s) => s.deco.batiments)
+  const { nbImmeubles, graineDecor } = useEtat((s) => s.reglages)
   const p = usePalette()
-  const immeubles = useMemo(() => {
-    const r = alea(21)
+  const tousImmeubles = useMemo(() => {
+    const r = alea(graineDecor * 3 + 21)
     const liste: { x: number; z: number; w: number; d: number; h: number }[] = []
     for (let essais = 0; liste.length < 16 && essais < 600; essais++) {
       const a = r() * Math.PI * 2
@@ -119,7 +123,8 @@ export function ImmeublesLointains() {
       liste.push({ x, z, w, d, h })
     }
     return liste
-  }, [])
+  }, [graineDecor])
+  const immeubles = useMemo(() => tousImmeubles.slice(0, nbImmeubles), [tousImmeubles, nbImmeubles])
   const corps = useMemo<Boite[]>(
     () => immeubles.map((b, i) => ({ p: [b.x, b.h / 2 - 0.25, b.z], s: [b.w, b.h, b.d], c: p.immeubles[i % p.immeubles.length] })),
     [immeubles, p.immeubles],

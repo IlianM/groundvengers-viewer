@@ -1,11 +1,14 @@
 import { create } from 'zustand'
 import type { VueId } from '../views'
+import { parametres } from '../data'
+import { Config, Reglages, REGLAGES_DEFAUT, FORMAT_CONFIG } from '../reglages'
 
 export type Deco = { herbe: boolean; arbres: boolean; batiments: boolean; meubles: boolean; structure: boolean }
 export type Theme = 'clair' | 'sombre'
 type Vec3 = [number, number, number]
 
-export const ECART_ECLATE = 5 // m ajoutés entre deux niveaux en vue éclatée
+/** Mètres ajoutés entre deux niveaux en vue éclatée (réglage). */
+export const ecartNiveaux = () => useEtat.getState().reglages.ecartNiveaux
 
 export const CAMERA_DEFAUT = { position: [26, 20, 28] as Vec3, cible: [0, 4, 0] as Vec3 }
 
@@ -26,6 +29,7 @@ type Etat = {
   deco: Deco
   cameraCible: { n: number; position: Vec3; cible: Vec3 }
   modeleLocal: { url: string; nom: string } | null // .glb chargé par la personne (glisser-déposer), prioritaire sur batiment.json
+  reglages: Reglages // personnalisation (Options)
   eclate: boolean // vue éclatée demandée
   ecart: number // écart actuel entre niveaux (animé de 0 à ECART_ECLATE)
   eclatePieces: boolean // pièces écartées horizontalement
@@ -51,19 +55,22 @@ type Etat = {
   setEclate: (b: boolean) => void
   setEclatePieces: (b: boolean) => void
   setModeleLocal: (fichier: File | null) => void
+  setReglage: <K extends keyof Reglages>(k: K, v: Reglages[K]) => void
+  reinitialiserReglages: (cles?: (keyof Reglages)[]) => void
+  appliquerConfig: (c: Config) => void
+  exporterConfig: () => Config
 }
 
 // Options d'apparence gardées dans le navigateur (aucune donnée envoyée nulle part).
 const CLE = 'gv-options-v1'
-const DECO_DEFAUT: Deco = { herbe: true, arbres: true, batiments: true, meubles: true, structure: true }
 
-function lireOptions(): { theme?: Theme; deco?: Partial<Deco> } {
+function lireOptions(): Config {
+  let brut: Record<string, unknown> = {}
   try {
-    const brut = localStorage.getItem(CLE)
-    return brut ? JSON.parse(brut) : {}
-  } catch {
-    return {}
-  }
+    const t = localStorage.getItem(CLE)
+    if (t) brut = JSON.parse(t)
+  } catch { /* stockage indisponible : valeurs par défaut */ }
+  return Config.parse({ format: FORMAT_CONFIG, version: 1, theme: themeSysteme(), ...brut })
 }
 function themeSysteme(): Theme {
   try {
@@ -75,7 +82,7 @@ function themeSysteme(): Theme {
 const sauvegarde = lireOptions()
 
 export const useEtat = create<Etat>((set, get) => ({
-  vue: 'architecture',
+  vue: sauvegarde.reglages.demarrageVue as VueId,
   niveau: null,
   coupe: false,
   selection: null,
@@ -83,12 +90,13 @@ export const useEtat = create<Etat>((set, get) => ({
   risqueActif: null,
   scenarioActif: null,
   calquesMasques: new Set(),
-  minimumVital: false,
+  minimumVital: sauvegarde.reglages.demarrageMinimumVital,
   architectureIA: 'edge',
-  seuilAnonymat: 5,
+  seuilAnonymat: sauvegarde.reglages.demarrageSeuil,
   scene: null,
-  theme: sauvegarde.theme === 'sombre' || sauvegarde.theme === 'clair' ? sauvegarde.theme : themeSysteme(),
-  deco: { ...DECO_DEFAUT, ...sauvegarde.deco },
+  theme: sauvegarde.theme,
+  deco: sauvegarde.deco as Deco,
+  reglages: sauvegarde.reglages,
   cameraCible: { n: 0, ...CAMERA_DEFAUT },
   modeleLocal: null,
   eclate: false,
@@ -127,6 +135,13 @@ export const useEtat = create<Etat>((set, get) => ({
     animerEcart()
     recadrer(get, set)
   },
+  setReglage: (k, v) => set((s) => ({ reglages: Reglages.parse({ ...s.reglages, [k]: v }) })),
+  reinitialiserReglages: (cles) => set((s) => ({
+    reglages: cles ? { ...s.reglages, ...Object.fromEntries(cles.map((k) => [k, REGLAGES_DEFAUT[k]])) } as Reglages : REGLAGES_DEFAUT,
+    ...(cles ? {} : { deco: { herbe: true, arbres: true, batiments: true, meubles: true, structure: true }, theme: themeSysteme() }),
+  })),
+  appliquerConfig: (c) => set({ theme: c.theme, deco: c.deco as Deco, reglages: c.reglages }),
+  exporterConfig: () => ({ format: FORMAT_CONFIG, version: 1, theme: get().theme, deco: get().deco, reglages: get().reglages }),
   setModeleLocal: (fichier) => {
     const ancien = get().modeleLocal
     if (ancien) URL.revokeObjectURL(ancien.url)
@@ -140,18 +155,28 @@ export const useEtat = create<Etat>((set, get) => ({
   allerA: (position, cible) => set((s) => ({ cameraCible: { n: s.cameraCible.n + 1, position, cible } })),
 }))
 
-// Applique le thème au document et garde les options.
-function appliquer(s: Pick<Etat, 'theme' | 'deco'>) {
-  document.documentElement.dataset.theme = s.theme
+// Applique thème et réglages d'interface au document, et garde la personnalisation dans le navigateur.
+function appliquer(s: Pick<Etat, 'theme' | 'deco' | 'reglages'>) {
+  const r = s.reglages
+  const el = document.documentElement
+  el.dataset.theme = s.theme
+  el.style.setProperty('--echelle', String(r.tailleTexte / 100))
+  el.style.setProperty('--echelle-etiq', String(r.tailleEtiquettes / 100))
+  el.style.setProperty('--w-gauche', `${r.panneauGauche ? r.largeurGauche : 0}px`)
+  el.style.setProperty('--w-droite', `${r.panneauDroit ? r.largeurDroite : 0}px`)
+  el.style.setProperty('--h-bandeau', r.bandeauBas ? '64px' : '0px')
+  if (r.accent) el.style.setProperty('--accent-2', r.accent)
+  else el.style.removeProperty('--accent-2')
+  parametres.ecartPieces = r.ecartPieces
   try {
-    localStorage.setItem(CLE, JSON.stringify({ theme: s.theme, deco: s.deco }))
+    localStorage.setItem(CLE, JSON.stringify({ theme: s.theme, deco: s.deco, reglages: r }))
   } catch {
     /* stockage indisponible : les options restent valables pour la session */
   }
 }
 appliquer(useEtat.getState())
 useEtat.subscribe((s, prev) => {
-  if (s.theme !== prev.theme || s.deco !== prev.deco) appliquer(s)
+  if (s.theme !== prev.theme || s.deco !== prev.deco || s.reglages !== prev.reglages) appliquer(s)
 })
 
 // On recule la caméra quand le bâtiment s'étale, pour le garder dans le cadre.
@@ -173,10 +198,11 @@ function animerEcart() {
     const k = 1 - Math.exp(-((t - dernier) / 1000) * 8)
     dernier = t
     const vers = (v: number, cible: number) => (Math.abs(cible - v) < 0.005 ? cible : v + (cible - v) * k)
-    const e2 = vers(ecart, eclate ? ECART_ECLATE : 0)
+    const cibleE = eclate ? ecartNiveaux() : 0
+    const e2 = vers(ecart, cibleE)
     const p2 = vers(pieces, eclatePieces ? 1 : 0)
     useEtat.setState({ ecart: e2, pieces: p2 })
-    animation = e2 === (eclate ? ECART_ECLATE : 0) && p2 === (eclatePieces ? 1 : 0) ? 0 : requestAnimationFrame(pas)
+    animation = e2 === cibleE && p2 === (eclatePieces ? 1 : 0) ? 0 : requestAnimationFrame(pas)
   }
   animation = requestAnimationFrame(pas)
 }
