@@ -9,10 +9,29 @@ import { niveauVisible } from './visibles'
 import type { Zone } from '../schema'
 
 type Couleurs = Palette['meuble']
+
+/** Emplacement d'un personnage : assis (siège), debout à son poste, ou dans le hall. */
+export type Siege = {
+  zone: string
+  niveau: string
+  x: number
+  z: number
+  y: number // hauteur du siège (0 = debout)
+  ry: number // orientation (rad) : 0 regarde vers z croissant
+  tache: 'bureau' | 'reunion' | 'cafe' | 'attente' | 'accueil' | 'presente' | 'comptoir'
+}
+// Pendant la génération des positions de sièges, les fonctions d'aménagement y déposent leurs sièges.
+let collecteur: Siege[] | null = null
+let contexte: { zone: Zone; tache: Siege['tache'] } | null = null
+const ry = (face: number) => (face > 0 ? 0 : Math.PI)
+function siege(x: number, z: number, y: number, rot: number, tache?: Siege['tache']) {
+  if (collecteur && contexte) collecteur.push({ zone: contexte.zone.id, niveau: contexte.zone.niveau, x, z, y, ry: rot, tache: tache ?? contexte.tache })
+}
 type Poser = (x: number, y0: number, z: number, sx: number, sy: number, sz: number, couleur: string) => void
 
 // chaise : `face` = sens vers lequel elle regarde (+1 vers z croissant)
 function chaise(b: Poser, c: Couleurs, x: number, z: number, face: number) {
+  siege(x, z, 0.48, ry(face))
   b(x, 0, z, 0.08, 0.42, 0.08, c.chaise)
   b(x, 0.42, z, 0.46, 0.06, 0.46, c.chaise)
   b(x, 0.48, z - face * 0.22, 0.46, 0.46, 0.05, c.chaise)
@@ -73,6 +92,7 @@ function reunion(b: Poser, c: Couleurs, z: Zone) {
     for (let i = 0; i < parCote; i++) chaise(b, c, cx + (i - (parCote - 1) / 2) * (L / parCote), cz + s * (P / 2 + 0.45), -s)
   }
   b(cx, 1.0, z0 + 0.15, 2.0, 1.1, 0.06, c.ecran) // écran mural
+  siege(cx + 1.4, z0 + 0.95, 0, 0, 'presente') // une personne présente devant l'écran
 }
 
 function accueil(b: Poser, c: Couleurs, z: Zone) {
@@ -86,6 +106,8 @@ function accueil(b: Poser, c: Couleurs, z: Zone) {
   b(cx, 0, z0 + 13.6, 2.2, 0.45, 0.85, c.canape)
   b(cx, 0.45, z0 + 13.9, 2.2, 0.45, 0.2, c.canape)
   b(cx, 0, z0 + 12.3, 1.0, 0.4, 0.5, c.table)
+  siege(cx, z0 + 3.4, 0, 0, 'accueil') // personne à l'accueil, derrière la banque
+  for (const dx of [-0.5, 0.5]) { siege(cx + dx, z0 + 11.0, 0.45, 0, 'attente'); siege(cx + dx, z0 + 13.6, 0.45, Math.PI, 'attente') }
   for (const [px, pz] of [[1, 1.2], [w - 1, 1.2], [1, d - 1.2], [w - 1, d - 1.2]]) plante(b, c, x0 + px, z0 + pz)
 }
 
@@ -107,9 +129,13 @@ function cafeteria(b: Poser, c: Couleurs, z: Zone) {
     const zz = z0 + 2.2 + Math.floor(i / cols) * 3.2
     b(x, 0.72, zz, 1.0, 0.05, 1.0, c.table)
     b(x, 0, zz, 0.12, 0.72, 0.12, c.pied)
-    for (const [dx, dz] of [[0.75, 0], [-0.75, 0], [0, 0.75], [0, -0.75]]) b(x + dx, 0, zz + dz, 0.35, 0.45, 0.35, c.chaise)
+    for (const [dx, dz] of [[0.75, 0], [-0.75, 0], [0, 0.75], [0, -0.75]]) {
+      b(x + dx, 0, zz + dz, 0.35, 0.45, 0.35, c.chaise)
+      siege(x + dx, zz + dz, 0.45, Math.atan2(-dx, -dz))
+    }
   }
   b(x0 + w - 3.2, 0, z0 + d - 0.8, 5.0, 1.0, 0.7, c.comptoir) // comptoir
+  for (const dx of [-1.2, 1.2]) siege(x0 + w - 3.2 + dx, z0 + d - 1.8, 0, 0, 'comptoir')
 }
 
 function amenagement(z: Zone): NonNullable<Zone['amenagement']> {
@@ -125,6 +151,34 @@ function amenagement(z: Zone): NonNullable<Zone['amenagement']> {
 }
 
 type BoiteNiveau = Boite & { niveau: string; zone: string }
+
+function tacheDe(z: Zone): Siege['tache'] {
+  switch (amenagement(z)) {
+    case 'reunion': return 'reunion'
+    case 'cafeteria': return 'cafe'
+    case 'accueil': return 'attente'
+    default: return 'bureau'
+  }
+}
+
+/** Tous les emplacements possibles de personnages, générés avec le mobilier (même géométrie). */
+export function genererSieges(c: Couleurs): Siege[] {
+  collecteur = []
+  const rien: Poser = () => {}
+  try {
+    for (const z of donnees.batiment.zones) {
+      contexte = { zone: z, tache: tacheDe(z) }
+      switch (amenagement(z)) {
+        case 'bureaux': openSpace(rien, c, z); break
+        case 'bureau_individuel': bureauIndividuel(rien, c, z); break
+        case 'reunion': reunion(rien, c, z); break
+        case 'accueil': accueil(rien, c, z); break
+        case 'cafeteria': cafeteria(rien, c, z); break
+      }
+    }
+    return collecteur
+  } finally { collecteur = null; contexte = null }
+}
 
 export function genererMobilier(c: Couleurs): BoiteNiveau[] {
   const [W, D] = donnees.batiment.emprise

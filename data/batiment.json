@@ -26,5 +26,9 @@
     { "id": "ZONE-R2-REU", "niveau": "R2", "nom": "Salle de réunion R2", "type": "reunion", "effectif_max": 12, "detection_presence": true, "rect": [18, 6, 12, 6] },
     { "id": "ZONE-R2-SRV", "niveau": "R2", "nom": "Local serveur", "type": "technique", "effectif_max": 0, "detection_presence": false, "rect": [0, 12, 10, 6] },
     { "id": "ZONE-R2-CIRC", "niveau": "R2", "nom": "Circulation", "type": "circulation", "effectif_max": 0, "detection_presence": false, "rect": [10, 12, 20, 6] }
+  ],
+  "ascenseurs": [
+    { "id": "ASC-01", "nom": "Ascenseur 1", "position": [9.95, 12.85], "taille": [1.3, 1.3], "niveaux": ["R0", "R1", "R2"] },
+    { "id": "ASC-02", "nom": "Ascenseur 2", "position": [11.5, 12.85], "taille": [1.3, 1.3], "niveaux": ["R0", "R1", "R2"] }
   ]
 }

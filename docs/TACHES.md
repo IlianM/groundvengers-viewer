@@ -37,3 +37,8 @@ Liste simple, à cocher à la main. Une tâche = une branche ou un commit. Les i
 ## F-26 — Simulation d'une journée (fait)
 Bouton **Journée** (haut de la vue 3D) : curseur horaire 00:00–24:00, lecture automatique (vitesse réglable dans Options › Démarrage), zones colorées et étiquetées par effectif simulé. Une zone **identifiable** (rouge) = au moins une personne présente, détection de présence active, moins de N personnes (seuil d'anonymat et Minimum vital respectés). Lien partageable : `#sim=1&h=9.5`.
 Limite : profils fictifs et déterministes (`src/simulation.ts`), à remplacer par des mesures réelles. Ils illustrent la règle d'anonymat, ils ne prouvent rien.
+
+## F-33 / F-34 — Personnages et ascenseurs (fait)
+- **Personnages** : figures très simples, assises aux postes (certaines au téléphone), en réunion (une personne présente devant l'écran), à la cafétéria (tasse en main), à l'accueil, sur les canapés, ou traversant le hall. Leur nombre par zone suit la simulation d'une journée ; sans simulation, matinée type (10h30). Survol = tâche en cours, clic = fiche de la zone. Positions déduites du mobilier généré (`genererSieges`), donc elles suivent les changements d'effectif. Options › Rendu : afficher, vitesse.
+- **Ascenseurs** : liste `ascenseurs` de `data/batiment.json` (position, taille, niveaux desservis). Cage vitrée par niveau + cabine qui monte et descend, portes coulissantes ; suit la vue éclatée et le filtre de niveau. Un ascenseur ajouté dans le JSON apparaît sans code.
+- Limites : décor et animation purement illustratifs, aucun lien avec les capteurs réels ; les personnages ne changent pas d'étage.

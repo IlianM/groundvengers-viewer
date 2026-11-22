@@ -135,7 +135,7 @@ function Camera() {
 
 function Rendu() {
   return (
-    <Onglet cles={['qualite', 'brouillard', 'densiteBrouillard', 'couleurCiel', 'tailleEquipements', 'epaisseurLiens', 'opaciteZones', 'opaciteMeubles', 'anneaux']}>
+    <Onglet cles={['qualite', 'brouillard', 'densiteBrouillard', 'couleurCiel', 'tailleEquipements', 'epaisseurLiens', 'opaciteZones', 'opaciteMeubles', 'anneaux', 'personnages', 'vitessePersonnages', 'ascenseurs']}>
       <h4>Rendu</h4>
       <Choix k="qualite" libelle="Qualité" options={[['economique', 'Économique (ordinateur lent)'], ['normale', 'Normale'], ['haute', 'Haute (écran très net)']]} />
       <Interrupteur k="brouillard" libelle="Brouillard lointain" />
@@ -148,6 +148,10 @@ function Rendu() {
       <Curseur k="opaciteZones" libelle="Opacité des zones" min={0.3} max={2} pas={0.1} unite=" ×" />
       <Curseur k="opaciteMeubles" libelle="Opacité des meubles (hors vue Architecture)" min={0.1} max={1} pas={0.05} />
       <Interrupteur k="anneaux" libelle="Anneaux (points d’entrée, risques)" />
+      <h4>Vie du bâtiment</h4>
+      <Interrupteur k="personnages" libelle="Personnages (travail, réunions, café…)" aide="Leur nombre suit la simulation d’une journée ; sans simulation : matinée type." />
+      <Curseur k="vitessePersonnages" libelle="Vitesse des personnages" min={0.3} max={2.5} pas={0.1} unite=" ×" />
+      <Interrupteur k="ascenseurs" libelle="Ascenseurs animés" />
     </Onglet>
   )
 }

@@ -29,6 +29,15 @@ export const Zone = z.object({
 })
 export type Zone = z.infer<typeof Zone>
 
+export const Ascenseur = z.object({
+  id: z.string(),
+  nom: z.string(),
+  position: z.tuple([z.number(), z.number()]), // centre de la cage [x, z] en m, repère du bâtiment
+  taille: z.tuple([z.number(), z.number()]).default([1.3, 1.3]), // [largeur, profondeur]
+  niveaux: z.array(z.string()), // niveaux desservis
+})
+export type Ascenseur = z.infer<typeof Ascenseur>
+
 export const Batiment = z.object({
   nom: z.string(),
   emprise: z.tuple([z.number(), z.number()]), // [largeur x, profondeur z] en m
@@ -36,6 +45,7 @@ export const Batiment = z.object({
   modele: z.string().nullable(),
   niveaux: z.array(Niveau),
   zones: z.array(Zone),
+  ascenseurs: z.array(Ascenseur).default([]),
 })
 export type Batiment = z.infer<typeof Batiment>
 

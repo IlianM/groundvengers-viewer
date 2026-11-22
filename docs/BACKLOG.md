@@ -36,3 +36,5 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-30 | Matrice de risques liée | Should | ✅ vue Risques avec matrice impact × probabilité |
 | F-31 | Mode présentation | Must | ✅ |
 | F-32 | Glisser-déposer un modèle | Could | ✅ |
+| F-33 | Personnages animés (travail, réunion, café, accueil, déplacements) | Could | ✅ liés à la simulation d'une journée |
+| F-34 | Ascenseurs (cages vitrées, cabines animées) | Could | ✅ données dans `batiment.json` › `ascenseurs` |

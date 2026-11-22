@@ -39,7 +39,7 @@ function valider<T>(fichier: string, schema: z.ZodType<T>, brut: unknown, erreur
 export function chargerDonnees(): { donnees: Donnees; erreurs: string[] } {
   const erreurs: string[] = []
   const batiment = valider('batiment.json', Batiment, batimentJson, erreurs,
-    { nom: '?', emprise: [10, 10], modele: null, niveaux: [], zones: [] })
+    { nom: '?', emprise: [10, 10], modele: null, niveaux: [], zones: [], ascenseurs: [] })
   const domo = valider('domotique.json', FichierEquipe, domotiqueJson, erreurs, { equipements: [], liens: [], gaines: [], scenarios: [] })
   const cyber = valider('cyber.json', FichierEquipe, cyberJson, erreurs, { equipements: [], liens: [], gaines: [], scenarios: [] })
   const ia = valider('ia.json', FichierIA, iaJson, erreurs, { equipements: [], liens: [], gaines: [], scenarios: [], noeuds: [] })

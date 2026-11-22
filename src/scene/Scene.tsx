@@ -1,3 +1,5 @@
+import { Ascenseurs } from './Ascenseurs'
+import { Personnages } from './Personnages'
 import { effectifSimule, identifiableA } from '../simulation'
 import { Suspense, useEffect, useMemo, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
@@ -64,6 +66,8 @@ export function Scene3D() {
       <ImmeublesLointains />
       {!urlModele && <Mobilier />}
       <Zones />
+      {!urlModele && <Ascenseurs />}
+      {!urlModele && <Personnages />}
       <VolumesReseau />
       <Gaines />
       <ScenarioIntrusion />

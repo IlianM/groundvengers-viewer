@@ -53,6 +53,9 @@ export const Reglages = z.object({
   opaciteZones: nombre(1, 0.3, 2),
   opaciteMeubles: nombre(0.4, 0.1, 1),
   anneaux: bool(true),
+  personnages: bool(true),
+  vitessePersonnages: nombre(1, 0.3, 2.5),
+  ascenseurs: bool(true),
   // Éclatement
   ecartNiveaux: nombre(5, 2, 14),
   ecartPieces: nombre(0.5, 0.2, 1.2),
