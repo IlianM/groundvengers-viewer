@@ -64,7 +64,8 @@ function repartir(sieges: Siege[], voies: Map<string, Voie>, effectifs: Map<stri
 const G = {
   tete: new THREE.SphereGeometry(0.11, 10, 8),
   torse: new THREE.BoxGeometry(0.34, 0.52, 0.19),
-  bras: new THREE.BoxGeometry(0.08, 0.55, 0.08),
+  brasHaut: new THREE.BoxGeometry(0.08, 0.3, 0.08),
+  avantBras: new THREE.BoxGeometry(0.07, 0.28, 0.07),
   jambe: new THREE.BoxGeometry(0.12, 0.8, 0.12),
   cuisse: new THREE.BoxGeometry(0.12, 0.12, 0.42),
   tibia: new THREE.BoxGeometry(0.11, 0.45, 0.11),
@@ -84,10 +85,11 @@ function Bonhomme({ o, p, animer, decal }: { o: Occupant; p: Palette['personnage
   const tete = useRef<THREE.Mesh>(null)
   const buste = useRef<THREE.Group>(null)
   const bg = useRef<THREE.Group>(null), bd = useRef<THREE.Group>(null)
+  const cg = useRef<THREE.Group>(null), cd = useRef<THREE.Group>(null) // coudes
   const jg = useRef<THREE.Group>(null), jd = useRef<THREE.Group>(null)
   const jambesAssis = useRef<THREE.Group>(null), jambesDebout = useRef<THREE.Group>(null)
   const tasse = useRef<THREE.Mesh>(null)
-  const cur = useRef({ gx: 0, gz: 0, dx: 0, dz: 0, tx: 0, ty: 0, tz: 0, bx: 0, by: 0, h: -1 })
+  const cur = useRef({ gx: 0, gz: 0, ge: 0, dx: 0, dz: 0, de: 0, tx: 0, ty: 0, tz: 0, bx: 0, by: 0, h: -1 })
   const survol = useRef(false)
   const [etiquette, setEtiquette] = useState<string | null>(null)
   const infobulles = useEtat((s) => s.reglages.infobulles)
@@ -112,15 +114,17 @@ function Bonhomme({ o, p, animer, decal }: { o: Occupant; p: Palette['personnage
       if (jg.current) jg.current.rotation.x = s * 0.6
       if (jd.current) jd.current.rotation.x = -s * 0.6
       if (e.pose === 'marche') { cible.gx = -s * 0.5; cible.dx = s * 0.5 }
-      else { cible.gx = -s * 0.5 } // « arpente » : un bras tient le téléphone
+      else { cible.gx = -s * 0.5 } // « arpente » : l'autre main tient le téléphone
     } else {
       if (jg.current) jg.current.rotation.x = 0
       if (jd.current) jd.current.rotation.x = 0
     }
     c.h = hanche
-    for (const key of ['gx', 'gz', 'dx', 'dz', 'tx', 'ty', 'tz', 'bx', 'by'] as const) c[key] += (cible[key] - c[key]) * k
+    for (const key of ['gx', 'gz', 'ge', 'dx', 'dz', 'de', 'tx', 'ty', 'tz', 'bx', 'by'] as const) c[key] += (cible[key] - c[key]) * k
     if (bg.current) { bg.current.rotation.set(c.gx, 0, c.gz) }
     if (bd.current) { bd.current.rotation.set(c.dx, 0, c.dz) }
+    if (cg.current) cg.current.rotation.x = c.ge
+    if (cd.current) cd.current.rotation.x = c.de
     if (tete.current) tete.current.rotation.set(c.tx, c.ty, c.tz)
     if (buste.current) { buste.current.position.y = hanche; buste.current.rotation.set(c.bx, c.by, 0) }
     if (jambesAssis.current) { jambesAssis.current.visible = e.assis; jambesAssis.current.position.y = hanche }
@@ -155,10 +159,16 @@ function Bonhomme({ o, p, animer, decal }: { o: Occupant; p: Palette['personnage
         <group ref={buste}>
           <mesh geometry={G.torse} material={mat(haut)} position={[0, 0.27, 0]} />
           <mesh ref={tete} geometry={G.tete} material={mat(p.peau)} position={[0, 0.65, 0]} />
-          <group ref={bg} position={[-0.21, epaule, 0]}><mesh geometry={G.bras} material={mat(haut)} position={[0, -0.25, 0]} /></group>
+          <group ref={bg} position={[-0.21, epaule, 0]}>
+            <mesh geometry={G.brasHaut} material={mat(haut)} position={[0, -0.15, 0]} />
+            <group ref={cg} position={[0, -0.3, 0]}><mesh geometry={G.avantBras} material={mat(haut)} position={[0, -0.14, 0]} /></group>
+          </group>
           <group ref={bd} position={[0.21, epaule, 0]}>
-            <mesh geometry={G.bras} material={mat(haut)} position={[0, -0.25, 0]} />
-            <mesh ref={tasse} visible={false} geometry={G.tasse} material={mat('#f8f9fa')} position={[0, -0.55, 0.03]} />
+            <mesh geometry={G.brasHaut} material={mat(haut)} position={[0, -0.15, 0]} />
+            <group ref={cd} position={[0, -0.3, 0]}>
+              <mesh geometry={G.avantBras} material={mat(haut)} position={[0, -0.14, 0]} />
+              <mesh ref={tasse} visible={false} geometry={G.tasse} material={mat('#f8f9fa')} position={[0, -0.3, 0.03]} />
+            </group>
           </group>
         </group>
         {choisi && <mesh geometry={G.anneau} material={MAT_ANNEAU} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.04, 0]} renderOrder={5} />}

@@ -138,29 +138,36 @@ export function etatDe(o: Occupant, t: number): Etat {
   return { x: px, z: pz, ry: o.ry, assis, marche: false, pose: poseAssise(o, t) }
 }
 
-/** Angles cibles (rad) des bras, de la tête et du buste pour une pose ; t en secondes. */
-export type Cible = { gx: number; gz: number; dx: number; dz: number; tx: number; ty: number; tz: number; bx: number; by: number }
+/**
+ * Angles cibles (rad) pour une pose ; t en secondes.
+ * Bras articulés : épaule (x = avant/arrière, z = écart latéral) + coude (e). Aucune pose ne lève un bras tendu
+ * vers l'avant : les mains montent toujours coude plié (téléphone, café) ou les deux bras en V (étirement).
+ */
+export type Cible = { gx: number; gz: number; ge: number; dx: number; dz: number; de: number; tx: number; ty: number; tz: number; bx: number; by: number }
 export function cibleDe(pose: Pose, t: number): Cible {
-  const base: Cible = { gx: 0.05, gz: 0, dx: 0.05, dz: 0, tx: 0, ty: 0, tz: 0, bx: 0, by: 0 }
+  const base: Cible = { gx: 0.05, gz: 0, ge: -0.1, dx: 0.05, dz: 0, de: -0.1, tx: 0, ty: 0, tz: 0, bx: 0, by: 0 }
   const s = Math.sin
+  // mains sur un clavier ou une table, coudes pliés
+  const clavier = { gx: -0.55, ge: -0.85, dx: -0.55, de: -0.85 }
   switch (pose) {
-    case 'taper': return { ...base, gx: -1.25 + 0.06 * s(t * 9), dx: -1.25 + 0.06 * s(t * 9 + 2), tx: 0.12 }
-    case 'souris': return { ...base, gx: -1.25 + 0.03 * s(t * 8), dx: -1.12 + 0.05 * s(t * 2.5), tx: 0.1 }
-    case 'croise': return { ...base, gx: -1.1, gz: 1.15, dx: -1.1, dz: -1.15, bx: -0.15, ty: 0.3 * s(t * 0.4) }
-    case 'penser': return { ...base, gx: -1.15, dx: -2.05, dz: -0.25, tx: 0.2, tz: 0.08, bx: 0.08 }
-    case 'telephone': return { ...base, gx: -1.1, dx: -2.25, dz: -0.1, tz: 0.25, ty: 0.15 }
-    case 'lire': return { ...base, gx: -1.15, dx: -1.15, tx: 0.5, bx: 0.14 }
-    case 'etire': return { ...base, gx: -3.0 + 0.1 * s(t * 2), gz: 0.3, dx: -3.0 + 0.1 * s(t * 2 + 1), dz: -0.3, tx: -0.2, bx: -0.12 }
-    case 'boire': return { ...base, gx: -1.2, dx: -1.95 + 0.12 * s(t * 0.9), tx: -0.1, ty: 0.3 * s(t * 0.5) }
-    case 'discute': return { ...base, gx: -0.9 + 0.4 * s(t * 3), dx: -1.0 + 0.4 * s(t * 3 + 1.5), ty: 0.6 * s(t * 0.8), by: 0.15 * s(t * 0.8) }
-    case 'reunion': return { ...base, gx: -0.95, dx: -0.95, ty: 0.6 * s(t * 0.7) }
-    case 'note': return { ...base, gx: -1.0, dx: -1.2 + 0.1 * s(t * 5), tx: 0.5, bx: 0.1 }
-    case 'presente': return { ...base, dx: -2.5 + 0.18 * s(t * 1.6), dz: -0.15, gz: 0.15, by: 0.25 * s(t * 0.5) }
-    case 'accueil': return { ...base, gx: -1.2 + 0.06 * s(t * 8), dx: -1.2 + 0.06 * s(t * 8 + 2), ty: 0.5 * s(t * 0.6) }
-    case 'comptoir': return { ...base, dx: -1.75 + 0.1 * s(t * 0.8), ty: 0.3 * s(t * 0.4) }
-    case 'imprimante': return { ...base, gx: -1.3, dx: -1.3, tx: 0.12 }
-    case 'arpente': return { ...base, dx: -2.25, dz: -0.1, tz: 0.25 }
-    case 'marche': return { ...base }
-    default: return { ...base, gx: -1.1 + 0.04 * s(t * 2), dx: -1.1, tx: 0.25 } // attente : consulte son téléphone
+    case 'taper': return { ...base, ...clavier, ge: -0.85 + 0.06 * s(t * 9), de: -0.85 + 0.06 * s(t * 9 + 2), tx: 0.12 }
+    case 'souris': return { ...base, ...clavier, ge: -0.85 + 0.03 * s(t * 8), dx: -0.6, de: -0.8 + 0.05 * s(t * 2.5), tx: 0.1 }
+    case 'croise': return { ...base, gx: -0.3, gz: 0.3, ge: -1.9, dx: -0.3, dz: -0.3, de: -1.9, bx: -0.15, ty: 0.3 * s(t * 0.4) }
+    case 'penser': return { ...base, gx: -0.55, ge: -0.85, dx: -0.9, dz: -0.2, de: -1.9, tx: 0.2, tz: 0.08, bx: 0.08 }
+    case 'telephone': return { ...base, gx: -0.55, ge: -0.85, dx: -0.9, dz: -0.5, de: -2.1, tz: 0.25, ty: 0.15 }
+    case 'lire': return { ...base, ...clavier, tx: 0.5, bx: 0.14 }
+    case 'etire': return { ...base, gx: -0.2, gz: -2.4 + 0.1 * s(t * 2), ge: -0.3, dx: -0.2, dz: 2.4 - 0.1 * s(t * 2 + 1), de: -0.3, tx: -0.2, bx: -0.12 }
+    case 'boire': return { ...base, gx: -0.55, ge: -0.85, dx: -0.9, de: -1.9 + 0.12 * s(t * 0.9), tx: -0.1, ty: 0.3 * s(t * 0.5) }
+    case 'discute': return { ...base, gx: -0.5 + 0.25 * s(t * 3), ge: -0.9 + 0.2 * s(t * 3 + 1), dx: -0.5 + 0.25 * s(t * 3 + 1.5), de: -0.9 + 0.2 * s(t * 3 + 2.5), ty: 0.6 * s(t * 0.8), by: 0.15 * s(t * 0.8) }
+    case 'reunion': return { ...base, ...clavier, ty: 0.6 * s(t * 0.7) }
+    case 'note': return { ...base, gx: -0.55, ge: -0.85, dx: -0.6, de: -0.8 + 0.08 * s(t * 5), tx: 0.5, bx: 0.1 }
+    // présentation : mains ouvertes à hauteur de poitrine, jamais de bras levé
+    case 'presente': return { ...base, gx: -0.35, ge: -0.7, dx: -0.6, dz: 0.5, de: -0.9 + 0.3 * s(t * 1.6), by: 0.25 * s(t * 0.5) }
+    case 'accueil': return { ...base, gx: -0.5, ge: -0.9 + 0.06 * s(t * 8), dx: -0.5, de: -0.9 + 0.06 * s(t * 8 + 2), ty: 0.5 * s(t * 0.6) }
+    case 'comptoir': return { ...base, dx: -0.9, de: -1.9 + 0.1 * s(t * 0.8), ty: 0.3 * s(t * 0.4) }
+    case 'imprimante': return { ...base, gx: -0.7, ge: -0.5, dx: -0.7, de: -0.5, tx: 0.12 }
+    case 'arpente': return { ...base, dx: -0.9, dz: -0.5, de: -2.1, tz: 0.25 }
+    case 'marche': return { ...base, ge: -0.3, de: -0.3 }
+    default: return { ...base, gx: -0.7, ge: -1.0 + 0.04 * s(t * 2), dx: -0.7, de: -1.0, tx: 0.25 } // attente : consulte son téléphone
   }
 }
