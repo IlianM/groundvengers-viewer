@@ -1,3 +1,4 @@
+import { FichePersonne } from './FichePersonne'
 import { effectifSimule, identifiableA, formatHeure } from '../simulation'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { donnees, erreurs } from '../data'
@@ -188,6 +189,7 @@ export function FicheDetail() {
       </aside>
     )
   }
+  if (selection.startsWith('pers:')) return <FichePersonne cle={selection.slice(5)} />
   const zone = donnees.zoneParId.get(selection)
   if (zone) {
     const dans = donnees.equipements.filter((e) => e.zone === zone.id)

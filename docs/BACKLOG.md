@@ -38,3 +38,5 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-32 | Glisser-déposer un modèle | Could | ✅ |
 | F-33 | Personnages animés (travail, réunion, café, accueil, déplacements) | Could | ✅ liés à la simulation d'une journée |
 | F-34 | Ascenseurs (cages vitrées, cabines animées) | Could | ✅ données dans `batiment.json` › `ascenseurs` |
+| F-35 | Open space en îlots, écrans variés, cafétéria en quinconce | Could | ✅ |
+| F-36 | Fiche personne (agenda, préférences, confort, ce que le bâtiment sait) | Could | ✅ |

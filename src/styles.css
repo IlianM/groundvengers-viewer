@@ -186,3 +186,36 @@ dd { margin: 0; display: flex; align-items: center; }
 .sim-stats { justify-content: space-between; font-size: calc(12.5px * var(--echelle, 1)); margin-top: 4px; flex-wrap: wrap; }
 .sim-stats .alerte { color: #e03131; }
 .sim-mention { font-size: calc(11px * var(--echelle, 1)); color: var(--discret); margin-top: 2px; }
+
+.fiche-personne h3 { margin: 14px 0 4px; }
+.fiche-personne .ko, .jauge ~ .discret .ko { color: #e03131; }
+.fiche-personne dd.ko { color: #e03131; font-weight: 600; }
+.verrou { border: 1px dashed var(--bord); border-radius: 8px; padding: 8px 10px; background: var(--chip); font-size: calc(12.5px * var(--echelle, 1)); }
+.verrou p { margin: 4px 0 6px; color: var(--discret); }
+.timeline { position: relative; height: 18px; background: var(--chip); border: 1px solid var(--bord); border-radius: 4px; overflow: hidden; margin-top: 4px; }
+.timeline .seg { position: absolute; top: 0; bottom: 0; opacity: .85; border-right: 1px solid var(--panneau); }
+.timeline .maintenant { position: absolute; top: -2px; bottom: -2px; width: 2px; background: #e03131; }
+.timeline-echelle { display: flex; justify-content: space-between; font-size: calc(10.5px * var(--echelle, 1)); color: var(--discret); }
+.planning { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 2px; font-size: calc(12px * var(--echelle, 1)); }
+.planning li { display: grid; grid-template-columns: 10px 86px auto; gap: 6px; align-items: baseline; padding: 1px 4px; border-radius: 4px; }
+.planning li i { width: 8px; height: 8px; border-radius: 50%; align-self: center; }
+.planning li small { grid-column: 3; color: var(--discret); }
+.planning li.courant { background: var(--chip); outline: 1px solid var(--accent-2); }
+.confort-ligne { display: flex; justify-content: space-between; margin-top: 6px; }
+.confort-ligne .ok { color: #2f9e44; }
+.confort-ligne .ko { color: #e03131; }
+.jauge { position: relative; height: 26px; margin: 4px 0 2px; }
+.jauge::before { content: ''; position: absolute; left: 0; right: 0; top: 7px; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #74c0fc, #ffe066, #ff8787); opacity: .7; }
+.jauge-zone { position: absolute; top: 4px; height: 12px; border: 1.5px solid var(--texte); border-radius: 4px; opacity: .45; }
+.jauge-pref, .jauge-actuel { position: absolute; width: 0; height: 0; transform: translateX(-50%); }
+.jauge-pref { top: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 8px solid var(--accent-2); }
+.jauge-actuel { top: 11px; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 8px solid var(--texte); }
+.jauge-echelle { position: absolute; left: 0; right: 0; bottom: -10px; display: flex; justify-content: space-between; font-size: calc(10px * var(--echelle, 1)); color: var(--discret); }
+.comparatif { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 6px 0; }
+.comparatif > div { border: 1px solid var(--bord); border-radius: 8px; padding: 6px 8px; background: var(--chip); }
+.comparatif b { display: block; font-size: calc(22px * var(--echelle, 1)); }
+.comparatif span { font-size: calc(11px * var(--echelle, 1)); color: var(--discret); }
+.comparatif > div:nth-child(1) b { color: #e8590c; }
+.comparatif > div:nth-child(2) b { color: #2f9e44; }
+.mention-fiche { margin-top: 10px; font-size: calc(11px * var(--echelle, 1)); color: var(--discret); }
+.jauge { margin-bottom: 16px; }

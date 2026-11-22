@@ -43,3 +43,17 @@ export const formatHeure = (h: number) => {
   const m = Math.round(h * 60) % (24 * 60)
   return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
 }
+
+/** Température simulée d'une zone (°C) : l'extérieur se réchauffe dans la journée, les occupants ajoutent un peu de chaleur. */
+export function temperatureZone(z: Zone, h: number, n: number): number {
+  const soleil = Math.max(0, Math.sin((Math.PI * (h - 6)) / 14))
+  const etage = z.niveau === 'R2' ? 0.6 : z.niveau === 'R0' ? -0.3 : 0
+  const technique = z.type === 'technique' ? 3 : 0
+  return 18.6 + 3.4 * soleil + 0.07 * n + etage + technique
+}
+
+/** Éclairement simulé (lux) : lumière du jour + éclairage d'appoint tant que la zone est occupée. */
+export function luminositeZone(h: number, n: number): number {
+  const jour = Math.max(0, Math.sin((Math.PI * (h - 6.5)) / 12)) * 350
+  return Math.round(n > 0 ? Math.max(450, jour + 250) : jour * 0.3)
+}

@@ -21,7 +21,7 @@ function versHash(): string {
   if (s.risqueActif) p.set('rsk', s.risqueActif)
   if (s.scenarioActif) { p.set('scn', s.scenarioActif.id); if (s.scenarioActif.etape > 0) p.set('etp', String(s.scenarioActif.etape + 1)) }
   if (s.simulation.actif) { p.set('sim', '1'); p.set('h', String(Math.round(s.simulation.heure * 4) / 4)) }
-  if (s.selection) p.set('sel', s.selection)
+  if (s.selection && !s.selection.startsWith('pers:')) p.set('sel', s.selection)
   return p.toString()
 }
 
