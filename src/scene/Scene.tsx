@@ -1,3 +1,4 @@
+import { effectifSimule, identifiableA } from '../simulation'
 import { Suspense, useEffect, useMemo, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Html, Line, Edges, useGLTF } from '@react-three/drei'
@@ -289,6 +290,7 @@ function couleurZone(z: Zone, vue: string, seuil: number, mv: boolean, p: Palett
 }
 
 function Zones() {
+  const sim = useEtat((st) => st.simulation)
   const { vue, niveau, coupe, calquesMasques, seuilAnonymat, minimumVital, setSelection, ecart, pieces, reglages } = useEtat()
   const p = usePalette()
   if (calquesMasques.has('zones')) return null
@@ -300,7 +302,14 @@ function Zones() {
         .map((z) => {
           const n = donnees.batiment.niveaux.find((x) => x.id === z.niveau)!
           const [x, zz, w, d] = z.rect
-          const { couleur, opacite } = couleurZone(z, vue, seuilAnonymat, minimumVital, p)
+          let { couleur, opacite } = couleurZone(z, vue, seuilAnonymat, minimumVital, p)
+          const nSim = sim.actif ? effectifSimule(z, sim.heure) : null
+          const identifiable = nSim !== null && identifiableA(z, nSim, seuilAnonymat, minimumVital)
+          if (nSim !== null) {
+            const t = z.effectif_max ? nSim / z.effectif_max : 0
+            couleur = identifiable ? '#e03131' : nSim === 0 ? p.zones.technique : t > 0.66 ? '#1864ab' : t > 0.33 ? '#4dabf7' : '#a5d8ff'
+            opacite = identifiable ? 0.6 : nSim === 0 ? 0.12 : 0.35 + 0.4 * t
+          }
           const [dx, dz] = decalageZone(z, pieces)
           const cx = x + w / 2 - W / 2 + dx
           const cz = zz + d / 2 - D / 2 + dz
@@ -315,8 +324,10 @@ function Zones() {
                 <Html position={[0, 0.3, 0]} center style={{ pointerEvents: 'none' }}>
                   <span className="etiquette-zone">
                     {z.nom}
+                    {nSim !== null && z.effectif_max > 0 && <em> · {nSim} pers.</em>}
+                    {identifiable && <em className="alerte"> · identifiable</em>}
                     {vue === 'occupant' && z.type === 'bureau' && !z.detection_presence && <em> · sans détection</em>}
-                    {zoneNonAnonyme(z, seuilAnonymat, minimumVital) && (vue === 'ia' || vue === 'occupant') && <em className="alerte"> · non anonyme</em>}
+                    {!identifiable && zoneNonAnonyme(z, seuilAnonymat, minimumVital) && (vue === 'ia' || vue === 'occupant') && <em className="alerte"> · non anonyme</em>}
                   </span>
                 </Html>
               )}

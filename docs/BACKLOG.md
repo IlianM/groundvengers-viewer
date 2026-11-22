@@ -29,7 +29,7 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-23 | Bascule Edge / central | Must | ✅ |
 | F-24 | Cycle de vie de la donnée | Should | ✅ partiel (frise dans la fiche) |
 | F-25 | Alerte zones < N personnes | Must | ✅ |
-| F-26 | Simulation d'une journée | Could | ⬜ |
+| F-26 | Simulation d'une journée | Could | ✅ |
 | F-27 | Tout collecter / Minimum vital + indicateurs | Must | ✅ |
 | F-28 | Vue Occupant | Should | ✅ |
 | F-29 | Badges de preuve | Must | ✅ |

@@ -20,6 +20,7 @@ function versHash(): string {
   if (s.eclatePieces) p.set('pcs', '1')
   if (s.risqueActif) p.set('rsk', s.risqueActif)
   if (s.scenarioActif) { p.set('scn', s.scenarioActif.id); if (s.scenarioActif.etape > 0) p.set('etp', String(s.scenarioActif.etape + 1)) }
+  if (s.simulation.actif) { p.set('sim', '1'); p.set('h', String(Math.round(s.simulation.heure * 4) / 4)) }
   if (s.selection) p.set('sel', s.selection)
   return p.toString()
 }
@@ -47,6 +48,8 @@ export function appliquerHash(hash: string) {
     const etp = Math.min(Math.max(Number(p.get('etp') ?? 1), 1), sc.etapes.length) - 1
     useEtat.setState({ scenarioActif: { id: sc.id, etape: Number.isFinite(etp) ? etp : 0, lecture: false } })
   }
+  const h = Number(p.get('h') ?? 8.5)
+  s.setSimulation({ actif: p.get('sim') === '1', heure: Number.isFinite(h) ? Math.min(Math.max(h, 0), 24) % 24 : 8.5, lecture: false })
   const sel = p.get('sel')
   if (sel && (donnees.parId.has(sel) || donnees.zoneParId.has(sel) || donnees.gaineParId.has(sel))) reveler({ id: sel })
   else useEtat.getState().setSelection(null)

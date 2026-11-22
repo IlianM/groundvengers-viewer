@@ -1,3 +1,4 @@
+import { effectifSimule, identifiableA, formatHeure } from '../simulation'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { donnees, erreurs } from '../data'
 import { useEtat, CAMERA_DEFAUT, type Deco } from '../store'
@@ -42,6 +43,8 @@ export function OutilsCamera() {
     ['Dessus', [0.01, 46, 0.01], [0, 0, 0]],
     ['Façade', [0, 8, 40], [0, 5, 0]],
   ]
+  const sim = useEtat((st) => st.simulation.actif)
+  const setSim = useEtat((st) => st.setSimulation)
   const [etat, setEtat] = useState<'' | 'ok' | 'ko'>('')
   const copier = async () => {
     setEtat((await copierLien()) ? 'ok' : 'ko')
@@ -50,6 +53,7 @@ export function OutilsCamera() {
   return (
     <div className="outils-camera">
       {vues.map(([nom, pos, cible]) => <button key={nom} onClick={() => allerA(pos, cible)}>{nom}</button>)}
+      <button className={sim ? 'actif' : ''} onClick={() => setSim({ actif: !sim, lecture: false })} title="Simule les présences au fil d’une journée (données fictives)">Journée</button>
       <button onClick={copier} title="Copie un lien qui rouvre cette vue, ce niveau et cette sélection">
         {etat === 'ok' ? 'Lien copié ✓' : etat === 'ko' ? 'Copie impossible' : 'Copier le lien'}
       </button>
@@ -535,5 +539,45 @@ function PanneauScenarios() {
         </div>
       )}
     </>
+  )
+}
+
+/** F-26 — barre de simulation d'une journée : curseur horaire, lecture, effectifs et zones identifiables. */
+export function BarreSimulation() {
+  const { simulation: sim, setSimulation, seuilAnonymat, minimumVital, niveau } = useEtat()
+  const vitesse = useEtat((s) => s.reglages.vitesseJournee)
+  useEffect(() => {
+    if (!sim.actif || !sim.lecture) return
+    let id = 0, t0 = performance.now()
+    const tick = (t: number) => {
+      const dt = (t - t0) / 1000; t0 = t
+      setSimulation({ heure: (useEtat.getState().simulation.heure + dt * vitesse) % 24 })
+      id = requestAnimationFrame(tick)
+    }
+    id = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(id)
+  }, [sim.actif, sim.lecture, vitesse, setSimulation])
+  if (!sim.actif) return null
+  const zones = donnees.batiment.zones.filter((z) => !niveau || z.niveau === niveau)
+  const eff = zones.map((z) => [z, effectifSimule(z, sim.heure)] as const)
+  const total = eff.reduce((a, [, n]) => a + n, 0)
+  const ident = eff.filter(([z, n]) => identifiableA(z, n, seuilAnonymat, minimumVital))
+  return (
+    <div className="barre-simulation" role="group" aria-label="Simulation d’une journée">
+      <div className="sim-ligne">
+        <button className="sim-lecture" onClick={() => setSimulation({ lecture: !sim.lecture })} aria-label={sim.lecture ? 'Pause' : 'Lecture'}>{sim.lecture ? '❚❚' : '▶'}</button>
+        <b className="sim-heure">{formatHeure(sim.heure)}</b>
+        <input type="range" min={0} max={23.75} step={0.25} value={sim.heure} aria-label="Heure de la journée"
+          onChange={(e) => setSimulation({ heure: Number(e.target.value), lecture: false })} />
+        <button className="sim-fermer" onClick={() => setSimulation({ actif: false, lecture: false })} aria-label="Fermer la simulation">×</button>
+      </div>
+      <div className="sim-ligne sim-stats">
+        <span><b>{total}</b> personnes{niveau ? ` en ${niveau}` : ''}</span>
+        <span className={ident.length ? 'alerte' : ''} title={ident.map(([z, n]) => `${z.nom} (${n})`).join(', ')}>
+          <b>{ident.length}</b> zone{ident.length > 1 ? 's' : ''} identifiable{ident.length > 1 ? 's' : ''} (&lt; {seuilAnonymat} pers. avec détection)
+        </span>
+      </div>
+      <div className="sim-mention">Journée type simulée, présences fictives.</div>
+    </div>
   )
 }

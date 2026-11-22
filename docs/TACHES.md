@@ -33,3 +33,7 @@ Liste simple, à cocher à la main. Une tâche = une branche ou un commit. Les i
 ## Règles
 - Cocher ici dans le même commit que le code.
 - Ne pas modifier `data/*.json` d'une autre équipe sans l'accord de son auteur.
+
+## F-26 — Simulation d'une journée (fait)
+Bouton **Journée** (haut de la vue 3D) : curseur horaire 00:00–24:00, lecture automatique (vitesse réglable dans Options › Démarrage), zones colorées et étiquetées par effectif simulé. Une zone **identifiable** (rouge) = au moins une personne présente, détection de présence active, moins de N personnes (seuil d'anonymat et Minimum vital respectés). Lien partageable : `#sim=1&h=9.5`.
+Limite : profils fictifs et déterministes (`src/simulation.ts`), à remplacer par des mesures réelles. Ils illustrent la règle d'anonymat, ils ne prouvent rien.

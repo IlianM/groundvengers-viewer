@@ -1,7 +1,7 @@
 import { useEtat } from './store'
 import { Scene3D } from './scene/Scene'
 import { Recherche } from './ui/Recherche'
-import { BarreHaut, PanneauGauche, FicheDetail, BandeauBas, Presentation, BandeauErreurs, OutilsCamera, ZoneDepot } from './ui/Panneaux'
+import { BarreHaut, PanneauGauche, FicheDetail, BandeauBas, Presentation, BandeauErreurs, OutilsCamera, ZoneDepot, BarreSimulation } from './ui/Panneaux'
 
 export default function App() {
   const r = useEtat((s) => s.reglages)
@@ -14,6 +14,7 @@ export default function App() {
           <Scene3D />
           {r.recherche && <Recherche />}
           {r.boutonsCamera && <OutilsCamera />}
+          <BarreSimulation />
           <Presentation />
           <BandeauErreurs />
           {r.mentionFictif && <div className="mention-fictif">Entreprise, personnes et données fictives · maquette temporaire</div>}

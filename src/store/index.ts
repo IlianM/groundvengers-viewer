@@ -20,6 +20,7 @@ type Etat = {
   survol: string | null
   risqueActif: string | null // vue Risques : risque isolé dans la matrice
   scenarioActif: { id: string; etape: number; lecture: boolean } | null // scénario d'intrusion (vue Cyber)
+  simulation: { actif: boolean; heure: number; lecture: boolean } // F-26 : simulation d'une journée
   calquesMasques: Set<string>
   minimumVital: boolean
   architectureIA: 'edge' | 'central'
@@ -41,6 +42,7 @@ type Etat = {
   setSelection: (id: string | null) => void
   setSurvol: (id: string | null) => void
   setRisqueActif: (id: string | null) => void
+  setSimulation: (p: Partial<{ actif: boolean; heure: number; lecture: boolean }>) => void
   lancerScenario: (id: string | null) => void
   setEtapeScenario: (n: number) => void
   setLecture: (b: boolean) => void
@@ -88,6 +90,7 @@ export const useEtat = create<Etat>((set, get) => ({
   selection: null,
   survol: null,
   risqueActif: null,
+  simulation: { actif: false, heure: 8.5, lecture: false },
   scenarioActif: null,
   calquesMasques: new Set(),
   minimumVital: sauvegarde.reglages.demarrageMinimumVital,
@@ -109,6 +112,7 @@ export const useEtat = create<Etat>((set, get) => ({
   setCoupe: (coupe) => set({ coupe }),
   setSelection: (selection) => set({ selection }),
   setSurvol: (survol) => set({ survol }),
+  setSimulation: (p) => set((s) => ({ simulation: { ...s.simulation, ...p } })),
   setRisqueActif: (risqueActif) => set({ risqueActif, selection: null }),
   lancerScenario: (id) => {
     set({ scenarioActif: id ? { id, etape: 0, lecture: true } : null, selection: null })
