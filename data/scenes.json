@@ -1,0 +1,11 @@
+{
+  "scenes": [
+    { "titre": "1. Le problème", "texte": "Le modèle dominant collecte tout : caméras, badges nominatifs, capteurs par poste, flux continu vers le cloud.", "vue": "donnees", "niveau": null, "minimum_vital": false },
+    { "titre": "2. Le bâtiment", "texte": "Un siège de 3 niveaux, découpé en zones. Les bureaux individuels sont distingués des espaces collectifs.", "vue": "architecture", "niveau": null, "minimum_vital": true },
+    { "titre": "3. Le pilotage", "texte": "La GTB existe déjà : capteurs, automates par étage, bus LonWorks, M-Bus, Modbus, DALI.", "vue": "domotique", "niveau": "R1", "minimum_vital": true },
+    { "titre": "4. L'intelligence locale", "texte": "Le calcul se fait dans le bâtiment. Comparez un modèle par étage (Edge) et un serveur unique cloisonné.", "vue": "ia", "niveau": null, "minimum_vital": true, "architecture_ia": "edge" },
+    { "titre": "5. La sécurité", "texte": "Réseau GTB isolé derrière le firewall. Le flux Wi-Fi vers la GTB est bloqué.", "vue": "cyber", "niveau": null, "minimum_vital": true },
+    { "titre": "6. Le minimum vital", "texte": "Seules restent les données utiles au pilotage et à OPERAT. Comparez les indicateurs avec la scène 1.", "vue": "donnees", "niveau": null, "minimum_vital": true },
+    { "titre": "7. Ce que voit l'occupant", "texte": "Chaque capteur dit ce qu'il mesure et ce qu'il garde. Pas de détection dans les bureaux individuels.", "vue": "occupant", "niveau": "R1", "minimum_vital": true }
+  ]
+}

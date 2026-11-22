@@ -1,0 +1,30 @@
+{
+  "nom": "Siège GroundVengers (maquette temporaire MVP)",
+  "emprise": [30, 18],
+  "modele": null,
+  "niveaux": [
+    { "id": "R0", "nom": "Rez-de-chaussée", "altitude": 0, "hauteur": 3.5 },
+    { "id": "R1", "nom": "Niveau 1", "altitude": 3.5, "hauteur": 3.5 },
+    { "id": "R2", "nom": "Niveau 2", "altitude": 7, "hauteur": 3.5 }
+  ],
+  "zones": [
+    { "id": "ZONE-R0-HALL", "niveau": "R0", "nom": "Hall d'accueil", "type": "hall", "effectif_max": 4, "detection_presence": false, "rect": [0, 0, 12, 18] },
+    { "id": "ZONE-R0-TECH", "niveau": "R0", "nom": "Local technique", "type": "technique", "effectif_max": 0, "detection_presence": false, "rect": [12, 0, 6, 8] },
+    { "id": "ZONE-R0-REU", "niveau": "R0", "nom": "Salle de réunion R0", "type": "reunion", "effectif_max": 10, "detection_presence": true, "rect": [18, 0, 12, 8] },
+    { "id": "ZONE-R0-CAFE", "niveau": "R0", "nom": "Cafétéria", "type": "open_space", "effectif_max": 15, "detection_presence": true, "rect": [12, 8, 18, 10] },
+
+    { "id": "ZONE-R1-OPEN-A", "niveau": "R1", "nom": "Open space A", "type": "open_space", "effectif_max": 20, "detection_presence": true, "rect": [0, 0, 15, 12], "preuves": ["PRV-DPO-01"] },
+    { "id": "ZONE-R1-OPEN-B", "niveau": "R1", "nom": "Open space B", "type": "open_space", "effectif_max": 16, "detection_presence": true, "rect": [15, 0, 15, 12] },
+    { "id": "ZONE-R1-BUR-01", "niveau": "R1", "nom": "Bureau individuel 1", "type": "bureau", "effectif_max": 1, "detection_presence": false, "rect": [0, 12, 5, 6], "preuves": ["PRV-DPO-01", "PRV-VERBATIM-SOPHIE"] },
+    { "id": "ZONE-R1-BUR-02", "niveau": "R1", "nom": "Bureau individuel 2", "type": "bureau", "effectif_max": 1, "detection_presence": false, "rect": [5, 12, 5, 6] },
+    { "id": "ZONE-R1-REU", "niveau": "R1", "nom": "Salle de réunion R1", "type": "reunion", "effectif_max": 8, "detection_presence": true, "rect": [10, 12, 10, 6] },
+    { "id": "ZONE-R1-TECH", "niveau": "R1", "nom": "Local technique R1", "type": "technique", "effectif_max": 0, "detection_presence": false, "rect": [20, 12, 10, 6] },
+
+    { "id": "ZONE-R2-OPEN-C", "niveau": "R2", "nom": "Open space C", "type": "open_space", "effectif_max": 24, "detection_presence": true, "rect": [0, 0, 18, 12] },
+    { "id": "ZONE-R2-DIR", "niveau": "R2", "nom": "Bureau de direction", "type": "bureau", "effectif_max": 1, "detection_presence": false, "rect": [18, 0, 6, 6] },
+    { "id": "ZONE-R2-RH", "niveau": "R2", "nom": "Bureau RH (2 personnes)", "type": "bureau", "effectif_max": 2, "detection_presence": true, "rect": [24, 0, 6, 6], "preuves": ["PRV-DPO-01"] },
+    { "id": "ZONE-R2-REU", "niveau": "R2", "nom": "Salle de réunion R2", "type": "reunion", "effectif_max": 12, "detection_presence": true, "rect": [18, 6, 12, 6] },
+    { "id": "ZONE-R2-SRV", "niveau": "R2", "nom": "Local serveur", "type": "technique", "effectif_max": 0, "detection_presence": false, "rect": [0, 12, 10, 6] },
+    { "id": "ZONE-R2-CIRC", "niveau": "R2", "nom": "Circulation", "type": "circulation", "effectif_max": 0, "detection_presence": false, "rect": [10, 12, 20, 6] }
+  ]
+}

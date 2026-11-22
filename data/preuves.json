@@ -1,0 +1,25 @@
+{
+  "preuves": [
+    { "id": "PRV-DECRET-TERTIAIRE", "statut": "sourcee", "titre": "Décret tertiaire : –40 % d'énergie finale d'ici 2030, déclaration OPERAT", "document": "Service-public.fr", "lien": "https://entreprendre.service-public.gouv.fr/vosdroits/F38065?profil=tout" },
+    { "id": "PRV-BACS", "statut": "sourcee", "titre": "Décret BACS : GTB obligatoire au-delà de 70 kW, échéance décalée à 2030", "document": "Banque des Territoires", "lien": "https://www.banquedesterritoires.fr/batiments-tertiaires-le-calendrier-de-mise-en-oeuvre-des-systemes-dautomatisation-et-de-controle" },
+    { "id": "PRV-CNIL", "statut": "sourcee", "titre": "CNIL : surveillance permanente des salariés en général excessive, consultation du CSE", "document": "CNIL", "lien": "https://cnil.fr/fr/controle-de-lactivite-des-personnes-employees" },
+    { "id": "PRV-CNIL-SANCTION", "statut": "sourcee", "titre": "Sanction CNIL de 40 000 € pour surveillance excessive (déc. 2024)", "document": "CNIL", "lien": "https://www.cnil.fr/fr/surveillance-excessive-des-salaries-sanction-de-40-000-euros-entreprise-secteur-immobilier" },
+    { "id": "PRV-ADEME", "statut": "sourcee", "titre": "Numérique : 4,4 % de l'empreinte carbone française, centres de données 46 %", "document": "Vie-publique.fr (ADEME, Arcep)", "lien": "https://www.vie-publique.fr/en-bref/298347-numerique-des-emissions-de-gaz-effet-de-serre-en-hausse" },
+    { "id": "PRV-DIVD-BACNET", "statut": "sourcee", "titre": "29 736 systèmes BACnet exposés sur Internet, dont 12 572 vulnérables", "document": "DIVD", "lien": "https://divd.nl/newsroom/articles/case-with-new-properties" },
+    { "id": "PRV-ARXIV-PROTOCOLES", "statut": "sourcee", "titre": "Failles de BACnet, KNX, LonWorks et Modbus", "document": "arXiv 2210.11726", "lien": "https://arxiv.org/pdf/2210.11726" },
+    { "id": "PRV-SYNOPTIQUE", "statut": "observee", "titre": "Synoptique GTB du binôme Domotique (17/11/2026)", "document": "Dossier de preuves, section Observations", "lien": null },
+    { "id": "PRV-DPO-01", "statut": "simulee", "titre": "Échange simulé avec la DPO : zones de plusieurs personnes, agrégats effacés", "document": "Kit d'enquête, échange RSSI et DPO", "lien": null },
+    { "id": "PRV-RSSI-01", "statut": "simulee", "titre": "Échange simulé avec le RSSI : réseau GTB isolé, inventaire, authentification forte", "document": "Kit d'enquête, échange RSSI et DPO", "lien": null },
+    { "id": "PRV-Q-OCCUPANTS", "statut": "simulee", "titre": "Questionnaire occupants simulé : CO2 accepté à 90 %, caméra à 8 %", "document": "Dossier de preuves, Questionnaires", "lien": null },
+    { "id": "PRV-Q-EXPLOITANTS", "statut": "simulee", "titre": "Questionnaire exploitants simulé : occupation par poste consultée 0 fois sur 4", "document": "Dossier de preuves, Questionnaires", "lien": null },
+    { "id": "PRV-VERBATIM-MARC", "statut": "simulee", "titre": "Marc, Facility Manager : garder alarmes et tendances techniques", "document": "Dossier de preuves, Entretiens", "lien": null },
+    { "id": "PRV-VERBATIM-SOPHIE", "statut": "simulee", "titre": "Sophie : « Un capteur dans mon bureau, c'est un capteur sur moi »", "document": "Dossier de preuves, Entretiens", "lien": null }
+  ],
+  "risques": [
+    { "id": "RSK-INTRUSION", "nom": "Intrusion réseau", "impact": "Critique", "probabilite": "Élevée", "preventif": "Sauvegarde des logs et redondance, réseau GTB isolé", "correctif": "Retracer une attaque avec peu de logs" },
+    { "id": "RSK-CAPTEUR", "nom": "Capteurs en panne", "impact": "Moyen", "probabilite": "Élevée", "preventif": "Alarme de défaillance, maintenance régulière", "correctif": "Régulation de secours (consigne fixe), remplacement rapide" },
+    { "id": "RSK-IA", "nom": "IA qui dysfonctionne", "impact": "Critique", "probabilite": "Faible", "preventif": "Tests sur données simulées, seuils de sécurité codés en dur", "correctif": "Bascule en pilotage classique par horaires, puis réentraînement" },
+    { "id": "RSK-OBSOLESCENCE", "nom": "Équipement sans mises à jour", "impact": "Moyen", "probabilite": "Élevée", "preventif": "Inventaire des équipements et de leurs versions", "correctif": "Remplacer ou isoler l'équipement" },
+    { "id": "RSK-IDENTIFICATION", "nom": "Donnée qui identifie une personne", "impact": "Critique", "probabilite": "Moyenne", "preventif": "Zones de plusieurs personnes, pas de détection dans les petits bureaux", "correctif": "Retirer le capteur, purger les données, informer le CSE" }
+  ]
+}
