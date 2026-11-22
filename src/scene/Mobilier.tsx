@@ -1,7 +1,7 @@
 // Meubles générés à partir des zones de batiment.json (effectif, type, aménagement).
 // Rien à dessiner à la main : changer l'effectif d'une zone change ses bureaux.
 import { useMemo } from 'react'
-import { donnees } from '../data'
+import { donnees, decalageNiveau } from '../data'
 import { useEtat } from '../store'
 import { usePalette, type Palette } from './palette'
 import { Boites, type Boite } from './Boites'
@@ -149,12 +149,14 @@ export function genererMobilier(c: Couleurs): BoiteNiveau[] {
 
 export function Mobilier() {
   const meubles = useEtat((s) => s.deco.meubles)
-  const { niveau, coupe, vue } = useEtat()
+  const { niveau, coupe, vue, ecart } = useEtat()
   const p = usePalette()
   const tous = useMemo(() => genererMobilier(p.meuble), [p.meuble])
   const items = useMemo(
-    () => tous.filter((m) => (!niveau || m.niveau === niveau) && niveauVisible(m.niveau, niveau, coupe)),
-    [tous, niveau, coupe],
+    () => tous
+      .filter((m) => (!niveau || m.niveau === niveau) && niveauVisible(m.niveau, niveau, coupe))
+      .map((m) => (ecart ? { ...m, p: [m.p[0], m.p[1] + decalageNiveau(m.niveau, ecart), m.p[2]] as [number, number, number] } : m)),
+    [tous, niveau, coupe, ecart],
   )
   if (!meubles) return null
   // hors vue Architecture, les meubles s'effacent pour laisser lire les équipements

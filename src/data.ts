@@ -81,9 +81,20 @@ export function chargerDonnees(): { donnees: Donnees; erreurs: string[] } {
 
 export const { donnees, erreurs } = chargerDonnees()
 
+/** Décalage vertical d'un niveau en vue éclatée : chaque niveau monte de (rang × écart). */
+export function decalageNiveau(id: string, ecart: number): number {
+  if (!ecart) return 0
+  const tries = [...donnees.batiment.niveaux].sort((a, b) => a.altitude - b.altitude)
+  return Math.max(0, tries.findIndex((n) => n.id === id)) * ecart
+}
+
+/** Altitude monde du bas de la dalle d'un niveau, vue éclatée comprise. */
+export function altitudeNiveau(id: string, ecart = 0): number {
+  return (donnees.batiment.niveaux.find((n) => n.id === id)?.altitude ?? 0) + decalageNiveau(id, ecart)
+}
+
 /** Position monde (Three.js) d'un équipement : bâtiment centré sur l'origine. */
-export function positionMonde(e: Equipement): [number, number, number] {
-  const n = donnees.batiment.niveaux.find((x) => x.id === e.niveau)
+export function positionMonde(e: Equipement, ecart = 0): [number, number, number] {
   const [w, d] = donnees.batiment.emprise
-  return [e.position[0] - w / 2, (n?.altitude ?? 0) + e.position[1], e.position[2] - d / 2]
+  return [e.position[0] - w / 2, altitudeNiveau(e.niveau, ecart) + e.position[1], e.position[2] - d / 2]
 }

@@ -8,7 +8,7 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-02 | Import IFC | Should | ⬜ |
 | F-03 | Navigation 3D | Must | ✅ |
 | F-04 | Sélecteur d'étage | Must | ✅ |
-| F-05 | Vue éclatée | Could | ⬜ |
+| F-05 | Vue éclatée | Could | ✅ |
 | F-06 | Zones nommées avec effectif | Must | ✅ |
 | F-07 | Sélecteur de vue et calques | Must | ✅ |
 | F-08 | Info-bulle au survol | Must | ✅ |

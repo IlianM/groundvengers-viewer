@@ -49,6 +49,10 @@ docs/            contribuer, schéma, export 3D, glossaire, backlog
 
 Menu **Options** : mode sombre, et décor activable séparément (herbe/route, arbres, bâtiments au loin, meubles). Les choix sont gardés dans le navigateur. Le décor est grossier et n'influe pas sur les indicateurs. Le panneau de gauche propose aussi la **coupe** (masquer les niveaux au-dessus du niveau choisi) ; en vue Cyber, le calque **Volumes réseau** montre les réseaux GTB isolé et bureautique par niveau.
 
+## Caméra
+
+Souris : clic gauche tourner, clic droit déplacer, molette zoom. Clavier : **flèches** pour se déplacer, **Maj + flèches** pour tourner et incliner, **+ / −** pour zoomer. Boutons Recentrer, Dessus, Façade. La case **Vue éclatée** (panneau de gauche) écarte les niveaux les uns des autres.
+
 ## Recherche et lien partageable
 
 La barre de recherche (en haut à gauche de la vue 3D, touche `/`) trouve un équipement, une zone ou un modèle IA par nom, identifiant, type, protocole ou configuration. Un clic règle la vue, le niveau et les calques pour le montrer, puis place la caméra dessus. Le bouton **Copier le lien** copie une URL qui rouvre la même vue, le même niveau et la même sélection (le thème et le décor restent personnels).

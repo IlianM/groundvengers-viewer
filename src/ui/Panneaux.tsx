@@ -99,7 +99,7 @@ export function OutilsCamera() {
 }
 
 export function PanneauGauche() {
-  const { vue, niveau, setNiveau, coupe, setCoupe, calquesMasques, basculerCalque, architectureIA, setArchitectureIA, seuilAnonymat, setSeuilAnonymat, minimumVital } = useEtat()
+  const { vue, niveau, setNiveau, coupe, setCoupe, eclate, setEclate, calquesMasques, basculerCalque, architectureIA, setArchitectureIA, seuilAnonymat, setSeuilAnonymat, minimumVital } = useEtat()
   const def = VUES.find((v) => v.id === vue)!
   const ctx = { architectureIA }
   const categories = [...new Set(donnees.equipements.filter((e) => def.montre(e, ctx)).map((e) => e.categorie))]
@@ -123,6 +123,11 @@ export function PanneauGauche() {
           Coupe : masquer les niveaux au-dessus
         </label>
       )}
+
+      <label className="calque" title="Écarte les niveaux les uns des autres pour mieux voir les étages et les liens qui les traversent">
+        <input type="checkbox" checked={eclate} onChange={(e) => setEclate(e.target.checked)} />
+        Vue éclatée (écarter les niveaux)
+      </label>
 
       <h3>Calques</h3>
       {categories.map((c) => (
@@ -168,6 +173,7 @@ export function PanneauGauche() {
           ))}
         </>
       )}
+    <p className="discret aide-clavier">Clavier : flèches = se déplacer · Maj + flèches = tourner · + / − = zoom</p>
     </aside>
   )
 }

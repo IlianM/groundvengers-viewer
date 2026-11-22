@@ -120,3 +120,5 @@ dd { margin: 0; display: flex; align-items: center; }
 .recherche-liste li.actif { background: var(--btn); outline: 1px solid var(--accent-2); }
 .recherche-liste li.aucun { color: var(--discret); cursor: default; }
 .recherche-liste small { color: var(--discret); font-size: 11.5px; }
+
+.aide-clavier { margin-top: 18px; border-top: 1px solid var(--bord); padding-top: 8px; }

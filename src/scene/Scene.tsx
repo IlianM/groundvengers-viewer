@@ -2,7 +2,7 @@ import { Suspense, useEffect, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Html, Line, Edges, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
-import { donnees, positionMonde } from '../data'
+import { donnees, positionMonde, altitudeNiveau } from '../data'
 import { useEtat, CAMERA_DEFAUT } from '../store'
 import { useVisibles, niveauVisible } from './visibles'
 import { usePalette, type Palette } from './palette'
@@ -74,7 +74,53 @@ function CameraRig() {
     return () => controls.removeEventListener('start', arreter)
   }, [controls])
 
+  // Clavier : flèches = déplacer, Maj + flèches = tourner / incliner, + et − = zoom
+  const touches = useRef(new Set<string>())
+  const shiftRef = useRef(false)
+  useEffect(() => {
+    const utile = (k: string) => k.startsWith('Arrow') || ['+', '-', '=', '_', 'PageUp', 'PageDown'].includes(k)
+    const saisie = (e: KeyboardEvent) => ['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target as HTMLElement).tagName)
+    const bas = (e: KeyboardEvent) => {
+      shiftRef.current = e.shiftKey
+      if (!utile(e.key) || saisie(e) || e.ctrlKey || e.metaKey || e.altKey) return
+      e.preventDefault()
+      touches.current.add(e.key)
+      anim.current = null // la personne reprend la main
+    }
+    const haut = (e: KeyboardEvent) => { shiftRef.current = e.shiftKey; touches.current.delete(e.key) }
+    const vider = () => touches.current.clear()
+    window.addEventListener('keydown', bas)
+    window.addEventListener('keyup', haut)
+    window.addEventListener('blur', vider)
+    return () => { window.removeEventListener('keydown', bas); window.removeEventListener('keyup', haut); window.removeEventListener('blur', vider) }
+  }, [])
+
   useFrame((_, dt) => {
+    const t = touches.current
+    if (t.size > 0 && controls) {
+      const pas = Math.min(dt, 0.05)
+      const decal = camera.position.clone().sub(controls.target)
+      if (t.has('ArrowLeft') || t.has('ArrowRight') || t.has('ArrowUp') || t.has('ArrowDown')) {
+        if (shiftRef.current) {
+          const sph = new THREE.Spherical().setFromVector3(decal)
+          sph.theta += ((t.has('ArrowLeft') ? 1 : 0) - (t.has('ArrowRight') ? 1 : 0)) * pas * 1.4
+          sph.phi = THREE.MathUtils.clamp(sph.phi + ((t.has('ArrowDown') ? 1 : 0) - (t.has('ArrowUp') ? 1 : 0)) * pas * 1.0, 0.12, Math.PI / 2 - 0.04)
+          camera.position.copy(controls.target).add(new THREE.Vector3().setFromSpherical(sph))
+        } else {
+          const avant = new THREE.Vector3(-decal.x, 0, -decal.z).normalize()
+          const droite = new THREE.Vector3().crossVectors(avant, new THREE.Vector3(0, 1, 0))
+          const v = Math.max(6, decal.length() * 0.9) * pas
+          const dep = new THREE.Vector3()
+            .addScaledVector(avant, ((t.has('ArrowUp') ? 1 : 0) - (t.has('ArrowDown') ? 1 : 0)) * v)
+            .addScaledVector(droite, ((t.has('ArrowRight') ? 1 : 0) - (t.has('ArrowLeft') ? 1 : 0)) * v)
+          camera.position.add(dep)
+          controls.target.add(dep)
+        }
+      }
+      const zoom = ((t.has('-') || t.has('_') || t.has('PageDown') ? 1 : 0) - (t.has('+') || t.has('=') || t.has('PageUp') ? 1 : 0))
+      if (zoom) camera.position.copy(controls.target).add(decal.multiplyScalar(Math.exp(zoom * pas * 1.5)))
+      controls.update()
+    }
     const a = anim.current
     if (!a || !controls) return
     a.t += dt
@@ -95,7 +141,7 @@ function ModeleGLB({ url }: { url: string }) {
 
 /** Bâtiment temporaire du MVP, généré à partir de batiment.json (emprise + niveaux). */
 function BatimentTemporaire() {
-  const { niveau: niveauActif, coupe } = useEtat()
+  const { niveau: niveauActif, coupe, ecart } = useEtat()
   const p = usePalette()
   return (
     <group>
@@ -104,7 +150,7 @@ function BatimentTemporaire() {
         .map((n) => {
           const actif = !niveauActif || niveauActif === n.id
           return (
-            <group key={n.id} position={[0, n.altitude, 0]}>
+            <group key={n.id} position={[0, altitudeNiveau(n.id, ecart), 0]}>
               <mesh position={[0, -0.1, 0]}>
                 <boxGeometry args={[W, 0.2, D]} />
                 <meshStandardMaterial color={p.dalle} transparent opacity={niveauActif === n.id ? 0.9 : actif ? 0.3 : 0.05} depthWrite={niveauActif === n.id} />
@@ -134,7 +180,7 @@ function couleurZone(z: Zone, vue: string, seuil: number, mv: boolean, p: Palett
 }
 
 function Zones() {
-  const { vue, niveau, coupe, calquesMasques, seuilAnonymat, minimumVital, setSelection } = useEtat()
+  const { vue, niveau, coupe, calquesMasques, seuilAnonymat, minimumVital, setSelection, ecart } = useEtat()
   const p = usePalette()
   if (calquesMasques.has('zones')) return null
   const etiquettes = vue === 'architecture' || vue === 'occupant' || niveau !== null
@@ -149,7 +195,7 @@ function Zones() {
           const cx = x + w / 2 - W / 2
           const cz = zz + d / 2 - D / 2
           return (
-            <group key={z.id} position={[cx, n.altitude + 0.02, cz]}>
+            <group key={z.id} position={[cx, altitudeNiveau(n.id, ecart) + 0.02, cz]}>
               <mesh rotation={[-Math.PI / 2, 0, 0]} onClick={(ev) => { ev.stopPropagation(); setSelection(z.id) }}>
                 <planeGeometry args={[w - 0.15, d - 0.15]} />
                 <meshStandardMaterial color={couleur} transparent opacity={opacite} side={THREE.DoubleSide} depthWrite={false} />
@@ -192,11 +238,11 @@ function Forme({ e }: { e: Equipement }) {
 
 function Equipements() {
   const { equipements, def, ctx } = useVisibles()
-  const { selection, survol, vue, setSelection, setSurvol } = useEtat()
+  const { selection, survol, vue, setSelection, setSurvol, ecart } = useEtat()
   return (
     <group>
       {equipements.map((e) => {
-        const pos = positionMonde(e)
+        const pos = positionMonde(e, ecart)
         const sel = selection === e.id
         const couleur = def.couleur(e, ctx)
         return (
@@ -257,6 +303,7 @@ function Trait({ a, b, couleur, pointille, anime, opacite, epaisseur }: {
 function Liens() {
   const { liens, def, ids } = useVisibles()
   const selection = useEtat((s) => s.selection)
+  const ecart = useEtat((s) => s.ecart)
   return (
     <group>
       {liens.flatMap((l) => {
@@ -269,8 +316,8 @@ function Liens() {
             return (
               <Trait
                 key={`${l.id}-${v}`}
-                a={positionMonde(de)}
-                b={positionMonde(vers)}
+                a={positionMonde(de, ecart)}
+                b={positionMonde(vers, ecart)}
                 couleur={def.couleurLien(l)}
                 pointille={l.autorise_par_firewall === false}
                 anime={l.type === 'flux_reseau' && l.autorise_par_firewall !== false}
@@ -286,7 +333,7 @@ function Liens() {
 
 /** Vue IA : flux animés des capteurs vers le nœud de calcul (Edge par étage ou central cloisonné). */
 function FluxIA() {
-  const { vue, architectureIA, niveau, selection, minimumVital } = useEtat()
+  const { vue, architectureIA, niveau, selection, minimumVital, ecart } = useEtat()
   const { ids } = useVisibles()
   if (vue !== 'ia') return null
   const noeuds = donnees.noeuds.filter((n) => n.architecture === architectureIA)
@@ -295,7 +342,7 @@ function FluxIA() {
       {noeuds.flatMap((n) => {
         const hote = donnees.parId.get(n.heberge_sur)
         if (!hote || (niveau && architectureIA === 'edge' && hote.niveau !== niveau)) return []
-        const ph = positionMonde(hote)
+        const ph = positionMonde(hote, ecart)
         return [
           <mesh key={`${n.id}-halo`} position={ph}>
             <sphereGeometry args={[1.1, 24, 16]} />
@@ -307,7 +354,7 @@ function FluxIA() {
             .map((id) => {
               const touche = !selection || selection === id || selection === n.heberge_sur
               return (
-                <Trait key={`${n.id}-${id}`} a={positionMonde(donnees.parId.get(id)!)} b={ph}
+                <Trait key={`${n.id}-${id}`} a={positionMonde(donnees.parId.get(id)!, ecart)} b={ph}
                   couleur={COULEURS.equipe.ia} anime opacite={touche ? 0.9 : 0.12} epaisseur={1.8} />
               )
             }),
@@ -319,7 +366,7 @@ function FluxIA() {
 
 /** Cyber (F-16) : périmètre de chaque réseau, un volume translucide par niveau autour de ses équipements affichés. */
 function VolumesReseau() {
-  const { vue, calquesMasques, niveau, coupe } = useEtat()
+  const { vue, calquesMasques, niveau, coupe, ecart } = useEtat()
   const { equipements } = useVisibles()
   if (vue !== 'cyber' || calquesMasques.has('volumes')) return null
   const reseaux = [
@@ -342,7 +389,7 @@ function VolumesReseau() {
             const cz = (Math.max(...zs) + Math.min(...zs)) / 2 - D / 2
             const couleur = COULEURS.reseau[r.id]
             return [
-              <group key={`${r.id}-${n.id}`} position={[cx, n.altitude + r.hauteur / 2 + 0.03, cz]}>
+              <group key={`${r.id}-${n.id}`} position={[cx, altitudeNiveau(n.id, ecart) + r.hauteur / 2 + 0.03, cz]}>
                 <mesh>
                   <boxGeometry args={[largeur, r.hauteur, profondeur]} />
                   <meshBasicMaterial color={couleur} transparent opacity={r.opacite} depthWrite={false} />
@@ -360,7 +407,7 @@ function VolumesReseau() {
 }
 
 function CouvertureWifi() {
-  const { vue, calquesMasques } = useEtat()
+  const { vue, calquesMasques, ecart } = useEtat()
   const { equipements } = useVisibles()
   if (vue !== 'cyber' || calquesMasques.has('couverture')) return null
   return (
@@ -368,7 +415,7 @@ function CouvertureWifi() {
       {equipements
         .filter((e) => e.categorie === 'borne_wifi')
         .map((e) => {
-          const [x, y, z] = positionMonde(e)
+          const [x, y, z] = positionMonde(e, ecart)
           const r = Number(e.config.portee_m ?? 10)
           return (
             <mesh key={`${e.id}-wifi`} position={[x, y - e.position[1] + 0.05, z]} rotation={[-Math.PI / 2, 0, 0]}>

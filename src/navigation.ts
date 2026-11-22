@@ -1,6 +1,6 @@
 // Aller à un élément : règle l'état de l'appli pour qu'il soit visible, le sélectionne et place la caméra.
-import { donnees, positionMonde } from './data'
-import { useEtat } from './store'
+import { donnees, positionMonde, altitudeNiveau } from './data'
+import { useEtat, ECART_ECLATE } from './store'
 import { VUES, type VueId } from './views'
 
 const sansAccent = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
@@ -61,7 +61,7 @@ export function reveler(cible: Cible) {
   const zone = donnees.zoneParId.get(cible.id)
   if (zone) {
     const [w, d] = donnees.batiment.emprise
-    const alt = donnees.batiment.niveaux.find((n) => n.id === zone.niveau)?.altitude ?? 0
+    const alt = altitudeNiveau(zone.niveau, s.eclate ? ECART_ECLATE : 0)
     const c: [number, number, number] = [zone.rect[0] + zone.rect[2] / 2 - w / 2, alt, zone.rect[1] + zone.rect[3] / 2 - d / 2]
     if (s.niveau && s.niveau !== zone.niveau) s.setNiveau(zone.niveau)
     if (s.calquesMasques.has('zones')) s.basculerCalque('zones')
@@ -88,6 +88,6 @@ export function reveler(cible: Cible) {
   if (s.niveau && s.niveau !== e.niveau) s.setNiveau(e.niveau)
   if (useEtat.getState().calquesMasques.has(e.categorie)) s.basculerCalque(e.categorie)
   s.setSelection(e.id)
-  const c = positionMonde(e)
+  const c = positionMonde(e, s.eclate ? ECART_ECLATE : 0)
   s.allerA([c[0] + DECALAGE[0], c[1] + DECALAGE[1], c[2] + DECALAGE[2]], c)
 }

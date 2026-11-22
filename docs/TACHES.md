@@ -9,12 +9,13 @@ Liste simple, à cocher à la main. Une tâche = une branche ou un commit. Les i
 - [x] Coupe horizontale (F-04), volumes réseau en vue Cyber (F-16)
 - [x] Mode sombre, décor (herbe, arbres, bâtiments au loin) et meubles, chacun désactivable
 - [x] Boutons Recentrer / Dessus / Façade
+- [x] Vue éclatée : les niveaux s'écartent avec animation (F-05)
+- [x] Caméra au clavier : flèches = déplacer, Maj + flèches = tourner, + / − = zoom
 - [x] Recherche d'un équipement, d'une zone ou d'un modèle IA, avec saut de caméra (F-11, touche `/`)
 - [x] URL partageable : vue, niveau, coupe, minimum vital, architecture IA, seuil et sélection dans le hash (F-12, bouton « Copier le lien »)
 
 ## À faire (Should / Could)
 - [ ] F-02 Import IFC
-- [ ] F-05 Vue éclatée des niveaux
 - [ ] F-15, F-18 (gaines de câbles), F-20, F-21, F-24, F-26, F-30, F-32 : voir `BACKLOG.md`
 - [ ] Relier les noms d'objets du `.glb` aux fiches (équipements, zones)
 - [ ] Tester le chargeur `.glb` avec un vrai export de l'équipe Domotique

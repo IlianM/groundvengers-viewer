@@ -5,6 +5,8 @@ export type Deco = { herbe: boolean; arbres: boolean; batiments: boolean; meuble
 export type Theme = 'clair' | 'sombre'
 type Vec3 = [number, number, number]
 
+export const ECART_ECLATE = 5 // m ajoutés entre deux niveaux en vue éclatée
+
 export const CAMERA_DEFAUT = { position: [26, 20, 28] as Vec3, cible: [0, 4, 0] as Vec3 }
 
 type Etat = {
@@ -21,6 +23,8 @@ type Etat = {
   theme: Theme
   deco: Deco
   cameraCible: { n: number; position: Vec3; cible: Vec3 }
+  eclate: boolean // vue éclatée demandée
+  ecart: number // écart actuel entre niveaux (animé de 0 à ECART_ECLATE)
 
   setVue: (v: VueId) => void
   setNiveau: (n: string | null) => void
@@ -35,6 +39,7 @@ type Etat = {
   setTheme: (t: Theme) => void
   setDeco: (k: keyof Deco, v: boolean) => void
   allerA: (position: Vec3, cible: Vec3) => void
+  setEclate: (b: boolean) => void
 }
 
 // Options d'apparence gardées dans le navigateur (aucune donnée envoyée nulle part).
@@ -58,7 +63,7 @@ function themeSysteme(): Theme {
 }
 const sauvegarde = lireOptions()
 
-export const useEtat = create<Etat>((set) => ({
+export const useEtat = create<Etat>((set, get) => ({
   vue: 'architecture',
   niveau: null,
   coupe: false,
@@ -72,6 +77,8 @@ export const useEtat = create<Etat>((set) => ({
   theme: sauvegarde.theme === 'sombre' || sauvegarde.theme === 'clair' ? sauvegarde.theme : themeSysteme(),
   deco: { ...DECO_DEFAUT, ...sauvegarde.deco },
   cameraCible: { n: 0, ...CAMERA_DEFAUT },
+  eclate: false,
+  ecart: 0,
 
   setVue: (vue) => set({ vue, selection: null, calquesMasques: new Set() }),
   setNiveau: (niveau) => set({ niveau }),
@@ -91,6 +98,13 @@ export const useEtat = create<Etat>((set) => ({
   setScene: (scene) => set({ scene }),
   setTheme: (theme) => set({ theme }),
   setDeco: (k, v) => set((s) => ({ deco: { ...s.deco, [k]: v } })),
+  setEclate: (eclate) => {
+    set({ eclate })
+    animerEcart()
+    // on recule un peu pour garder tout le bâtiment dans le cadre
+    const c = get().cameraCible
+    set({ cameraCible: { n: c.n + 1, position: eclate ? [34, 28, 38] : CAMERA_DEFAUT.position, cible: eclate ? [0, 7, 0] : CAMERA_DEFAUT.cible } })
+  },
   allerA: (position, cible) => set((s) => ({ cameraCible: { n: s.cameraCible.n + 1, position, cible } })),
 }))
 
@@ -107,3 +121,20 @@ appliquer(useEtat.getState())
 useEtat.subscribe((s, prev) => {
   if (s.theme !== prev.theme || s.deco !== prev.deco) appliquer(s)
 })
+
+// Animation de l'écart : on rapproche `ecart` de sa cible à chaque image (0,5 s environ), les composants suivent via le store.
+let animation = 0
+function animerEcart() {
+  if (animation) return
+  let dernier = performance.now()
+  const pas = (t: number) => {
+    const { eclate, ecart } = useEtat.getState()
+    const cible = eclate ? ECART_ECLATE : 0
+    const k = 1 - Math.exp(-((t - dernier) / 1000) * 8)
+    dernier = t
+    const suivant = Math.abs(cible - ecart) < 0.01 ? cible : ecart + (cible - ecart) * k
+    useEtat.setState({ ecart: suivant })
+    animation = suivant === cible ? 0 : requestAnimationFrame(pas)
+  }
+  animation = requestAnimationFrame(pas)
+}
