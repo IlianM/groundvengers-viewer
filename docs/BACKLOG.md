@@ -14,8 +14,8 @@ Reprend la carte des fonctionnalités de la proposition. ✅ = présent dans le 
 | F-08 | Info-bulle au survol | Must | ✅ |
 | F-09 | Fiche détail | Must | ✅ |
 | F-10 | Chargement JSON + schéma commun | Must | ✅ |
-| F-11 | Recherche | Should | ⬜ |
-| F-12 | URL partageable | Should | ⬜ |
+| F-11 | Recherche | Should | ✅ |
+| F-12 | URL partageable | Should | ✅ |
 | F-13 | Équipements Domotique | Must | ✅ données d'exemple |
 | F-14 | Liaisons par protocole | Must | ✅ |
 | F-15 | Compteurs et chemin Niagara | Should | ✅ partiel |

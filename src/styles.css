@@ -111,3 +111,12 @@ dd { margin: 0; display: flex; align-items: center; }
 .indicateur em { font-style: normal; color: var(--gain); font-weight: 600; font-size: 12px; }
 .indicateur span { grid-column: 1 / -1; font-size: 11.5px; color: var(--discret); }
 .bandeau-bas .visibles { margin-left: auto; white-space: nowrap; }
+
+.recherche { position: absolute; top: 10px; left: 10px; width: 280px; z-index: 3; }
+.recherche input { width: 100%; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--bord); background: var(--chip); color: var(--texte); font: inherit; backdrop-filter: blur(4px); }
+.recherche input:focus { outline: 2px solid var(--accent-2); outline-offset: 0; }
+.recherche-liste { list-style: none; margin: 4px 0 0; padding: 4px; background: var(--panneau); border: 1px solid var(--bord); border-radius: 8px; box-shadow: 0 8px 24px var(--ombre); max-height: 340px; overflow-y: auto; }
+.recherche-liste li { display: grid; padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+.recherche-liste li.actif { background: var(--btn); outline: 1px solid var(--accent-2); }
+.recherche-liste li.aucun { color: var(--discret); cursor: default; }
+.recherche-liste small { color: var(--discret); font-size: 11.5px; }

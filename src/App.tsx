@@ -1,4 +1,5 @@
 import { Scene3D } from './scene/Scene'
+import { Recherche } from './ui/Recherche'
 import { BarreHaut, PanneauGauche, FicheDetail, BandeauBas, Presentation, BandeauErreurs, OutilsCamera } from './ui/Panneaux'
 
 export default function App() {
@@ -9,6 +10,7 @@ export default function App() {
         <PanneauGauche />
         <main className="viewer">
           <Scene3D />
+          <Recherche />
           <OutilsCamera />
           <Presentation />
           <BandeauErreurs />

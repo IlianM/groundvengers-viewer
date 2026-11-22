@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { donnees, erreurs } from '../data'
 import { useEtat, CAMERA_DEFAUT, type Deco } from '../store'
+import { copierLien } from '../partage'
 import { VUES, LIBELLES, COULEURS, zoneNonAnonyme, phraseOccupant, type VueId } from '../views'
 import { useVisibles, indicateurs } from '../scene/visibles'
 import type { Equipement } from '../schema'
@@ -82,9 +83,17 @@ export function OutilsCamera() {
     ['Dessus', [0.01, 46, 0.01], [0, 0, 0]],
     ['Façade', [0, 8, 40], [0, 5, 0]],
   ]
+  const [etat, setEtat] = useState<'' | 'ok' | 'ko'>('')
+  const copier = async () => {
+    setEtat((await copierLien()) ? 'ok' : 'ko')
+    setTimeout(() => setEtat(''), 2200)
+  }
   return (
     <div className="outils-camera">
       {vues.map(([nom, pos, cible]) => <button key={nom} onClick={() => allerA(pos, cible)}>{nom}</button>)}
+      <button onClick={copier} title="Copie un lien qui rouvre cette vue, ce niveau et cette sélection">
+        {etat === 'ok' ? 'Lien copié ✓' : etat === 'ko' ? 'Copie impossible' : 'Copier le lien'}
+      </button>
     </div>
   )
 }
