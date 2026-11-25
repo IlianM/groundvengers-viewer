@@ -70,6 +70,15 @@ export const capaciteTotale = () => donnees.batiment.zones.reduce((a, z) => a + 
  * proportionnellement à l'occupation simulée (à la capacité si le bâtiment est vide), sans dépasser l'effectif max.
  */
 export function effectifsZones(h: number, force: number | null): Map<string, number> {
+  // mémoïsé sur le dernier appel : les sélecteurs du store le rappellent très souvent avec les mêmes arguments
+  if (cacheEff && cacheEff.h === h && cacheEff.force === force) return cacheEff.val
+  const val = calculerEffectifs(h, force)
+  cacheEff = { h, force, val }
+  return val
+}
+let cacheEff: { h: number; force: number | null; val: Map<string, number> } | null = null
+
+function calculerEffectifs(h: number, force: number | null): Map<string, number> {
   const zones = donnees.batiment.zones
   const simule = new Map(zones.map((z) => [z.id, effectifSimule(z, h)]))
   if (force === null) return simule

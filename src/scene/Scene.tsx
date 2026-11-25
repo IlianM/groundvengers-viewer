@@ -309,7 +309,8 @@ function couleurZone(z: Zone, vue: string, seuil: number, mv: boolean, p: Palett
 }
 
 /** Étiquette de zone : seules les pièces à usage collectif ou technique en portent une (307 étiquettes seraient illisibles) ; un clic ouvre la fiche de n'importe quelle zone. */
-const avecEtiquette = (z: Zone) =>
+const avecEtiquette = (z: Zone, niveauChoisi: boolean) =>
+  !niveauChoisi ? (z.type === 'hall' || z.type === 'open_space' || z.type === 'parking') :
   z.type === 'hall' || z.type === 'reunion' || z.type === 'open_space' || z.type === 'parking' ||
   (z.type === 'technique' && z.rect[2] * z.rect[3] >= 10) || (z.type === 'bureau' && z.nom.startsWith('Direction'))
 
@@ -319,47 +320,79 @@ function Zones() {
   const { vue, niveau, coupe, calquesMasques, seuilAnonymat, setSelection, ecart, pieces, reglages } = useEtat()
   const minimumVital = useMinimumVital()
   const p = usePalette()
-  if (calquesMasques.has('zones')) return null
+  const masque = calquesMasques.has('zones')
   const etiquettes = reglages.etiquettesZones && (vue === 'architecture' || vue === 'occupant' || niveau !== null)
+  const zones = useMemo(
+    () => donnees.batiment.zones.filter((z) => (!niveau || z.niveau === niveau) && niveauVisible(z.niveau, niveau, coupe)),
+    [niveau, coupe],
+  )
+  // Toutes les zones dans UN maillage (couleur et transparence par sommet) et UN jeu d'arêtes : 2 draw calls au lieu de ~900.
+  const { surface, aretes } = useMemo(() => {
+    const pos = new Float32Array(zones.length * 12), col = new Float32Array(zones.length * 16), idx = new Uint32Array(zones.length * 6)
+    const lp = new Float32Array(zones.length * 24)
+    const tmp = new THREE.Color()
+    zones.forEach((z, i) => {
+      const n = donnees.batiment.niveaux.find((x) => x.id === z.niveau)!
+      const [x, zz, w, d] = z.rect
+      let { couleur, opacite } = couleurZone(z, vue, seuilAnonymat, minimumVital, p)
+      const nSim = sim.actif ? effectifs.get(z.id) ?? 0 : null
+      if (nSim !== null) {
+        const identifiable = identifiableA(z, nSim, seuilAnonymat, minimumVital)
+        const t = z.effectif_max ? nSim / z.effectif_max : 0
+        couleur = identifiable ? '#e03131' : nSim === 0 ? p.zones.technique : t > 0.66 ? '#1864ab' : t > 0.33 ? '#4dabf7' : '#a5d8ff'
+        opacite = identifiable ? 0.6 : nSim === 0 ? 0.12 : 0.35 + 0.4 * t
+      }
+      const [dx, dz] = decalageZone(z, pieces)
+      const cx = x + w / 2 - W / 2 + dx, cz = zz + d / 2 - D / 2 + dz, y = altitudeNiveau(n.id, ecart) + 0.02
+      const hw = (w - 0.15) / 2, hd = (d - 0.15) / 2
+      const coins = [[cx - hw, cz + hd], [cx + hw, cz + hd], [cx + hw, cz - hd], [cx - hw, cz - hd]]
+      tmp.set(couleur)
+      coins.forEach(([px, pz], k) => {
+        pos.set([px, y, pz], i * 12 + k * 3)
+        col.set([tmp.r, tmp.g, tmp.b, Math.min(1, opacite * reglages.opaciteZones)], i * 16 + k * 4)
+      })
+      idx.set([i * 4, i * 4 + 1, i * 4 + 2, i * 4, i * 4 + 2, i * 4 + 3], i * 6)
+      for (let k = 0; k < 4; k++) {
+        const a = coins[k], b = coins[(k + 1) % 4]
+        lp.set([a[0], y, a[1], b[0], y, b[1]], i * 24 + k * 6)
+      }
+    })
+    const g = new THREE.BufferGeometry()
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3))
+    g.setAttribute('color', new THREE.BufferAttribute(col, 4))
+    g.setIndex(new THREE.BufferAttribute(idx, 1))
+    const l = new THREE.BufferGeometry()
+    l.setAttribute('position', new THREE.BufferAttribute(lp, 3))
+    return { surface: g, aretes: l }
+  }, [zones, vue, seuilAnonymat, minimumVital, p, sim, effectifs, ecart, pieces, reglages.opaciteZones])
+  useEffect(() => () => { surface.dispose(); aretes.dispose() }, [surface, aretes])
+  if (masque) return null
   return (
     <group>
-      {donnees.batiment.zones
-        .filter((z) => (!niveau || z.niveau === niveau) && niveauVisible(z.niveau, niveau, coupe))
-        .map((z) => {
-          const n = donnees.batiment.niveaux.find((x) => x.id === z.niveau)!
-          const [x, zz, w, d] = z.rect
-          let { couleur, opacite } = couleurZone(z, vue, seuilAnonymat, minimumVital, p)
-          const nSim = sim.actif ? effectifs.get(z.id) ?? 0 : null
-          const identifiable = nSim !== null && identifiableA(z, nSim, seuilAnonymat, minimumVital)
-          if (nSim !== null) {
-            const t = z.effectif_max ? nSim / z.effectif_max : 0
-            couleur = identifiable ? '#e03131' : nSim === 0 ? p.zones.technique : t > 0.66 ? '#1864ab' : t > 0.33 ? '#4dabf7' : '#a5d8ff'
-            opacite = identifiable ? 0.6 : nSim === 0 ? 0.12 : 0.35 + 0.4 * t
-          }
-          const [dx, dz] = decalageZone(z, pieces)
-          const cx = x + w / 2 - W / 2 + dx
-          const cz = zz + d / 2 - D / 2 + dz
-          return (
-            <group key={z.id} position={[cx, altitudeNiveau(n.id, ecart) + 0.02, cz]}>
-              <mesh rotation={[-Math.PI / 2, 0, 0]} onClick={(ev) => { ev.stopPropagation(); setSelection(z.id) }}>
-                <planeGeometry args={[w - 0.15, d - 0.15]} />
-                <meshStandardMaterial color={couleur} transparent opacity={Math.min(1, opacite * reglages.opaciteZones)} side={THREE.DoubleSide} depthWrite={false} />
-                <Edges color={p.zoneBord} />
-              </mesh>
-              {etiquettes && avecEtiquette(z) && (
-                <Html position={[0, 0.3, 0]} center style={{ pointerEvents: 'none' }}>
-                  <span className="etiquette-zone">
-                    {z.nom.replace(/ \(N2-[\d-]+\)$/, '')}
-                    {nSim !== null && z.effectif_max > 0 && <em> · {nSim} pers.</em>}
-                    {identifiable && <em className="alerte"> · identifiable</em>}
-                    {vue === 'occupant' && z.type === 'bureau' && !z.detection_presence && <em> · sans détection</em>}
-                    {!identifiable && zoneNonAnonyme(z, seuilAnonymat, minimumVital) && (vue === 'ia' || vue === 'occupant') && <em className="alerte"> · non anonyme</em>}
-                  </span>
-                </Html>
-              )}
-            </group>
-          )
-        })}
+      <mesh geometry={surface} onClick={(ev) => { ev.stopPropagation(); const z = zones[Math.floor((ev.faceIndex ?? 0) / 2)]; if (z) setSelection(z.id) }}>
+        <meshBasicMaterial vertexColors transparent depthWrite={false} side={THREE.DoubleSide} />
+      </mesh>
+      <lineSegments geometry={aretes} raycast={() => null}>
+        <lineBasicMaterial color={p.zoneBord} />
+      </lineSegments>
+      {etiquettes && zones.filter((z) => avecEtiquette(z, niveau !== null)).map((z) => {
+        const n = donnees.batiment.niveaux.find((x) => x.id === z.niveau)!
+        const [x, zz, w, d] = z.rect
+        const nSim = sim.actif ? effectifs.get(z.id) ?? 0 : null
+        const identifiable = nSim !== null && identifiableA(z, nSim, seuilAnonymat, minimumVital)
+        const [dx, dz] = decalageZone(z, pieces)
+        return (
+          <Html key={z.id} position={[x + w / 2 - W / 2 + dx, altitudeNiveau(n.id, ecart) + 0.32, zz + d / 2 - D / 2 + dz]} center style={{ pointerEvents: 'none' }}>
+            <span className="etiquette-zone">
+              {z.nom.replace(/ \(N2[A-Z]?-[\w-]+\)$/, '')}
+              {nSim !== null && z.effectif_max > 0 && <em> · {nSim} pers.</em>}
+              {identifiable && <em className="alerte"> · identifiable</em>}
+              {vue === 'occupant' && z.type === 'bureau' && !z.detection_presence && <em> · sans détection</em>}
+              {!identifiable && zoneNonAnonyme(z, seuilAnonymat, minimumVital) && (vue === 'ia' || vue === 'occupant') && <em className="alerte"> · non anonyme</em>}
+            </span>
+          </Html>
+        )
+      })}
     </group>
   )
 }

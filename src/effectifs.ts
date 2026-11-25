@@ -7,7 +7,8 @@ import { effectifsZones, HEURE_AMBIANTE } from './simulation'
 export function useEffectifs(): Map<string, number> {
   const cle = useEtat((s) => {
     const h = s.simulation.actif ? s.simulation.heure : HEURE_AMBIANTE
-    return donnees.batiment.zones.map((z) => effectifsZones(h, s.reglages.effectifForce).get(z.id)).join(',')
+    const m = effectifsZones(h, s.reglages.effectifForce)
+    return donnees.batiment.zones.map((z) => m.get(z.id)).join(',')
   })
   return useMemo(() => {
     const n = cle.split(',').map(Number)
