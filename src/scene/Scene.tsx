@@ -44,7 +44,7 @@ export function Scene3D({ mode = null, secondaire = false, nom = 'seule' }: { mo
     >
       <ModeContexte.Provider value={mode}>
       <color attach="background" args={[fond]} />
-      {(ciel || r.couleurCiel) && r.brouillard && <fogExp2 attach="fog" args={[fond, 0.0105 * r.densiteBrouillard]} />}
+      {(ciel || r.couleurCiel) && r.brouillard && <fogExp2 attach="fog" args={[fond, (0.0105 * r.densiteBrouillard * 30) / Math.max(W, D, 30)]} />}
       <ambientLight intensity={p.lumiere.ambiante} />
       <directionalLight position={[20, 40, 10]} intensity={p.lumiere.directe} />
       <OrbitControls
@@ -86,7 +86,7 @@ export function Scene3D({ mode = null, secondaire = false, nom = 'seule' }: { mo
       <FluxIA />
       <CouvertureWifi />
       <Equipements />
-      {!ciel && <gridHelper args={[60, 30, p.grille[0], p.grille[1]]} position={[0, -0.11, 0]} />}
+      {!ciel && <gridHelper args={[Math.ceil((Math.max(W, D) * 1.6) / 10) * 10, Math.ceil((Math.max(W, D) * 1.6) / 10) * 5, p.grille[0], p.grille[1]]} position={[0, -0.11, 0]} />}
       </ModeContexte.Provider>
     </Canvas>
   )
@@ -276,17 +276,18 @@ function BatimentTemporaire() {
         .filter((n) => niveauVisible(n.id, niveauActif, coupe))
         .map((n) => {
           const actif = !niveauActif || niveauActif === n.id
+          const [ex, ez, ew, ed] = n.emprise ?? [0, 0, W, D] // chaque niveau a sa propre emprise (les sous-sols dépassent des étages)
           return (
-            <group key={n.id} position={[0, altitudeNiveau(n.id, ecart), 0]}>
+            <group key={n.id} position={[ex + ew / 2 - W / 2, altitudeNiveau(n.id, ecart), ez + ed / 2 - D / 2]}>
               {montrer && (
                 <>
                   <mesh position={[0, -0.1, 0]}>
-                    <boxGeometry args={[W, 0.2, D]} />
+                    <boxGeometry args={[ew, 0.2, ed]} />
                     <meshStandardMaterial color={p.dalle} transparent opacity={(niveauActif === n.id ? 0.9 : actif ? 0.3 : 0.05) * f} depthWrite={niveauActif === n.id && f > 0.95} />
                     <Edges color={p.dalleBord} />
                   </mesh>
                   <mesh position={[0, n.hauteur / 2, 0]}>
-                    <boxGeometry args={[W, n.hauteur, D]} />
+                    <boxGeometry args={[ew, n.hauteur, ed]} />
                     <meshStandardMaterial color="#ffffff" transparent opacity={(actif ? 0.06 : 0.02) * f} depthWrite={false} />
                     <Edges color={actif ? p.enveloppeBord : p.enveloppeBordInactif} />
                   </mesh>
@@ -306,6 +307,11 @@ function couleurZone(z: Zone, vue: string, seuil: number, mv: boolean, p: Palett
   }
   return { couleur: p.zones[z.type] ?? p.zones.technique, opacite: vue === 'architecture' ? p.zoneOpacite.architecture : p.zoneOpacite.autre }
 }
+
+/** Étiquette de zone : seules les pièces à usage collectif ou technique en portent une (307 étiquettes seraient illisibles) ; un clic ouvre la fiche de n'importe quelle zone. */
+const avecEtiquette = (z: Zone) =>
+  z.type === 'hall' || z.type === 'reunion' || z.type === 'open_space' || z.type === 'parking' ||
+  (z.type === 'technique' && z.rect[2] * z.rect[3] >= 10) || (z.type === 'bureau' && z.nom.startsWith('Direction'))
 
 function Zones() {
   const sim = useEtat((st) => st.simulation)
@@ -340,10 +346,10 @@ function Zones() {
                 <meshStandardMaterial color={couleur} transparent opacity={Math.min(1, opacite * reglages.opaciteZones)} side={THREE.DoubleSide} depthWrite={false} />
                 <Edges color={p.zoneBord} />
               </mesh>
-              {etiquettes && (
+              {etiquettes && avecEtiquette(z) && (
                 <Html position={[0, 0.3, 0]} center style={{ pointerEvents: 'none' }}>
                   <span className="etiquette-zone">
-                    {z.nom}
+                    {z.nom.replace(/ \(N2-[\d-]+\)$/, '')}
                     {nSim !== null && z.effectif_max > 0 && <em> · {nSim} pers.</em>}
                     {identifiable && <em className="alerte"> · identifiable</em>}
                     {vue === 'occupant' && z.type === 'bureau' && !z.detection_presence && <em> · sans détection</em>}

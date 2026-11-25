@@ -6,12 +6,12 @@
       "categorie": "passerelle",
       "type": "acces_internet",
       "nom": "Accès Internet opérateur",
-      "niveau": "R0",
-      "zone": "ZONE-R0-TECH",
+      "niveau": "SS1",
+      "zone": "ZONE-SS1-N2A-S1-07",
       "position": [
-        12.6,
-        1.8,
-        0.6
+        97.94,
+        1.2,
+        20.42
       ],
       "reseau": "internet",
       "donnee": {
@@ -31,12 +31,12 @@
       "categorie": "firewall",
       "type": "firewall",
       "nom": "Firewall principal",
-      "niveau": "R0",
-      "zone": "ZONE-R0-TECH",
+      "niveau": "SS1",
+      "zone": "ZONE-SS1-N2A-S1-07",
       "position": [
-        13.2,
-        1.8,
-        2.2
+        98.88,
+        1.2,
+        20.42
       ],
       "config": {
         "politique": "tout refuser par défaut",
@@ -62,12 +62,12 @@
       "categorie": "switch",
       "type": "switch",
       "nom": "Switch bureautique",
-      "niveau": "R0",
-      "zone": "ZONE-R0-TECH",
+      "niveau": "SS1",
+      "zone": "ZONE-SS1-N2A-S1-07",
       "position": [
-        12.6,
+        99.81,
         1.2,
-        5.5
+        20.42
       ],
       "reseau": "bureautique",
       "donnee": {
@@ -83,12 +83,12 @@
       "categorie": "switch",
       "type": "switch",
       "nom": "Switch GTB (réseau isolé)",
-      "niveau": "R0",
-      "zone": "ZONE-R0-TECH",
+      "niveau": "SS1",
+      "zone": "ZONE-SS1-N2A-S1-22",
       "position": [
-        15,
-        1.2,
-        3.5
+        44.29,
+        1.0,
+        28.52
       ],
       "reseau": "GTB",
       "config": {
@@ -106,17 +106,70 @@
       ]
     },
     {
-      "id": "BAIE-R0-01",
+      "id": "BAIE-SS1-01",
       "equipe": "cyber",
       "categorie": "baie",
       "type": "baie_42u",
-      "nom": "Baie réseau R0",
-      "niveau": "R0",
-      "zone": "ZONE-R0-TECH",
+      "nom": "Baie réseau SS1 (cœur de réseau)",
+      "niveau": "SS1",
+      "zone": "ZONE-SS1-N2A-S1-07",
       "position": [
-        17,
-        1,
-        7.2
+        97.94,
+        1.2,
+        22.7
+      ],
+      "donnee": {
+        "nature": "technique",
+        "identifiante": false,
+        "conservation": "aucune",
+        "minimum_vital": true
+      }
+    },
+    {
+      "id": "GW-CLOUD-01",
+      "equipe": "cyber",
+      "categorie": "passerelle",
+      "type": "passerelle_cloud",
+      "nom": "Passerelle cloud constructeur",
+      "niveau": "SS1",
+      "zone": "ZONE-SS1-N2A-S1-07",
+      "position": [
+        98.88,
+        1.2,
+        22.7
+      ],
+      "reseau": "internet",
+      "config": {
+        "envoi": "toutes les mesures, en continu"
+      },
+      "donnee": {
+        "nature": "technique",
+        "identifiante": false,
+        "conservation": "illimitée chez le prestataire",
+        "minimum_vital": false
+      },
+      "point_entree": true,
+      "risques": [
+        "RSK-INTRUSION"
+      ],
+      "preuves": [
+        "PRV-ADEME",
+        "PRV-DIVD-BACNET"
+      ],
+      "description": "Modèle « tout collecter » : flux continu vers le cloud. Absent en mode minimum vital (traitement local)."
+    },
+    {
+      "id": "BAIE-R0-01",
+      "equipe": "cyber",
+      "categorie": "baie",
+      "type": "coffret",
+      "nom": "Coffret réseau R0",
+      "niveau": "R0",
+      "zone": "ZONE-R0-N2-00-58",
+      "position": [
+        33.98,
+        1.0,
+        11.54
       ],
       "donnee": {
         "nature": "technique",
@@ -132,11 +185,11 @@
       "type": "coffret",
       "nom": "Coffret réseau R1",
       "niveau": "R1",
-      "zone": "ZONE-R1-TECH",
+      "zone": "ZONE-R1-N2-01-66",
       "position": [
-        28.5,
-        1,
-        16.5
+        33.98,
+        1.0,
+        11.54
       ],
       "donnee": {
         "nature": "technique",
@@ -152,11 +205,31 @@
       "type": "coffret",
       "nom": "Coffret réseau R2",
       "niveau": "R2",
-      "zone": "ZONE-R2-SRV",
+      "zone": "ZONE-R2-N2-02-61",
       "position": [
-        2,
-        1,
-        16.5
+        33.98,
+        1.0,
+        11.54
+      ],
+      "donnee": {
+        "nature": "technique",
+        "identifiante": false,
+        "conservation": "aucune",
+        "minimum_vital": true
+      }
+    },
+    {
+      "id": "BAIE-R3-01",
+      "equipe": "cyber",
+      "categorie": "baie",
+      "type": "coffret",
+      "nom": "Coffret réseau R3",
+      "niveau": "R3",
+      "zone": "ZONE-R3-N2-03-54",
+      "position": [
+        33.98,
+        1.0,
+        11.54
       ],
       "donnee": {
         "nature": "technique",
@@ -170,13 +243,13 @@
       "equipe": "cyber",
       "categorie": "borne_wifi",
       "type": "wifi6",
-      "nom": "Borne Wi-Fi hall",
+      "nom": "Borne Wi-Fi · R0, secteur 1",
       "niveau": "R0",
-      "zone": "ZONE-R0-HALL",
+      "zone": "ZONE-R0-N2-00-72",
       "position": [
-        6,
+        11.75,
         3.3,
-        9
+        11.17
       ],
       "reseau": "bureautique",
       "config": {
@@ -195,17 +268,71 @@
       ]
     },
     {
+      "id": "AP-WIFI-R0-02",
+      "equipe": "cyber",
+      "categorie": "borne_wifi",
+      "type": "wifi6",
+      "nom": "Borne Wi-Fi · R0, secteur 2",
+      "niveau": "R0",
+      "zone": "ZONE-R0-N2-00-71",
+      "position": [
+        33.72,
+        3.3,
+        13.87
+      ],
+      "reseau": "bureautique",
+      "config": {
+        "ssid": "GV-Corp",
+        "portee_m": 12
+      },
+      "donnee": {
+        "nature": "technique",
+        "identifiante": false,
+        "conservation": "aucune",
+        "minimum_vital": true
+      },
+      "point_entree": true,
+      "risques": []
+    },
+    {
+      "id": "AP-WIFI-R0-03",
+      "equipe": "cyber",
+      "categorie": "borne_wifi",
+      "type": "wifi6",
+      "nom": "Borne Wi-Fi · R0, secteur 3",
+      "niveau": "R0",
+      "zone": "ZONE-R0-N2-00-70",
+      "position": [
+        56.83,
+        3.3,
+        11.18
+      ],
+      "reseau": "bureautique",
+      "config": {
+        "ssid": "GV-Corp",
+        "portee_m": 12
+      },
+      "donnee": {
+        "nature": "technique",
+        "identifiante": false,
+        "conservation": "aucune",
+        "minimum_vital": true
+      },
+      "point_entree": true,
+      "risques": []
+    },
+    {
       "id": "AP-WIFI-R1-01",
       "equipe": "cyber",
       "categorie": "borne_wifi",
       "type": "wifi6",
-      "nom": "Borne Wi-Fi open space A",
+      "nom": "Borne Wi-Fi · R1, secteur 1",
       "niveau": "R1",
-      "zone": "ZONE-R1-OPEN-A",
+      "zone": "ZONE-R1-N2-01-56",
       "position": [
-        8,
+        25.09,
         3.3,
-        3
+        11.42
       ],
       "reseau": "bureautique",
       "config": {
@@ -228,13 +355,13 @@
       "equipe": "cyber",
       "categorie": "borne_wifi",
       "type": "wifi6",
-      "nom": "Borne Wi-Fi open space B",
+      "nom": "Borne Wi-Fi · R1, secteur 2",
       "niveau": "R1",
-      "zone": "ZONE-R1-OPEN-B",
+      "zone": "ZONE-R1-N2-01-01",
       "position": [
-        23,
+        20.3,
         3.3,
-        8
+        17.38
       ],
       "reseau": "bureautique",
       "config": {
@@ -247,25 +374,26 @@
         "conservation": "aucune",
         "minimum_vital": true
       },
-      "point_entree": true
+      "point_entree": true,
+      "risques": []
     },
     {
-      "id": "AP-WIFI-R2-01",
+      "id": "AP-WIFI-R1-03",
       "equipe": "cyber",
       "categorie": "borne_wifi",
       "type": "wifi6",
-      "nom": "Borne Wi-Fi R2",
-      "niveau": "R2",
-      "zone": "ZONE-R2-OPEN-C",
+      "nom": "Borne Wi-Fi · R1, secteur 3",
+      "niveau": "R1",
+      "zone": "ZONE-R1-N2-01-72",
       "position": [
-        14,
+        62.89,
         3.3,
-        8
+        11.18
       ],
       "reseau": "bureautique",
       "config": {
         "ssid": "GV-Corp",
-        "portee_m": 14
+        "portee_m": 12
       },
       "donnee": {
         "nature": "technique",
@@ -273,7 +401,170 @@
         "conservation": "aucune",
         "minimum_vital": true
       },
-      "point_entree": true
+      "point_entree": true,
+      "risques": []
+    },
+    {
+      "id": "AP-WIFI-R2-01",
+      "equipe": "cyber",
+      "categorie": "borne_wifi",
+      "type": "wifi6",
+      "nom": "Borne Wi-Fi · R2, secteur 1",
+      "niveau": "R2",
+      "zone": "ZONE-R2-N2-02-54",
+      "position": [
+        25.09,
+        3.3,
+        11.41
+      ],
+      "reseau": "bureautique",
+      "config": {
+        "ssid": "GV-Corp",
+        "portee_m": 12
+      },
+      "donnee": {
+        "nature": "technique",
+        "identifiante": false,
+        "conservation": "aucune",
+        "minimum_vital": true
+      },
+      "point_entree": true,
+      "risques": []
+    },
+    {
+      "id": "AP-WIFI-R2-02",
+      "equipe": "cyber",
+      "categorie": "borne_wifi",
+      "type": "wifi6",
+      "nom": "Borne Wi-Fi · R2, secteur 2",
+      "niveau": "R2",
+      "zone": "ZONE-R2-N2-02-01",
+      "position": [
+        20.3,
+        3.3,
+        17.38
+      ],
+      "reseau": "bureautique",
+      "config": {
+        "ssid": "GV-Corp",
+        "portee_m": 12
+      },
+      "donnee": {
+        "nature": "technique",
+        "identifiante": false,
+        "conservation": "aucune",
+        "minimum_vital": true
+      },
+      "point_entree": true,
+      "risques": []
+    },
+    {
+      "id": "AP-WIFI-R2-03",
+      "equipe": "cyber",
+      "categorie": "borne_wifi",
+      "type": "wifi6",
+      "nom": "Borne Wi-Fi · R2, secteur 3",
+      "niveau": "R2",
+      "zone": "ZONE-R2-N2-02-71",
+      "position": [
+        62.89,
+        3.3,
+        11.17
+      ],
+      "reseau": "bureautique",
+      "config": {
+        "ssid": "GV-Corp",
+        "portee_m": 12
+      },
+      "donnee": {
+        "nature": "technique",
+        "identifiante": false,
+        "conservation": "aucune",
+        "minimum_vital": true
+      },
+      "point_entree": true,
+      "risques": []
+    },
+    {
+      "id": "AP-WIFI-R3-01",
+      "equipe": "cyber",
+      "categorie": "borne_wifi",
+      "type": "wifi6",
+      "nom": "Borne Wi-Fi · R3, secteur 1",
+      "niveau": "R3",
+      "zone": "ZONE-R3-N2-03-48",
+      "position": [
+        26.43,
+        3.3,
+        11.41
+      ],
+      "reseau": "bureautique",
+      "config": {
+        "ssid": "GV-Corp",
+        "portee_m": 12
+      },
+      "donnee": {
+        "nature": "technique",
+        "identifiante": false,
+        "conservation": "aucune",
+        "minimum_vital": true
+      },
+      "point_entree": true,
+      "risques": []
+    },
+    {
+      "id": "AP-WIFI-R3-02",
+      "equipe": "cyber",
+      "categorie": "borne_wifi",
+      "type": "wifi6",
+      "nom": "Borne Wi-Fi · R3, secteur 2",
+      "niveau": "R3",
+      "zone": "ZONE-R3-N2-03-01",
+      "position": [
+        20.3,
+        3.3,
+        17.38
+      ],
+      "reseau": "bureautique",
+      "config": {
+        "ssid": "GV-Corp",
+        "portee_m": 12
+      },
+      "donnee": {
+        "nature": "technique",
+        "identifiante": false,
+        "conservation": "aucune",
+        "minimum_vital": true
+      },
+      "point_entree": true,
+      "risques": []
+    },
+    {
+      "id": "AP-WIFI-R3-03",
+      "equipe": "cyber",
+      "categorie": "borne_wifi",
+      "type": "wifi6",
+      "nom": "Borne Wi-Fi · R3, secteur 3",
+      "niveau": "R3",
+      "zone": "ZONE-R3-N2-03-63",
+      "position": [
+        61.69,
+        3.3,
+        11.17
+      ],
+      "reseau": "bureautique",
+      "config": {
+        "ssid": "GV-Corp",
+        "portee_m": 12
+      },
+      "donnee": {
+        "nature": "technique",
+        "identifiante": false,
+        "conservation": "aucune",
+        "minimum_vital": true
+      },
+      "point_entree": true,
+      "risques": []
     },
     {
       "id": "CAM-R0-01",
@@ -282,11 +573,11 @@
       "type": "camera_ip",
       "nom": "Caméra IP hall",
       "niveau": "R0",
-      "zone": "ZONE-R0-HALL",
+      "zone": "ZONE-R0-N2-00-68",
       "position": [
-        1,
+        16.64,
         3.2,
-        1
+        3.48
       ],
       "reseau": "bureautique",
       "donnee": {
@@ -312,11 +603,11 @@
       "type": "badge_nominatif",
       "nom": "Lecteur de badge nominatif entrée",
       "niveau": "R0",
-      "zone": "ZONE-R0-HALL",
+      "zone": "ZONE-R0-N2-00-68",
       "position": [
-        8,
+        23.64,
         1.2,
-        0.3
+        2.78
       ],
       "reseau": "bureautique",
       "donnee": {
@@ -334,39 +625,6 @@
         "PRV-CNIL-SANCTION"
       ],
       "description": "Relier le badge à la GTB permettrait de suivre les horaires de chacun."
-    },
-    {
-      "id": "GW-CLOUD-01",
-      "equipe": "cyber",
-      "categorie": "passerelle",
-      "type": "passerelle_cloud",
-      "nom": "Passerelle cloud constructeur",
-      "niveau": "R0",
-      "zone": "ZONE-R0-TECH",
-      "position": [
-        15.5,
-        1.8,
-        0.6
-      ],
-      "reseau": "internet",
-      "config": {
-        "envoi": "toutes les mesures, en continu"
-      },
-      "donnee": {
-        "nature": "technique",
-        "identifiante": false,
-        "conservation": "illimitée chez le prestataire",
-        "minimum_vital": false
-      },
-      "point_entree": true,
-      "risques": [
-        "RSK-INTRUSION"
-      ],
-      "preuves": [
-        "PRV-ADEME",
-        "PRV-DIVD-BACNET"
-      ],
-      "description": "Modèle « tout collecter » : flux continu vers le cloud. Absent en mode minimum vital (traitement local)."
     }
   ],
   "liens": [
@@ -410,7 +668,7 @@
       "de": "SW-GTB-01",
       "vers": [
         "SRV-NIAGARA",
-        "GW-ISMA-R0"
+        "GW-ISMA-SS1"
       ]
     },
     {
@@ -421,9 +679,17 @@
       "de": "SW-BUR-01",
       "vers": [
         "AP-WIFI-R0-01",
+        "AP-WIFI-R0-02",
+        "AP-WIFI-R0-03",
         "AP-WIFI-R1-01",
         "AP-WIFI-R1-02",
-        "AP-WIFI-R2-01"
+        "AP-WIFI-R1-03",
+        "AP-WIFI-R2-01",
+        "AP-WIFI-R2-02",
+        "AP-WIFI-R2-03",
+        "AP-WIFI-R3-01",
+        "AP-WIFI-R3-02",
+        "AP-WIFI-R3-03"
       ]
     },
     {
@@ -431,10 +697,12 @@
       "equipe": "cyber",
       "type": "fibre",
       "protocole": "fibre",
-      "de": "BAIE-R0-01",
+      "de": "BAIE-SS1-01",
       "vers": [
+        "BAIE-R0-01",
         "BAIE-R1-01",
-        "BAIE-R2-01"
+        "BAIE-R2-01",
+        "BAIE-R3-01"
       ]
     },
     {
@@ -484,27 +752,265 @@
   ],
   "gaines": [
     {
-      "id": "GAINE-R0-BUR",
+      "id": "GAINE-SS1-DORSALE",
       "equipe": "cyber",
-      "nom": "Chemin de câbles bureautique R0",
+      "nom": "Dorsale fibre vers la montante (SS1)",
+      "type": "horizontale",
+      "reseau": "fibre",
+      "chemin": [
+        [
+          97.94,
+          22.7
+        ],
+        [
+          33.98,
+          22.7
+        ],
+        [
+          33.98,
+          11.54
+        ]
+      ],
+      "hauteur": 3.25,
+      "niveau": "SS1",
+      "contient": [
+        "LNK-FIBRE-DORSALE"
+      ]
+    },
+    {
+      "id": "GAINE-SS1-GTB",
+      "equipe": "cyber",
+      "nom": "Chemin de câbles GTB isolé (SS1)",
+      "type": "horizontale",
+      "reseau": "GTB",
+      "chemin": [
+        [
+          44.29,
+          28.52
+        ],
+        [
+          42.93,
+          28.52
+        ],
+        [
+          41.56,
+          28.52
+        ]
+      ],
+      "hauteur": 2.7,
+      "niveau": "SS1",
+      "contient": [
+        "LNK-NET-GTB-EQ"
+      ]
+    },
+    {
+      "id": "MONT-01",
+      "equipe": "cyber",
+      "nom": "Montante technique (SS1 → R3)",
+      "type": "montante",
+      "reseau": "mixte",
+      "chemin": [
+        [
+          33.98,
+          11.54
+        ]
+      ],
+      "hauteur": 3.0,
+      "de": "SS1",
+      "a": "R3",
+      "contient": [
+        "LNK-FIBRE-DORSALE",
+        "LNK-NET-BUR-AP"
+      ]
+    },
+    {
+      "id": "GAINE-R0-BUR-O",
+      "equipe": "cyber",
+      "nom": "Chemin de câbles bureautique R0 (ouest)",
       "type": "horizontale",
       "reseau": "bureautique",
       "chemin": [
         [
-          12.6,
-          6
+          33.98,
+          11.54
         ],
         [
-          12.6,
-          9
+          33.98,
+          11.18
         ],
         [
-          6,
-          9
+          11.75,
+          11.18
         ]
       ],
       "hauteur": 3.0,
       "niveau": "R0",
+      "contient": [
+        "LNK-NET-BUR-AP"
+      ]
+    },
+    {
+      "id": "GAINE-R0-BUR-E",
+      "equipe": "cyber",
+      "nom": "Chemin de câbles bureautique R0 (est)",
+      "type": "horizontale",
+      "reseau": "bureautique",
+      "chemin": [
+        [
+          33.98,
+          11.18
+        ],
+        [
+          56.83,
+          11.18
+        ]
+      ],
+      "hauteur": 3.0,
+      "niveau": "R0",
+      "contient": [
+        "LNK-NET-BUR-AP"
+      ]
+    },
+    {
+      "id": "GAINE-R1-BUR-O",
+      "equipe": "cyber",
+      "nom": "Chemin de câbles bureautique R1 (ouest)",
+      "type": "horizontale",
+      "reseau": "bureautique",
+      "chemin": [
+        [
+          33.98,
+          11.54
+        ],
+        [
+          33.98,
+          11.42
+        ],
+        [
+          20.3,
+          11.42
+        ]
+      ],
+      "hauteur": 3.0,
+      "niveau": "R1",
+      "contient": [
+        "LNK-NET-BUR-AP"
+      ]
+    },
+    {
+      "id": "GAINE-R1-BUR-E",
+      "equipe": "cyber",
+      "nom": "Chemin de câbles bureautique R1 (est)",
+      "type": "horizontale",
+      "reseau": "bureautique",
+      "chemin": [
+        [
+          33.98,
+          11.42
+        ],
+        [
+          62.89,
+          11.42
+        ]
+      ],
+      "hauteur": 3.0,
+      "niveau": "R1",
+      "contient": [
+        "LNK-NET-BUR-AP"
+      ]
+    },
+    {
+      "id": "GAINE-R2-BUR-O",
+      "equipe": "cyber",
+      "nom": "Chemin de câbles bureautique R2 (ouest)",
+      "type": "horizontale",
+      "reseau": "bureautique",
+      "chemin": [
+        [
+          33.98,
+          11.54
+        ],
+        [
+          33.98,
+          11.41
+        ],
+        [
+          20.3,
+          11.41
+        ]
+      ],
+      "hauteur": 3.0,
+      "niveau": "R2",
+      "contient": [
+        "LNK-NET-BUR-AP"
+      ]
+    },
+    {
+      "id": "GAINE-R2-BUR-E",
+      "equipe": "cyber",
+      "nom": "Chemin de câbles bureautique R2 (est)",
+      "type": "horizontale",
+      "reseau": "bureautique",
+      "chemin": [
+        [
+          33.98,
+          11.41
+        ],
+        [
+          62.89,
+          11.41
+        ]
+      ],
+      "hauteur": 3.0,
+      "niveau": "R2",
+      "contient": [
+        "LNK-NET-BUR-AP"
+      ]
+    },
+    {
+      "id": "GAINE-R3-BUR-O",
+      "equipe": "cyber",
+      "nom": "Chemin de câbles bureautique R3 (ouest)",
+      "type": "horizontale",
+      "reseau": "bureautique",
+      "chemin": [
+        [
+          33.98,
+          11.54
+        ],
+        [
+          33.98,
+          11.41
+        ],
+        [
+          20.3,
+          11.41
+        ]
+      ],
+      "hauteur": 3.0,
+      "niveau": "R3",
+      "contient": [
+        "LNK-NET-BUR-AP"
+      ]
+    },
+    {
+      "id": "GAINE-R3-BUR-E",
+      "equipe": "cyber",
+      "nom": "Chemin de câbles bureautique R3 (est)",
+      "type": "horizontale",
+      "reseau": "bureautique",
+      "chemin": [
+        [
+          33.98,
+          11.41
+        ],
+        [
+          61.69,
+          11.41
+        ]
+      ],
+      "hauteur": 3.0,
+      "niveau": "R3",
       "contient": [
         "LNK-NET-BUR-AP"
       ]
@@ -517,194 +1023,26 @@
       "reseau": "bureautique",
       "chemin": [
         [
-          6,
-          9
+          33.98,
+          11.54
         ],
         [
-          6,
-          1
+          33.98,
+          3.48
         ],
         [
-          1,
-          1
+          16.64,
+          3.48
+        ],
+        [
+          23.64,
+          2.78
         ]
       ],
       "hauteur": 3.0,
       "niveau": "R0",
       "contient": [
         "LNK-NET-CAM"
-      ]
-    },
-    {
-      "id": "GAINE-R0-GTB",
-      "equipe": "cyber",
-      "nom": "Chemin de câbles GTB isolé R0",
-      "type": "horizontale",
-      "reseau": "GTB",
-      "chemin": [
-        [
-          15,
-          3.5
-        ],
-        [
-          13,
-          3.5
-        ],
-        [
-          13,
-          4
-        ]
-      ],
-      "hauteur": 2.7,
-      "niveau": "R0",
-      "contient": [
-        "LNK-NET-GTB-EQ"
-      ]
-    },
-    {
-      "id": "GAINE-R0-DORSALE",
-      "equipe": "cyber",
-      "nom": "Dorsale fibre vers la montante",
-      "type": "horizontale",
-      "reseau": "fibre",
-      "chemin": [
-        [
-          17,
-          7.2
-        ],
-        [
-          17,
-          9.4
-        ],
-        [
-          28.5,
-          9.4
-        ],
-        [
-          28.5,
-          16.5
-        ]
-      ],
-      "hauteur": 3.25,
-      "niveau": "R0",
-      "contient": [
-        "LNK-FIBRE-DORSALE"
-      ]
-    },
-    {
-      "id": "MONT-01",
-      "equipe": "cyber",
-      "nom": "Montante technique (R0 → R2)",
-      "type": "montante",
-      "reseau": "mixte",
-      "chemin": [
-        [
-          28.5,
-          16.5
-        ]
-      ],
-      "hauteur": 3.0,
-      "de": "R0",
-      "a": "R2",
-      "contient": [
-        "LNK-FIBRE-DORSALE",
-        "LNK-NET-BUR-AP"
-      ]
-    },
-    {
-      "id": "GAINE-R1-BUR",
-      "equipe": "cyber",
-      "nom": "Chemin de câbles bureautique R1",
-      "type": "horizontale",
-      "reseau": "bureautique",
-      "chemin": [
-        [
-          28.5,
-          16.5
-        ],
-        [
-          28.5,
-          10
-        ],
-        [
-          8,
-          10
-        ],
-        [
-          8,
-          3
-        ]
-      ],
-      "hauteur": 3.0,
-      "niveau": "R1",
-      "contient": [
-        "LNK-NET-BUR-AP"
-      ]
-    },
-    {
-      "id": "GAINE-R1-BUR-B",
-      "equipe": "cyber",
-      "nom": "Dérivation borne Wi-Fi R1 (open space B)",
-      "type": "horizontale",
-      "reseau": "bureautique",
-      "chemin": [
-        [
-          23,
-          10
-        ],
-        [
-          23,
-          8
-        ]
-      ],
-      "hauteur": 3.0,
-      "niveau": "R1",
-      "contient": [
-        "LNK-NET-BUR-AP"
-      ]
-    },
-    {
-      "id": "GAINE-R2-FIBRE",
-      "equipe": "cyber",
-      "nom": "Fibre vers la baie R2",
-      "type": "horizontale",
-      "reseau": "fibre",
-      "chemin": [
-        [
-          28.5,
-          16.5
-        ],
-        [
-          2,
-          16.5
-        ]
-      ],
-      "hauteur": 3.25,
-      "niveau": "R2",
-      "contient": [
-        "LNK-FIBRE-DORSALE"
-      ]
-    },
-    {
-      "id": "GAINE-R2-BUR",
-      "equipe": "cyber",
-      "nom": "Dérivation borne Wi-Fi R2",
-      "type": "horizontale",
-      "reseau": "bureautique",
-      "chemin": [
-        [
-          14,
-          16.5
-        ],
-        [
-          14,
-          8
-        ]
-      ],
-      "hauteur": 3.0,
-      "niveau": "R2",
-      "contient": [
-        "LNK-NET-BUR-AP"
       ]
     }
   ],
@@ -717,7 +1055,7 @@
         {
           "de": "externe",
           "vers": "AP-WIFI-R1-01",
-          "texte": "Depuis le parking, l'attaquant se connecte à la borne Wi-Fi de l'open space A."
+          "texte": "Depuis le parking visiteurs, l'attaquant se connecte à la borne Wi-Fi du niveau 1."
         },
         {
           "de": "AP-WIFI-R1-01",
@@ -775,7 +1113,7 @@
         {
           "de": "externe",
           "vers": "CAM-R0-01",
-          "texte": "L'attaquant devine le mot de passe par défaut de la caméra du hall."
+          "texte": "L'attaquant devine le mot de passe par défaut de la caméra du hall d'accueil."
         },
         {
           "de": "CAM-R0-01",

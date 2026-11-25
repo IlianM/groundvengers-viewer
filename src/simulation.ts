@@ -21,7 +21,7 @@ export function tauxOccupation(z: Zone, h: number): number {
   const midi = bosse(h, 12, 13.75, 0.4)
   switch (z.type) {
     case 'open_space':
-      if (z.id.includes('CAFE')) return Math.max(0.6 * midi, 0.25 * bosse(h, 9.75, 10.5) + 0.2 * bosse(h, 15.75, 16.5))
+      if (z.amenagement === 'cafeteria') return Math.max(0.6 * midi, 0.25 * bosse(h, 9.75, 10.5) + 0.2 * bosse(h, 15.75, 16.5))
       return jour * (0.9 - 0.55 * midi)
     case 'bureau': return jour * (0.9 - 0.7 * midi)
     case 'reunion': {
@@ -48,7 +48,7 @@ export const formatHeure = (h: number) => {
 /** Température simulée d'une zone (°C) : l'extérieur se réchauffe dans la journée, les occupants ajoutent un peu de chaleur. */
 export function temperatureZone(z: Zone, h: number, n: number): number {
   const soleil = Math.max(0, Math.sin((Math.PI * (h - 6)) / 14))
-  const etage = z.niveau === 'R2' ? 0.6 : z.niveau === 'R0' ? -0.3 : 0
+  const etage = ((donnees.batiment.niveaux.find((n) => n.id === z.niveau)?.altitude ?? 4) - 4) * 0.08 // un peu plus chaud en montant
   const technique = z.type === 'technique' ? 3 : 0
   return 18.6 + 3.4 * soleil + 0.07 * n + etage + technique
 }

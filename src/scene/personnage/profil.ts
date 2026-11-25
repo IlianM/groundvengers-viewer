@@ -26,8 +26,6 @@ export const LIBELLE_BLOC: Record<Bloc['type'], string> = {
   arrivee: 'Arrivée', travail: 'Travail individuel', reunion: 'Réunion', dejeuner: 'Déjeuner', pause: 'Pause café', depart: 'Départ', accueil: 'Accueil des visiteurs',
 }
 
-const nomZone = (id: string | undefined, repli: string) => (id ? donnees.zoneParId.get(id)?.nom : undefined) ?? repli
-
 /** Retire d'un bloc la partie qui chevauche `f` (le bloc peut se scinder en deux). */
 function sans(b: Bloc, f: Bloc): Bloc[] {
   if (b.fin <= f.debut || b.debut >= f.fin) return [b]
@@ -56,7 +54,7 @@ export function profilDe(cle: string, zone: Zone, heure = 10.5, tache = 'bureau'
     return toutes[rang % toutes.length]?.nom ?? 'Salle de réunion'
   }
   const cafeteria = donnees.batiment.zones.find((z) => z.amenagement === 'cafeteria')?.nom ?? 'Cafétéria'
-  const hall = nomZone('ZONE-R0-HALL', 'Hall')
+  const hall = donnees.batiment.zones.find((z) => z.type === 'hall')?.nom ?? 'Hall'
   const arr = 8 + (h % 6) * 0.25
   const dep = 16.75 + (h % 7) * 0.25
   const r1 = 10 + (h % 3) * 0.5

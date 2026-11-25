@@ -11,7 +11,7 @@ import { niveauVisible } from './visibles'
 import { hash, etatDe, cibleDe, construireNavette, LIBELLE_POSE, type Occupant, type Pose } from './personnage/comportement'
 import { DEC_CABINE } from './personnage/ascenseur'
 import { planifierDeplacements } from './personnage/deplacements'
-import { repartir, BOUCLE_HALL } from './personnage/repartition'
+import { repartir, boucleHall, zoneHall } from './personnage/repartition'
 import { registre } from './personnage/registre'
 
 // géométries et matériaux partagés par tous les personnages
@@ -181,17 +181,20 @@ export function Personnages() {
   const nNavettes = Math.min(4, Math.floor(total / 15))
   const navettes = useMemo(() => {
     const cages = donnees.batiment.ascenseurs
+    const idHall = zoneHall()?.id ?? donnees.batiment.zones[0].id
     const liste: Occupant[] = []
     for (let j = 0; j < nNavettes && cages.length; j++) {
       const a = cages[j % cages.length]
       const niveaux = a.niveaux.map((id) => donnees.batiment.niveaux.find((n) => n.id === id)).filter((n): n is NonNullable<typeof n> => !!n)
         .sort((x, y) => x.altitude - y.altitude).map((n) => n.id)
-      if (niveaux.length < 2) continue
+      const sol = Math.max(0, niveaux.findIndex((id) => (donnees.batiment.niveaux.find((n) => n.id === id)?.altitude ?? 0) >= 0)) // niveau d'entrée : le premier hors sous-sol
+      const etages = niveaux.length - 1 - sol - (niveaux.length - sol > 3 ? 1 : 0) // on n'envoie personne sur la toiture
+      if (niveaux.length < 2 || etages < 1) continue
       const nav = construireNavette(
-        { x: a.position[0], z: a.position[1], profondeur: a.taille[1], niveaux, dec: (j % cages.length) * DEC_CABINE },
-        1 + (j % (niveaux.length - 1)), j * 100, BOUCLE_HALL[3][0], 24,
+        { x: a.position[0], z: a.position[1], profondeur: a.taille[1], niveaux, dec: (j % cages.length) * DEC_CABINE, sol },
+        sol + 1 + (j % etages), j * 100, boucleHall()[3][0], (zoneHall()?.rect[1] ?? 0) + (zoneHall()?.rect[3] ?? 20) + 4,
       )
-      if (nav) liste.push({ cle: `NAV#${j}`, zone: 'ZONE-R0-HALL', niveau: niveaux[0], tache: 'marche', x: 0, z: 0, y: 0, ry: 0, phase: j, navette: nav })
+      if (nav) liste.push({ cle: `NAV#${j}`, zone: idHall, niveau: niveaux[sol], tache: 'marche', x: 0, z: 0, y: 0, ry: 0, phase: j, navette: nav })
     }
     return liste
   }, [nNavettes])

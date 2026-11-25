@@ -18,7 +18,8 @@ export function cagesInfo(): CageInfo[] {
 const PORTEE_ALLEE = 2.2 // une allée verticale doit passer à moins de 2,2 m de la porte pour servir de couloir
 const nearest = (v: number[], x: number) => v.reduce((a, b) => (Math.abs(b - x) < Math.abs(a - x) ? b : a))
 const zHall = (c: CageInfo) => c.z + c.profondeur / 2 + 0.9
-const Z_COULOIR_CAFE = 16.0 // couloir libre entre les tables et le comptoir de la cafétéria
+/** Couloir libre entre les tables et le comptoir d'une cafétéria : 2 m avant son mur du fond. */
+const zCouloirCafe = (z: { rect: [number, number, number, number] }) => z.rect[1] + z.rect[3] - 2.0
 
 /** Où l'on peut aller depuis un ascenseur : coin café et imprimante des open spaces desservis, comptoir de la cafétéria. */
 export function destinationsDe(cage: CageInfo, voies: Map<string, Voie>, sieges: Siege[]): Destination[] {
@@ -40,7 +41,7 @@ export function destinationsDe(cage: CageInfo, voies: Map<string, Voie>, sieges:
     if (comptoir.length === 0) continue
     const mx = comptoir.reduce((a, s) => a + s.x, 0) / comptoir.length
     const mz = comptoir[0].z + 0.1
-    sortie.push({ niveau: z.niveau, pts: [L, [cage.x, Z_COULOIR_CAFE], [mx, Z_COULOIR_CAFE], [mx, mz]], ry: 0, pose: 'boire', nom: `comptoir (${z.nom})` })
+    sortie.push({ niveau: z.niveau, pts: [L, [cage.x, zCouloirCafe(z)], [mx, zCouloirCafe(z)], [mx, mz]], ry: 0, pose: 'boire', nom: `comptoir (${z.nom})` })
   }
   return sortie
 }

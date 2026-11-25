@@ -1,4 +1,5 @@
 # Schéma de données
+> Mise à jour IFC : `zone.type` accepte aussi `sanitaire`, `stockage`, `parking` ; `niveau.emprise` (optionnel, `[x, z, largeur, profondeur]`) donne l'empreinte propre d'un niveau (les sous-sols sont plus petits que les étages).
 
 La référence est `src/schema/index.ts` (Zod). Résumé :
 

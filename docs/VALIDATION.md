@@ -20,7 +20,8 @@ Fichiers : `data/domotique.json`, `data/batiment.json`, `public/models/` (export
 - [ ] **Chemin de la donnée** : compteur → passerelle iSMA → serveur Niagara : les liens (`LNK-MBUS-R0`, `LNK-MODBUS-R0`, `LNK-ETH-GTB`) correspondent-ils à l'installation prévue ?
 - [ ] **Durées de conservation** (texte du champ `conservation`) : mensuel 10 ans (OPERAT) pour les compteurs, 1 an pour le superviseur : à confirmer.
 - [ ] **Gaines GTB** : aucune n'est décrite côté Domotique (`gaines` vide). Ajouter les chemins du bus terrain.
-- [ ] **Bâtiment** : 3 niveaux, 16 zones, effectifs max, 2 ascenseurs (`ascenseurs` dans `batiment.json`) : conformes au bâtiment réel ?
+- [ ] **Bâtiment (issu de l'IFC)** : 7 niveaux (SS2, SS1, R0 à R3, toiture TT), 307 zones, 3 ascenseurs. Les effectifs max sont **déduits** des surfaces et des noms de pièces (règles dans `scripts/ifc_vers_donnees.py`) : à corriger avec les vrais effectifs. Le classement des pièces (bureau, réunion, open space…) vient du nom IFC.
+- [ ] **Emplacements des capteurs** : l'IFC ne contient aucun capteur ; toutes les positions sont des **propositions** générées par règles (CO₂ et présence dans les pièces occupées, compteurs en local technique…). À valider ou déplacer pièce par pièce.
 - [ ] **Export 3D réel** : tester un vrai `.glb` (`docs/EXPORT-3D.md`) : objets nommés comme les identifiants (`CPT-ELEC-TGBT`…) et ouvrant leur fiche.
 - [ ] **Confort** : consigne unique de 21 °C et modèle de température simulé (`src/simulation.ts`) : réalistes ? À remplacer par la vraie régulation.
 

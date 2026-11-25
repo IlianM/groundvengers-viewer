@@ -48,7 +48,7 @@ describe('visite guidée', () => {
 
   it('les données qu’elle utilise existent (scénario, zones)', () => {
     expect(donnees.scenarios.some((s) => s.id === 'SCN-WIFI')).toBe(true)
-    for (const id of ['ZONE-R1-OPEN-A', 'ZONE-R2-OPEN-C']) expect(donnees.zoneParId.has(id)).toBe(true)
-    expect(donnees.equipements.some((e) => e.categorie === 'capteur' && e.donnee.minimum_vital && e.niveau === 'R1')).toBe(true)
+    expect(donnees.batiment.zones.some((z) => z.type === 'open_space' && !z.amenagement)).toBe(true)
+    expect(donnees.equipements.some((e) => e.categorie === 'capteur' && e.donnee.minimum_vital)).toBe(true)
   })
 })

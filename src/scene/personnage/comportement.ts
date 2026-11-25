@@ -90,7 +90,7 @@ function surChemin(pts: Pt[], d: number): { x: number; z: number; ry: number } {
 type Seg = { t0: number; t1: number; kind: 'marche' | 'attend' | 'cache' | 'poste'; niveau: string; pts: Pt[]; ry?: number; pose?: Pose }
 export type Navette = { segs: Seg[]; periode: number; decalage: number }
 
-export type CageInfo = { x: number; z: number; profondeur: number; niveaux: string[]; dec: number }
+export type CageInfo = { x: number; z: number; profondeur: number; niveaux: string[]; dec: number; sol?: number } // sol : rang du niveau d'entrée dans `niveaux` (0 par défaut ; plus si des sous-sols sont desservis)
 
 /**
  * Scénario d'un usager : entre par la porte du hall, attend la cabine, monte au niveau `dest`, patiente un instant,
@@ -118,11 +118,12 @@ export function construireNavette(cage: CageInfo, dest: number, decalage: number
     if (jusqua > u) { segs.push({ t0: u, t1: jusqua, kind: 'attend', niveau, pts: [at], ry, pose }); u = jusqua }
   }
   const cache = (niveau: string, jusqua: number) => { segs.push({ t0: u, t1: jusqua, kind: 'cache', niveau, pts: [porte] }); u = jusqua }
-  const bas = cage.niveaux[0], haut = cage.niveaux[dest]
+  const s0 = cage.sol ?? 0
+  const bas = cage.niveaux[s0], haut = cage.niveaux[dest]
   const dec = cage.dec
   // montée
   marche(bas, [[xEntree, zEntree], [xEntree, zHall], L])
-  const sUp = arretOuvert(0, n, dec, u)
+  const sUp = arretOuvert(s0, n, dec, u)
   attend(bas, sUp + 0.3, L, Math.PI, 'asc')
   marche(bas, [L, porte])
   const sDest = arretApres(dest, n, dec, sUp + DWELL)
@@ -134,7 +135,7 @@ export function construireNavette(cage: CageInfo, dest: number, decalage: number
   const sDown = arretOuvert(dest, n, dec, u)
   attend(haut, sDown + 0.3, L, Math.PI, 'asc')
   marche(haut, [L, porte])
-  const sBas = arretApres(0, n, dec, sDown + DWELL)
+  const sBas = arretApres(s0, n, dec, sDown + DWELL)
   cache(haut, sBas + 0.4)
   // sortie du bâtiment
   marche(bas, [porte, L, [xEntree, L[1]], [xEntree, zEntree]])

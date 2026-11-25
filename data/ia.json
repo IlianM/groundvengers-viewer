@@ -1,23 +1,202 @@
 {
   "equipements": [
-    { "id": "SRV-IA-01", "equipe": "ia", "categorie": "serveur", "type": "inference_locale", "nom": "Serveur d'inférence local (cloisonné)", "niveau": "R0", "zone": "ZONE-R0-TECH", "position": [15.5, 1, 7.2], "reseau": "GTB",
-      "config": { "sortie_internet": false, "reseau": "VLAN GTB isolé" },
-      "donnee": { "nature": "occupation_agregee", "identifiante": false, "conservation": "agrégats 72 h", "minimum_vital": true }, "risques": ["RSK-IA"] }
+    {
+      "id": "SRV-IA-01",
+      "equipe": "ia",
+      "categorie": "serveur",
+      "type": "inference_locale",
+      "nom": "Serveur d'inférence local (cloisonné)",
+      "niveau": "SS1",
+      "zone": "ZONE-SS1-N2A-S1-22",
+      "position": [
+        45.66,
+        1.0,
+        28.52
+      ],
+      "reseau": "GTB",
+      "config": {
+        "sortie_internet": false,
+        "reseau": "VLAN GTB isolé"
+      },
+      "donnee": {
+        "nature": "occupation_agregee",
+        "identifiante": false,
+        "conservation": "agrégats 72 h",
+        "minimum_vital": true
+      },
+      "risques": [
+        "RSK-IA"
+      ]
+    }
   ],
   "liens": [],
   "noeuds": [
-    { "id": "IA-EDGE-R0", "heberge_sur": "AUT-IZOT-R0", "architecture": "edge", "modele": "Estimation d'occupation par zone (CO2) + régulation prédictive",
-      "entrees": ["CAP-CO2-R0-01", "CAP-CO2-R0-02"], "sorties": ["consigne chauffage par zone", "taux d'occupation zone / heure"],
-      "frequence": "5 min", "conservation": { "brut": "aucune (traité puis détruit)", "agrege": "72 h" }, "mode_degrade": "pilotage par horaires fixes", "preuves": ["PRV-DPO-01"] },
-    { "id": "IA-EDGE-R1", "heberge_sur": "AUT-IZOT-R1", "architecture": "edge", "modele": "Estimation d'occupation par zone (CO2 + IR) + régulation prédictive",
-      "entrees": ["CAP-CO2-R1-01", "CAP-CO2-R1-02", "CAP-CO2-R1-03", "CAP-IR-R1-01", "CAP-IR-R1-02", "CAP-TEMP-R1-01"], "sorties": ["consigne chauffage par zone", "éclairage par zone", "taux d'occupation zone / heure"],
-      "frequence": "5 min", "conservation": { "brut": "aucune (traité puis détruit)", "agrege": "72 h" }, "mode_degrade": "pilotage par horaires fixes", "preuves": ["PRV-DPO-01"] },
-    { "id": "IA-EDGE-R2", "heberge_sur": "AUT-IZOT-R2", "architecture": "edge", "modele": "Estimation d'occupation par zone (CO2 + IR) + régulation prédictive",
-      "entrees": ["CAP-CO2-R2-01", "CAP-CO2-R2-02", "CAP-IR-R2-01", "CAP-IR-R2-02", "CAP-TEMP-R2-01"], "sorties": ["consigne chauffage par zone", "taux d'occupation zone / heure"],
-      "frequence": "5 min", "conservation": { "brut": "aucune (traité puis détruit)", "agrege": "72 h" }, "mode_degrade": "pilotage par horaires fixes" },
-    { "id": "IA-CENTRAL", "heberge_sur": "SRV-IA-01", "architecture": "central", "modele": "Modèle unique d'occupation et de régulation pour tout le bâtiment",
-      "entrees": ["CAP-CO2-R0-01", "CAP-CO2-R0-02", "CAP-CO2-R1-01", "CAP-CO2-R1-02", "CAP-CO2-R1-03", "CAP-IR-R1-01", "CAP-IR-R1-02", "CAP-TEMP-R1-01", "CAP-CO2-R2-01", "CAP-CO2-R2-02", "CAP-IR-R2-01", "CAP-IR-R2-02", "CAP-TEMP-R2-01"],
-      "sorties": ["consignes chauffage et éclairage par zone", "indicateurs agrégés par niveau (OPERAT)"],
-      "frequence": "5 min", "conservation": { "brut": "aucune", "agrege": "72 h" }, "mode_degrade": "chaque automate repasse en pilotage par horaires", "preuves": ["PRV-RSSI-01"] }
+    {
+      "id": "IA-EDGE-R0",
+      "heberge_sur": "AUT-IZOT-R0",
+      "architecture": "edge",
+      "modele": "Estimation d'occupation par zone (CO2) + régulation prédictive",
+      "entrees": [
+        "CAP-CO2-R0-01",
+        "CAP-CO2-R0-02",
+        "CAP-CO2-R0-03",
+        "CAP-CO2-R0-04",
+        "CAP-IR-R0-01",
+        "CAP-IR-R0-02",
+        "CAP-TEMP-R0-01"
+      ],
+      "sorties": [
+        "consigne chauffage par zone",
+        "taux d'occupation zone / heure"
+      ],
+      "frequence": "5 min",
+      "conservation": {
+        "brut": "aucune (traité puis détruit)",
+        "agrege": "72 h"
+      },
+      "mode_degrade": "pilotage par horaires fixes"
+    },
+    {
+      "id": "IA-EDGE-R1",
+      "heberge_sur": "AUT-IZOT-R1",
+      "architecture": "edge",
+      "modele": "Estimation d'occupation par zone (CO2 + IR) + régulation prédictive",
+      "entrees": [
+        "CAP-CO2-R1-01",
+        "CAP-CO2-R1-02",
+        "CAP-IR-R1-01",
+        "CAP-IR-R1-02",
+        "CAP-TEMP-R1-01"
+      ],
+      "sorties": [
+        "consigne chauffage par zone",
+        "éclairage par zone",
+        "taux d'occupation zone / heure"
+      ],
+      "frequence": "5 min",
+      "conservation": {
+        "brut": "aucune (traité puis détruit)",
+        "agrege": "72 h"
+      },
+      "mode_degrade": "pilotage par horaires fixes",
+      "preuves": [
+        "PRV-DPO-01"
+      ]
+    },
+    {
+      "id": "IA-EDGE-R2",
+      "heberge_sur": "AUT-IZOT-R2",
+      "architecture": "edge",
+      "modele": "Estimation d'occupation par zone (CO2 + IR) + régulation prédictive",
+      "entrees": [
+        "CAP-CO2-R2-01",
+        "CAP-CO2-R2-02",
+        "CAP-CO2-R2-03",
+        "CAP-IR-R2-01",
+        "CAP-TEMP-R2-01",
+        "CAP-IR-R2-RH"
+      ],
+      "sorties": [
+        "consigne chauffage par zone",
+        "éclairage par zone",
+        "taux d'occupation zone / heure"
+      ],
+      "frequence": "5 min",
+      "conservation": {
+        "brut": "aucune (traité puis détruit)",
+        "agrege": "72 h"
+      },
+      "mode_degrade": "pilotage par horaires fixes"
+    },
+    {
+      "id": "IA-EDGE-R3",
+      "heberge_sur": "AUT-IZOT-R3",
+      "architecture": "edge",
+      "modele": "Estimation d'occupation par zone (CO2 + IR) + régulation prédictive",
+      "entrees": [
+        "CAP-CO2-R3-01",
+        "CAP-CO2-R3-02",
+        "CAP-CO2-R3-03",
+        "CAP-CO2-R3-04",
+        "CAP-CO2-R3-05",
+        "CAP-CO2-R3-06",
+        "CAP-CO2-R3-07",
+        "CAP-CO2-R3-08",
+        "CAP-CO2-R3-09",
+        "CAP-IR-R3-01",
+        "CAP-IR-R3-02",
+        "CAP-IR-R3-03",
+        "CAP-IR-R3-04",
+        "CAP-IR-R3-05",
+        "CAP-IR-R3-06",
+        "CAP-TEMP-R3-01"
+      ],
+      "sorties": [
+        "consigne chauffage par zone",
+        "éclairage par zone",
+        "taux d'occupation zone / heure"
+      ],
+      "frequence": "5 min",
+      "conservation": {
+        "brut": "aucune (traité puis détruit)",
+        "agrege": "72 h"
+      },
+      "mode_degrade": "pilotage par horaires fixes"
+    },
+    {
+      "id": "IA-CENTRAL",
+      "heberge_sur": "SRV-IA-01",
+      "architecture": "central",
+      "modele": "Modèle unique d'occupation et de régulation pour tout le bâtiment",
+      "entrees": [
+        "CAP-CO2-R0-01",
+        "CAP-CO2-R0-02",
+        "CAP-CO2-R0-03",
+        "CAP-CO2-R0-04",
+        "CAP-IR-R0-01",
+        "CAP-IR-R0-02",
+        "CAP-TEMP-R0-01",
+        "CAP-CO2-R1-01",
+        "CAP-CO2-R1-02",
+        "CAP-IR-R1-01",
+        "CAP-IR-R1-02",
+        "CAP-TEMP-R1-01",
+        "CAP-CO2-R2-01",
+        "CAP-CO2-R2-02",
+        "CAP-CO2-R2-03",
+        "CAP-IR-R2-01",
+        "CAP-TEMP-R2-01",
+        "CAP-IR-R2-RH",
+        "CAP-CO2-R3-01",
+        "CAP-CO2-R3-02",
+        "CAP-CO2-R3-03",
+        "CAP-CO2-R3-04",
+        "CAP-CO2-R3-05",
+        "CAP-CO2-R3-06",
+        "CAP-CO2-R3-07",
+        "CAP-CO2-R3-08",
+        "CAP-CO2-R3-09",
+        "CAP-IR-R3-01",
+        "CAP-IR-R3-02",
+        "CAP-IR-R3-03",
+        "CAP-IR-R3-04",
+        "CAP-IR-R3-05",
+        "CAP-IR-R3-06",
+        "CAP-TEMP-R3-01"
+      ],
+      "sorties": [
+        "consignes chauffage et éclairage par zone",
+        "indicateurs agrégés par niveau (OPERAT)"
+      ],
+      "frequence": "5 min",
+      "conservation": {
+        "brut": "aucune",
+        "agrege": "72 h"
+      },
+      "mode_degrade": "chaque automate repasse en pilotage par horaires",
+      "preuves": [
+        "PRV-RSSI-01"
+      ]
+    }
   ]
 }

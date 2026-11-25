@@ -8,32 +8,32 @@
       "minimum_vital": false,
       "camera": {
         "position": [
-          30,
-          22,
-          32
+          66,
+          44,
+          78
         ],
         "cible": [
           0,
-          4,
+          3,
           0
         ]
       }
     },
     {
       "titre": "2. Le bâtiment",
-      "texte": "Un siège de 3 niveaux, découpé en zones. Les bureaux individuels sont distingués des espaces collectifs.",
+      "texte": "Un bâtiment de 7 niveaux issu du fichier IFC : parking et locaux techniques en sous-sol, bureaux de R0 à R3, toiture technique. Les bureaux individuels sont distingués des espaces collectifs.",
       "vue": "architecture",
       "niveau": null,
       "minimum_vital": true,
       "camera": {
         "position": [
-          22,
-          16,
-          36
+          58,
+          38,
+          70
         ],
         "cible": [
           0,
-          5,
+          3,
           0
         ]
       }
@@ -42,17 +42,17 @@
       "titre": "3. Le pilotage",
       "texte": "La GTB existe déjà : capteurs, automates par étage, bus LonWorks, M-Bus, Modbus, DALI.",
       "vue": "domotique",
-      "niveau": "R1",
+      "niveau": "R3",
       "minimum_vital": true,
       "camera": {
         "position": [
-          18,
-          15,
-          24
+          46,
+          30,
+          54
         ],
         "cible": [
           0,
-          5,
+          10,
           0
         ]
       }
@@ -66,9 +66,9 @@
       "architecture_ia": "edge",
       "camera": {
         "position": [
-          -30,
-          20,
-          30
+          -60,
+          34,
+          66
         ],
         "cible": [
           0,
@@ -85,13 +85,13 @@
       "minimum_vital": true,
       "camera": {
         "position": [
-          20,
-          10,
-          16
+          62,
+          22,
+          62
         ],
         "cible": [
           0,
-          2,
+          0,
           0
         ]
       }
@@ -104,13 +104,13 @@
       "minimum_vital": true,
       "camera": {
         "position": [
-          30,
-          22,
-          32
+          66,
+          44,
+          78
         ],
         "cible": [
           0,
-          4,
+          3,
           0
         ]
       }
@@ -119,17 +119,17 @@
       "titre": "7. Ce que voit l'occupant",
       "texte": "Chaque capteur dit ce qu'il mesure et ce qu'il garde. Pas de détection dans les bureaux individuels.",
       "vue": "occupant",
-      "niveau": "R1",
+      "niveau": "R3",
       "minimum_vital": true,
       "camera": {
         "position": [
-          8,
-          22,
-          16
+          52,
+          36,
+          62
         ],
         "cible": [
           0,
-          5,
+          10,
           0
         ]
       }

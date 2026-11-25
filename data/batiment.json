@@ -1,34 +1,4466 @@
 {
-  "nom": "Siège GroundVengers (maquette temporaire MVP)",
-  "emprise": [30, 18],
+  "nom": "Bâtiment N2 (modèle IFC de l'équipe Domotique)",
+  "emprise": [
+    100.75,
+    30.03
+  ],
   "modele": null,
   "niveaux": [
-    { "id": "R0", "nom": "Rez-de-chaussée", "altitude": 0, "hauteur": 3.5 },
-    { "id": "R1", "nom": "Niveau 1", "altitude": 3.5, "hauteur": 3.5 },
-    { "id": "R2", "nom": "Niveau 2", "altitude": 7, "hauteur": 3.5 }
+    {
+      "id": "SS2",
+      "nom": "Sous-sol 2",
+      "altitude": -5.85,
+      "hauteur": 2.8,
+      "emprise": [
+        2.03,
+        2.21,
+        98.72,
+        27.82
+      ]
+    },
+    {
+      "id": "SS1",
+      "nom": "Sous-sol 1",
+      "altitude": -3.05,
+      "hauteur": 3.05,
+      "emprise": [
+        0.0,
+        0.0,
+        100.75,
+        30.03
+      ]
+    },
+    {
+      "id": "R0",
+      "nom": "Rez-de-chaussée",
+      "altitude": 0.0,
+      "hauteur": 4.05,
+      "emprise": [
+        2.0,
+        2.48,
+        86.4,
+        17.2
+      ]
+    },
+    {
+      "id": "R1",
+      "nom": "Niveau 1",
+      "altitude": 4.05,
+      "hauteur": 3.6,
+      "emprise": [
+        2.0,
+        2.67,
+        86.41,
+        17.01
+      ]
+    },
+    {
+      "id": "R2",
+      "nom": "Niveau 2",
+      "altitude": 7.65,
+      "hauteur": 3.6,
+      "emprise": [
+        2.0,
+        2.67,
+        86.41,
+        17.01
+      ]
+    },
+    {
+      "id": "R3",
+      "nom": "Niveau 3",
+      "altitude": 11.25,
+      "hauteur": 3.6,
+      "emprise": [
+        2.0,
+        2.67,
+        86.41,
+        17.01
+      ]
+    },
+    {
+      "id": "TT",
+      "nom": "Toiture-terrasse",
+      "altitude": 14.85,
+      "hauteur": 1.2,
+      "emprise": [
+        2.14,
+        2.81,
+        86.13,
+        16.72
+      ]
+    }
   ],
   "zones": [
-    { "id": "ZONE-R0-HALL", "niveau": "R0", "nom": "Hall d'accueil", "type": "hall", "effectif_max": 4, "detection_presence": false, "rect": [0, 0, 12, 18] },
-    { "id": "ZONE-R0-TECH", "niveau": "R0", "nom": "Local technique", "type": "technique", "effectif_max": 0, "detection_presence": false, "rect": [12, 0, 6, 8] },
-    { "id": "ZONE-R0-REU", "niveau": "R0", "nom": "Salle de réunion R0", "type": "reunion", "effectif_max": 10, "detection_presence": true, "rect": [18, 0, 12, 8] },
-    { "id": "ZONE-R0-CAFE", "niveau": "R0", "nom": "Cafétéria", "type": "open_space", "amenagement": "cafeteria", "effectif_max": 15, "detection_presence": true, "rect": [12, 8, 18, 10] },
-
-    { "id": "ZONE-R1-OPEN-A", "niveau": "R1", "nom": "Open space A", "type": "open_space", "effectif_max": 20, "detection_presence": true, "rect": [0, 0, 15, 12], "preuves": ["PRV-DPO-01"] },
-    { "id": "ZONE-R1-OPEN-B", "niveau": "R1", "nom": "Open space B", "type": "open_space", "effectif_max": 16, "detection_presence": true, "rect": [15, 0, 15, 12] },
-    { "id": "ZONE-R1-BUR-01", "niveau": "R1", "nom": "Bureau individuel 1", "type": "bureau", "effectif_max": 1, "detection_presence": false, "rect": [0, 12, 5, 6], "preuves": ["PRV-DPO-01", "PRV-VERBATIM-SOPHIE"] },
-    { "id": "ZONE-R1-BUR-02", "niveau": "R1", "nom": "Bureau individuel 2", "type": "bureau", "effectif_max": 1, "detection_presence": false, "rect": [5, 12, 5, 6] },
-    { "id": "ZONE-R1-REU", "niveau": "R1", "nom": "Salle de réunion R1", "type": "reunion", "effectif_max": 8, "detection_presence": true, "rect": [10, 12, 10, 6] },
-    { "id": "ZONE-R1-TECH", "niveau": "R1", "nom": "Local technique R1", "type": "technique", "effectif_max": 0, "detection_presence": false, "rect": [20, 12, 10, 6] },
-
-    { "id": "ZONE-R2-OPEN-C", "niveau": "R2", "nom": "Open space C", "type": "open_space", "effectif_max": 24, "detection_presence": true, "rect": [0, 0, 18, 12] },
-    { "id": "ZONE-R2-DIR", "niveau": "R2", "nom": "Bureau de direction", "type": "bureau", "effectif_max": 1, "detection_presence": false, "rect": [18, 0, 6, 6] },
-    { "id": "ZONE-R2-RH", "niveau": "R2", "nom": "Bureau RH (2 personnes)", "type": "bureau", "effectif_max": 2, "detection_presence": true, "rect": [24, 0, 6, 6], "preuves": ["PRV-DPO-01"] },
-    { "id": "ZONE-R2-REU", "niveau": "R2", "nom": "Salle de réunion R2", "type": "reunion", "effectif_max": 12, "detection_presence": true, "rect": [18, 6, 12, 6] },
-    { "id": "ZONE-R2-SRV", "niveau": "R2", "nom": "Local serveur", "type": "technique", "effectif_max": 0, "detection_presence": false, "rect": [0, 12, 10, 6] },
-    { "id": "ZONE-R2-CIRC", "niveau": "R2", "nom": "Circulation", "type": "circulation", "effectif_max": 0, "detection_presence": false, "rect": [10, 12, 20, 6] }
+    {
+      "id": "ZONE-SS2-N2P-SS2",
+      "niveau": "SS2",
+      "nom": "Parc de stationnement (N2P-SS2)",
+      "type": "parking",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        2.03,
+        2.21,
+        93.37,
+        17.7
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2P-S2-03",
+      "niveau": "SS2",
+      "nom": "Local technique desenfumage (N2P-S2-03)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        28.66,
+        12.81,
+        6.03,
+        4.96
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2A-S2-14",
+      "niveau": "SS2",
+      "nom": "Rapports tech non CD (N2A-S2-14)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        40.2,
+        19.9,
+        10.48,
+        10.13
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2A-S2-13",
+      "niveau": "SS2",
+      "nom": "Rapports tech non CD (N2A-S2-13)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        50.88,
+        19.9,
+        3.37,
+        10.13
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2A-S2-12",
+      "niveau": "SS2",
+      "nom": "Proceedings congres theses rap (N2A-S2-12)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        54.45,
+        19.9,
+        4.37,
+        10.13
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2A-S2-11",
+      "niveau": "SS2",
+      "nom": "Proceedings congres theses rap (N2A-S2-11)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        59.02,
+        19.9,
+        7.93,
+        10.13
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2A-S2-10",
+      "niveau": "SS2",
+      "nom": "Publi et doc Onera (N2A-S2-10)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        67.15,
+        19.9,
+        7.94,
+        10.13
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2A-S2-09",
+      "niveau": "SS2",
+      "nom": "Archives mortes Meudon (N2A-S2-09)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        75.29,
+        19.9,
+        9.64,
+        10.13
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2P-SS1",
+      "niveau": "SS1",
+      "nom": "Parc de stationnement (N2P-SS1)",
+      "type": "parking",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        0.0,
+        2.21,
+        95.4,
+        17.5
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2P-S1-01",
+      "niveau": "SS1",
+      "nom": "Local technique desenfumage tunnel (N2P-S1-01)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        0.0,
+        3.82,
+        1.78,
+        4.77
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2P-S1-05",
+      "niveau": "SS1",
+      "nom": "Local technique desenfumage (N2P-S1-05)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        28.66,
+        12.81,
+        6.03,
+        4.96
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-23",
+      "niveau": "SS1",
+      "nom": "Local technique eau fr sup (N2A-S1-23)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        40.2,
+        20.71,
+        2.43,
+        6.11
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-22",
+      "niveau": "SS1",
+      "nom": "RGI 02 (N2A-S1-22)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        40.2,
+        27.01,
+        6.82,
+        3.01
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-21",
+      "niveau": "SS1",
+      "nom": "Local technique sup RIA (N2A-S1-21)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        44.44,
+        20.71,
+        2.57,
+        6.11
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-20",
+      "niveau": "SS1",
+      "nom": "Périodiques 2 (N2A-S1-20)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        47.21,
+        19.9,
+        3.47,
+        10.13
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-19",
+      "niveau": "SS1",
+      "nom": "Périodiques 2 (N2A-S1-19)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        50.88,
+        19.9,
+        7.94,
+        10.13
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-18",
+      "niveau": "SS1",
+      "nom": "Périodiques 1 (N2A-S1-18)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        59.02,
+        19.9,
+        7.93,
+        10.13
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-17",
+      "niveau": "SS1",
+      "nom": "Périodiques 1 (N2A-S1-17)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        67.15,
+        19.9,
+        7.94,
+        10.13
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-16",
+      "niveau": "SS1",
+      "nom": "Rapports tech CD (N2A-S1-16)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        75.29,
+        19.9,
+        2.71,
+        10.13
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-15",
+      "niveau": "SS1",
+      "nom": "TGS (N2A-S1-15)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        78.2,
+        19.9,
+        2.82,
+        2.79
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-14",
+      "niveau": "SS1",
+      "nom": "Onduleurs (N2A-S1-14)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        78.2,
+        22.89,
+        2.82,
+        3.42
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-13",
+      "niveau": "SS1",
+      "nom": "Local HT (N2A-S1-13)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        78.2,
+        26.51,
+        4.94,
+        3.52
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-12",
+      "niveau": "SS1",
+      "nom": "TGBT (N2A-S1-12)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        83.34,
+        19.91,
+        3.53,
+        10.12
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2P-S1-02",
+      "niveau": "SS1",
+      "nom": "Atelier DCPA (N2P-S1-02)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        85.64,
+        2.21,
+        3.03,
+        4.93
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-10",
+      "niveau": "SS1",
+      "nom": "Archives définitives DIST (N2A-S1-10)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        88.76,
+        19.91,
+        6.54,
+        10.12
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-09",
+      "niveau": "SS1",
+      "nom": "Archives définitives (N2A-S1-09)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        90.55,
+        19.91,
+        4.75,
+        5.07
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-08",
+      "niveau": "SS1",
+      "nom": "Archives définitives (N2A-S1-08)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        95.5,
+        19.91,
+        5.25,
+        10.12
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-07",
+      "niveau": "SS1",
+      "nom": "RGI 01 (N2A-S1-07)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        97.0,
+        18.14,
+        3.75,
+        6.84
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-49",
+      "niveau": "R0",
+      "nom": "DSPI (N2-00-49)",
+      "type": "bureau",
+      "effectif_max": 2,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        2.48,
+        6.75,
+        4.78
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-48",
+      "niveau": "R0",
+      "nom": "DSPI (N2-00-48)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        5.58,
+        5.4,
+        4.05
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-47",
+      "niveau": "R0",
+      "nom": "DSPI (N2-00-47)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        9.63,
+        4.1,
+        2.7
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-46",
+      "niveau": "R0",
+      "nom": "DSPI (N2-00-46)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        12.33,
+        4.1,
+        2.7
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-45",
+      "niveau": "R0",
+      "nom": "Salle de réunion 4 places (N2-00-45)",
+      "type": "reunion",
+      "effectif_max": 4,
+      "detection_presence": true,
+      "rect": [
+        2.0,
+        15.13,
+        4.0,
+        4.51
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-44",
+      "niveau": "R0",
+      "nom": "DSPI (N2-00-44)",
+      "type": "bureau",
+      "effectif_max": 2,
+      "detection_presence": false,
+      "rect": [
+        6.1,
+        15.08,
+        5.35,
+        4.58
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-50",
+      "niveau": "R0",
+      "nom": "DSPI (N2-00-50)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        8.75,
+        2.48,
+        2.7,
+        4.78
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-53-O",
+      "niveau": "R0",
+      "nom": "Bureau DSPI (N2-00-53-O)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        9.05,
+        8.93,
+        2.85,
+        3.95
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-51",
+      "niveau": "R0",
+      "nom": "DSPI (N2-00-51)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        11.45,
+        2.48,
+        2.65,
+        4.78
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-43",
+      "niveau": "R0",
+      "nom": "DSPI (N2-00-43)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        11.45,
+        15.08,
+        4.09,
+        4.59
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-53-E",
+      "niveau": "R0",
+      "nom": "Bureau DSPI (N2-00-53-E)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        12.0,
+        8.97,
+        2.05,
+        4.42
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-54-N",
+      "niveau": "R0",
+      "nom": "Rangements EPI (N2-00-54-N)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        14.15,
+        8.97,
+        4.11,
+        2.17
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-54-S",
+      "niveau": "R0",
+      "nom": "Repro traceur (N2-00-54-S)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        14.15,
+        11.24,
+        4.11,
+        2.15
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-52",
+      "niveau": "R0",
+      "nom": "Salle de réunion 4 places (N2-00-52)",
+      "type": "reunion",
+      "effectif_max": 4,
+      "detection_presence": true,
+      "rect": [
+        14.2,
+        2.48,
+        4.06,
+        4.71
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-68",
+      "niveau": "R0",
+      "nom": "Hall accueil (N2-00-68)",
+      "type": "hall",
+      "effectif_max": 8,
+      "detection_presence": true,
+      "rect": [
+        15.64,
+        2.48,
+        9.0,
+        17.2
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-55",
+      "niveau": "R0",
+      "nom": "Sanitaires F (N2-00-55)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        22.3,
+        8.93,
+        3.59,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-01",
+      "niveau": "R0",
+      "nom": "Bureau (N2-00-01)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        23.74,
+        2.48,
+        2.51,
+        4.75
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-02",
+      "niveau": "R0",
+      "nom": "Bureau stagiaires (N2-00-02)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        26.35,
+        2.49,
+        2.6,
+        4.74
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-56",
+      "niveau": "R0",
+      "nom": "Sanitaires H (N2-00-56)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        26.39,
+        8.93,
+        3.36,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-03",
+      "niveau": "R0",
+      "nom": "Bureau abonnements (N2-00-03)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        29.05,
+        2.49,
+        2.6,
+        4.74
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-57",
+      "niveau": "R0",
+      "nom": "Douches (N2-00-57)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        29.85,
+        10.48,
+        1.53,
+        2.95
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-40",
+      "niveau": "R0",
+      "nom": "Cafétéria et espace documentation (N2-00-40)",
+      "type": "open_space",
+      "effectif_max": 17,
+      "detection_presence": true,
+      "rect": [
+        30.4,
+        15.13,
+        13.38,
+        4.55
+      ],
+      "amenagement": "cafeteria"
+    },
+    {
+      "id": "ZONE-R0-N2-00-04",
+      "niveau": "R0",
+      "nom": "Bureau publications (N2-00-04)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        31.75,
+        2.5,
+        2.6,
+        4.73
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-58",
+      "niveau": "R0",
+      "nom": "CFA (N2-00-58)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        32.2,
+        9.65,
+        2.35,
+        3.78
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-05",
+      "niveau": "R0",
+      "nom": "Bureau congres (N2-00-05)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        34.45,
+        2.51,
+        2.6,
+        4.72
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-59",
+      "niveau": "R0",
+      "nom": "Local reprographiegraphie cour fournit (N2-00-59)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        34.65,
+        8.93,
+        2.1,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-60",
+      "niveau": "R0",
+      "nom": "Salle de réunion 8 10 places (N2-00-60)",
+      "type": "reunion",
+      "effectif_max": 10,
+      "detection_presence": true,
+      "rect": [
+        36.85,
+        8.93,
+        9.7,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-06",
+      "niveau": "R0",
+      "nom": "Bureau congres (N2-00-06)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        37.15,
+        2.51,
+        2.6,
+        4.72
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-07",
+      "niveau": "R0",
+      "nom": "Secrétariat (N2-00-07)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        39.85,
+        2.52,
+        2.78,
+        4.71
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-08",
+      "niveau": "R0",
+      "nom": "Bureau direction (N2-00-08)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        42.73,
+        2.52,
+        3.77,
+        4.7
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-39",
+      "niveau": "R0",
+      "nom": "Bureau DSPI (N2-00-39)",
+      "type": "bureau",
+      "effectif_max": 2,
+      "detection_presence": false,
+      "rect": [
+        43.92,
+        15.13,
+        5.28,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-09",
+      "niveau": "R0",
+      "nom": "Bureau adjoint info (N2-00-09)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        46.6,
+        2.53,
+        3.95,
+        4.69
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-22",
+      "niveau": "R0",
+      "nom": "Salle traceur (N2-00-22)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        46.65,
+        8.93,
+        2.59,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-21",
+      "niveau": "R0",
+      "nom": "Salle copieur DR (N2-00-21)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        49.24,
+        8.93,
+        11.7,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-38",
+      "niveau": "R0",
+      "nom": "Zone int tech (N2-00-38)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        49.3,
+        15.13,
+        2.15,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-10",
+      "niveau": "R0",
+      "nom": "Bureau gestion (N2-00-10)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        50.65,
+        2.54,
+        2.6,
+        4.68
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-37",
+      "niveau": "R0",
+      "nom": "Zone petit mat de rech (N2-00-37)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        51.45,
+        15.13,
+        3.25,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-11",
+      "niveau": "R0",
+      "nom": "Bureau GED (N2-00-11)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        53.35,
+        2.55,
+        2.6,
+        4.68
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-36",
+      "niveau": "R0",
+      "nom": "Stock gros mat de reserve (N2-00-36)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        54.7,
+        15.13,
+        2.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-12",
+      "niveau": "R0",
+      "nom": "Bureau rapports tech (N2-00-12)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        56.05,
+        2.56,
+        2.6,
+        4.67
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-33",
+      "niveau": "R0",
+      "nom": "Zone de depot (N2-00-33)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        57.65,
+        15.13,
+        3.2,
+        1.7
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-34",
+      "niveau": "R0",
+      "nom": "Zone quarantaine (N2-00-34)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        57.65,
+        16.83,
+        3.2,
+        1.8
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-13",
+      "niveau": "R0",
+      "nom": "Bureau hyper arch (N2-00-13)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        58.75,
+        2.56,
+        2.6,
+        4.66
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-63",
+      "niveau": "R0",
+      "nom": "SSI (N2-00-63)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        58.94,
+        11.43,
+        2.0,
+        2.0
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-32",
+      "niveau": "R0",
+      "nom": "Zone de stock mat Val (N2-00-32)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        60.85,
+        15.13,
+        2.9,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-65",
+      "niveau": "R0",
+      "nom": "Salle CD SD (N2-00-65)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        61.04,
+        8.93,
+        5.86,
+        2.55
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-64",
+      "niveau": "R0",
+      "nom": "Stock m op sec (N2-00-64)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        61.04,
+        11.58,
+        3.21,
+        1.85
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-14",
+      "niveau": "R0",
+      "nom": "Bureau documentaliste (N2-00-14)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        61.45,
+        2.57,
+        2.6,
+        4.66
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-15",
+      "niveau": "R0",
+      "nom": "Bureau focus (N2-00-15)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        64.15,
+        2.58,
+        2.6,
+        4.65
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-66",
+      "niveau": "R0",
+      "nom": "Stock DEEE (N2-00-66)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        64.25,
+        11.58,
+        2.65,
+        1.85
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-16",
+      "niveau": "R0",
+      "nom": "Bureau agents impr (N2-00-16)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        66.85,
+        2.58,
+        3.95,
+        4.64
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-62",
+      "niveau": "R0",
+      "nom": "Stockage papier conso (N2-00-62)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        69.69,
+        8.83,
+        18.71,
+        2.3
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-28",
+      "niveau": "R0",
+      "nom": "Zone de stock mat neuf (N2-00-28)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        69.69,
+        11.23,
+        12.26,
+        2.3
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-17",
+      "niveau": "R0",
+      "nom": "Salle copieur classique (N2-00-17)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        70.9,
+        2.59,
+        8.0,
+        4.73
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-26",
+      "niveau": "R0",
+      "nom": "Zone de preparation (N2-00-26)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        77.65,
+        15.03,
+        3.23,
+        4.65
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-18",
+      "niveau": "R0",
+      "nom": "Façonnage 1 (N2-00-18)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        79.0,
+        2.61,
+        6.4,
+        4.61
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-25",
+      "niveau": "R0",
+      "nom": "Zone de reception (N2-00-25)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        80.88,
+        15.03,
+        7.52,
+        4.65
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-24",
+      "niveau": "R0",
+      "nom": "Zone de depart (N2-00-24)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        81.95,
+        11.23,
+        4.7,
+        2.3
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-19",
+      "niveau": "R0",
+      "nom": "Façonnage 2 (N2-00-19)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        85.5,
+        2.67,
+        2.9,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-23",
+      "niveau": "R0",
+      "nom": "Stock dech emball (N2-00-23)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        86.65,
+        11.23,
+        1.75,
+        2.3
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-08",
+      "niveau": "R1",
+      "nom": "Direction DICO DCPA (N2-01-08)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        2.68,
+        6.7,
+        4.55
+      ],
+      "preuves": [
+        "PRV-DPO-01",
+        "PRV-VERBATIM-SOPHIE"
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-07",
+      "niveau": "R1",
+      "nom": "Bureau Dico G (N2-01-07)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        7.33,
+        5.35,
+        2.25
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-06",
+      "niveau": "R1",
+      "nom": "Bureau Dico G (N2-01-06)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        9.68,
+        5.35,
+        3.95
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-05",
+      "niveau": "R1",
+      "nom": "Bureau Dico G (N2-01-05)",
+      "type": "bureau",
+      "effectif_max": 2,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        13.73,
+        5.35,
+        5.95
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-04",
+      "niveau": "R1",
+      "nom": "Bureau Dico G (N2-01-04)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        6.1,
+        15.13,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-09",
+      "niveau": "R1",
+      "nom": "Bureau Dico G (N2-01-09)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        8.8,
+        2.68,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-58",
+      "niveau": "R1",
+      "nom": "Archives Dico G (N2-01-58)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        9.05,
+        8.93,
+        6.75,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-03",
+      "niveau": "R1",
+      "nom": "Bureau Dico G (N2-01-03)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        10.15,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-10",
+      "niveau": "R1",
+      "nom": "Bureau Dico G (N2-01-10)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        12.85,
+        2.68,
+        3.92,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-02",
+      "niveau": "R1",
+      "nom": "Bureau Dico G (N2-01-02)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        12.85,
+        15.13,
+        2.69,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-59",
+      "niveau": "R1",
+      "nom": "Local reprographiegraphie (N2-01-59)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        15.9,
+        8.93,
+        2.4,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-11",
+      "niveau": "R1",
+      "nom": "Bureau Dico G (N2-01-11)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        16.87,
+        2.68,
+        2.62,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-12",
+      "niveau": "R1",
+      "nom": "Bureau DJ (N2-01-12)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        19.6,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-13",
+      "niveau": "R1",
+      "nom": "Bureau DJ (N2-01-13)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        22.3,
+        2.68,
+        2.58,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-62",
+      "niveau": "R1",
+      "nom": "Sanitaires F (N2-01-62)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        22.3,
+        8.93,
+        3.59,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-14",
+      "niveau": "R1",
+      "nom": "Bureau DJ (N2-01-14)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        24.98,
+        2.68,
+        2.62,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-63",
+      "niveau": "R1",
+      "nom": "Sanitaires H (N2-01-63)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        26.39,
+        8.93,
+        3.36,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-15",
+      "niveau": "R1",
+      "nom": "Bureau Dsdc (N2-01-15)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        27.7,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-65",
+      "niveau": "R1",
+      "nom": "Douches (N2-01-65)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        29.85,
+        10.48,
+        1.53,
+        2.95
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-16",
+      "niveau": "R1",
+      "nom": "Direction DSDC (N2-01-16)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        30.4,
+        2.68,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-54",
+      "niveau": "R1",
+      "nom": "Direction DJ (N2-01-54)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        30.4,
+        15.13,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-66",
+      "niveau": "R1",
+      "nom": "CFA (N2-01-66)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        32.21,
+        9.65,
+        2.34,
+        3.78
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-17",
+      "niveau": "R1",
+      "nom": "Bureau Dsdc (N2-01-17)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        34.45,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-53",
+      "niveau": "R1",
+      "nom": "Bureau DJ (N2-01-53)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        34.45,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-67",
+      "niveau": "R1",
+      "nom": "Archives vivantes (N2-01-67)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        34.65,
+        8.93,
+        9.7,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-18",
+      "niveau": "R1",
+      "nom": "Bureau Dsdc (N2-01-18)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        37.15,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-52",
+      "niveau": "R1",
+      "nom": "Bureau DJ (N2-01-52)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        37.15,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-19",
+      "niveau": "R1",
+      "nom": "Bureau Dsdc (N2-01-19)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        39.85,
+        2.68,
+        2.66,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-51",
+      "niveau": "R1",
+      "nom": "Bureau DJ (N2-01-51)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        39.85,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-20",
+      "niveau": "R1",
+      "nom": "Bureau dispo (N2-01-20)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        42.55,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-50",
+      "niveau": "R1",
+      "nom": "Bureau acheteur (N2-01-50)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        42.55,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-68",
+      "niveau": "R1",
+      "nom": "Salle de réunion mutualisable crise 30 places (N2-01-68)",
+      "type": "reunion",
+      "effectif_max": 30,
+      "detection_presence": true,
+      "rect": [
+        44.45,
+        8.93,
+        12.4,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-21",
+      "niveau": "R1",
+      "nom": "Bureau achet polyvalent (N2-01-21)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        45.25,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-49",
+      "niveau": "R1",
+      "nom": "Bureau acheteur (N2-01-49)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        45.25,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-22",
+      "niveau": "R1",
+      "nom": "Bureau achet polyvalent (N2-01-22)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        47.95,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-48",
+      "niveau": "R1",
+      "nom": "Bureau acheteur (N2-01-48)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        47.95,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-23",
+      "niveau": "R1",
+      "nom": "Bureau achet polyvalent (N2-01-23)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        50.65,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-47",
+      "niveau": "R1",
+      "nom": "Bureau acheteur (N2-01-47)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        50.65,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-24",
+      "niveau": "R1",
+      "nom": "Bureau ach et prest intel (N2-01-24)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        53.35,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-46",
+      "niveau": "R1",
+      "nom": "Bureau ach electro opt (N2-01-46)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        53.35,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-25",
+      "niveau": "R1",
+      "nom": "Bureau ach et prest intel (N2-01-25)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        56.05,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-45",
+      "niveau": "R1",
+      "nom": "Bureau ach electro opt (N2-01-45)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        56.05,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-69",
+      "niveau": "R1",
+      "nom": "Archives vivantes et definitives DA (N2-01-69)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        56.96,
+        8.93,
+        9.95,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-26",
+      "niveau": "R1",
+      "nom": "Bureau ach et prest intel (N2-01-26)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        58.76,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-44",
+      "niveau": "R1",
+      "nom": "Bureau ach electro opt (N2-01-44)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        58.76,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-27",
+      "niveau": "R1",
+      "nom": "Bureau ach et prest intel (N2-01-27)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        61.45,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-43",
+      "niveau": "R1",
+      "nom": "Bureau achet polyvalent (N2-01-43)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        61.45,
+        15.13,
+        2.29,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-28",
+      "niveau": "R1",
+      "nom": "Bureau chef de serv Sca (N2-01-28)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        64.16,
+        2.67,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-29",
+      "niveau": "R1",
+      "nom": "Bureau ach et prest intel (N2-01-29)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        68.21,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-70",
+      "niveau": "R1",
+      "nom": "Local reprographie courrier (N2-01-70)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        69.69,
+        8.93,
+        2.62,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-30",
+      "niveau": "R1",
+      "nom": "Bureau ach et prest intel (N2-01-30)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        70.91,
+        2.67,
+        2.55,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-71",
+      "niveau": "R1",
+      "nom": "Salle de réunion 20 places (N2-01-71)",
+      "type": "reunion",
+      "effectif_max": 20,
+      "detection_presence": true,
+      "rect": [
+        72.41,
+        8.93,
+        8.95,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-31",
+      "niveau": "R1",
+      "nom": "Bureau acheteur (N2-01-31)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        73.56,
+        2.67,
+        2.62,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-32",
+      "niveau": "R1",
+      "nom": "Bureau acheteur trav maint (N2-01-32)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        76.28,
+        2.67,
+        2.62,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-40",
+      "niveau": "R1",
+      "nom": "Bureau chef de serv Scga (N2-01-40)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        77.66,
+        15.13,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-33",
+      "niveau": "R1",
+      "nom": "Bureau gestion Scga (N2-01-33)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        79.01,
+        2.67,
+        2.55,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-34",
+      "niveau": "R1",
+      "nom": "Bureau gestion Scga (N2-01-34)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        81.66,
+        2.67,
+        2.65,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-39",
+      "niveau": "R1",
+      "nom": "Bureau adj direction (N2-01-39)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        81.71,
+        15.13,
+        6.7,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-35",
+      "niveau": "R1",
+      "nom": "Bureau dir des achats (N2-01-35)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        83.06,
+        2.67,
+        5.35,
+        5.75
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-36",
+      "niveau": "R1",
+      "nom": "Secrétariat (N2-01-36)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        83.06,
+        8.53,
+        5.35,
+        2.6
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-37",
+      "niveau": "R1",
+      "nom": "Bureau resp douanes (N2-01-37)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        83.06,
+        11.23,
+        5.35,
+        2.6
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-38",
+      "niveau": "R1",
+      "nom": "Bureau juriste (N2-01-38)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        83.06,
+        13.93,
+        5.35,
+        2.8
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-08",
+      "niveau": "R2",
+      "nom": "Direction DAEF (N2-02-08)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        2.68,
+        6.7,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-07",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-07)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        7.33,
+        5.35,
+        3.6
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-06",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-06)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        11.02,
+        5.35,
+        2.6
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-05",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-05)",
+      "type": "bureau",
+      "effectif_max": 2,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        13.73,
+        5.35,
+        5.95
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-04",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-04)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        7.45,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-09",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-09)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        8.8,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-55",
+      "niveau": "R2",
+      "nom": "Salle de réunion 20 places (N2-02-55)",
+      "type": "reunion",
+      "effectif_max": 20,
+      "detection_presence": true,
+      "rect": [
+        9.05,
+        8.93,
+        9.25,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-03",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-03)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        10.15,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-10",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-10)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        11.5,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-02",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-02)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        12.85,
+        15.13,
+        2.69,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-11",
+      "niveau": "R2",
+      "nom": "Bureau indiv (N2-02-11)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        14.2,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-12",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-12)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        16.9,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-13",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-13)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        19.6,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-14",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-14)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        22.3,
+        2.68,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-57",
+      "niveau": "R2",
+      "nom": "Sanitaires F (N2-02-57)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        22.3,
+        8.93,
+        3.59,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-15",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-15)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        26.35,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-58",
+      "niveau": "R2",
+      "nom": "Sanitaires H (N2-02-58)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        26.39,
+        8.93,
+        3.36,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-16",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-16)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        29.05,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-60",
+      "niveau": "R2",
+      "nom": "Douches (N2-02-60)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        29.85,
+        10.48,
+        1.52,
+        2.95
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-52",
+      "niveau": "R2",
+      "nom": "Bureau indiv (N2-02-52)",
+      "type": "bureau",
+      "effectif_max": 2,
+      "detection_presence": false,
+      "rect": [
+        30.4,
+        15.13,
+        5.3,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-17",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-17)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        31.75,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-61",
+      "niveau": "R2",
+      "nom": "CFA (N2-02-61)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        32.21,
+        9.65,
+        2.34,
+        3.78
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-18",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-18)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        34.45,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-62",
+      "niveau": "R2",
+      "nom": "Local reprographiegraphie cour fournit (N2-02-62)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        34.65,
+        8.93,
+        2.1,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-51",
+      "niveau": "R2",
+      "nom": "Bureau indiv (N2-02-51)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        35.8,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-63",
+      "niveau": "R2",
+      "nom": "Archives stockage (N2-02-63)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        36.85,
+        8.93,
+        8.3,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-19",
+      "niveau": "R2",
+      "nom": "Bureau DAEF (N2-02-19)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        37.15,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-50",
+      "niveau": "R2",
+      "nom": "Bureau indiv (N2-02-50)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        38.5,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-20",
+      "niveau": "R2",
+      "nom": "Bureau CCG (N2-02-20)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        39.85,
+        2.68,
+        2.75,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-49",
+      "niveau": "R2",
+      "nom": "Bureau indiv (N2-02-49)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        41.2,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-21",
+      "niveau": "R2",
+      "nom": "Direction CCG (N2-02-21)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        42.7,
+        2.68,
+        3.8,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-48",
+      "niveau": "R2",
+      "nom": "Bureau indiv (N2-02-48)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        43.9,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-64",
+      "niveau": "R2",
+      "nom": "Salle de réunion 8 places (N2-02-64)",
+      "type": "reunion",
+      "effectif_max": 8,
+      "detection_presence": true,
+      "rect": [
+        45.25,
+        8.93,
+        5.0,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-22",
+      "niveau": "R2",
+      "nom": "Bureau CCG (N2-02-22)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        46.6,
+        2.67,
+        2.55,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-47",
+      "niveau": "R2",
+      "nom": "Bureau SCF (N2-02-47)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        46.6,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-23",
+      "niveau": "R2",
+      "nom": "Bureau SCF (N2-02-23)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        49.25,
+        2.67,
+        2.65,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-46",
+      "niveau": "R2",
+      "nom": "Bureau SCF (N2-02-46)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        49.31,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-65",
+      "niveau": "R2",
+      "nom": "Local reprographiegraphie cour fournit (N2-02-65)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        50.35,
+        8.92,
+        2.4,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-24",
+      "niveau": "R2",
+      "nom": "Bureau SCF (N2-02-24)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        52.0,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-45",
+      "niveau": "R2",
+      "nom": "Bureau SCF (N2-02-45)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        52.0,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-66",
+      "niveau": "R2",
+      "nom": "Archives stockage (N2-02-66)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        52.86,
+        8.92,
+        3.1,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-25",
+      "niveau": "R2",
+      "nom": "Bureau SCC (N2-02-25)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        54.71,
+        2.67,
+        2.55,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-44",
+      "niveau": "R2",
+      "nom": "Bureau SCF (N2-02-44)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        54.71,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-67",
+      "niveau": "R2",
+      "nom": "Archives définitives (N2-02-67)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        56.06,
+        8.92,
+        10.85,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-26",
+      "niveau": "R2",
+      "nom": "Bureau SCC (N2-02-26)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        57.36,
+        2.67,
+        2.65,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-43",
+      "niveau": "R2",
+      "nom": "Bureau SCF (N2-02-43)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        57.4,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-27",
+      "niveau": "R2",
+      "nom": "Bureau dir SCC (N2-02-27)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        60.11,
+        2.67,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-42",
+      "niveau": "R2",
+      "nom": "Bureau dir SCF (N2-02-42)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        60.11,
+        15.13,
+        3.64,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-28",
+      "niveau": "R2",
+      "nom": "Bureau SCC (N2-02-28)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        64.16,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-29",
+      "niveau": "R2",
+      "nom": "Bureau dir adj SCF (N2-02-29)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        66.86,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-30",
+      "niveau": "R2",
+      "nom": "Bureau SCG (N2-02-30)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        69.56,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-68",
+      "niveau": "R2",
+      "nom": "Archives vivantes (N2-02-68)",
+      "type": "stockage",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        69.7,
+        8.93,
+        5.01,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-31",
+      "niveau": "R2",
+      "nom": "Bureau SCG (N2-02-31)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        72.26,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-69",
+      "niveau": "R2",
+      "nom": "Salle de réunion 8 places (N2-02-69)",
+      "type": "reunion",
+      "effectif_max": 8,
+      "detection_presence": true,
+      "rect": [
+        74.81,
+        8.93,
+        4.05,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-32",
+      "niveau": "R2",
+      "nom": "Bureau SCG (N2-02-32)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        74.96,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-33",
+      "niveau": "R2",
+      "nom": "Bureau SEGP (N2-02-33)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        77.66,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-39",
+      "niveau": "R2",
+      "nom": "Bureau qali compt (N2-02-39)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        77.66,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-70",
+      "niveau": "R2",
+      "nom": "Local reprographie courrier (N2-02-70)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        78.96,
+        8.93,
+        2.4,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-34",
+      "niveau": "R2",
+      "nom": "Bureau direction SCG (N2-02-34)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        80.36,
+        2.67,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-38",
+      "niveau": "R2",
+      "nom": "Secrétariat (N2-02-38)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        80.36,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-35",
+      "niveau": "R2",
+      "nom": "Bureau dir serv compt (N2-02-35)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        83.06,
+        2.67,
+        5.35,
+        5.75
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-36",
+      "niveau": "R2",
+      "nom": "Bureau qali compt (N2-02-36)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        83.06,
+        8.53,
+        5.35,
+        3.95
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-37",
+      "niveau": "R2",
+      "nom": "Bureau AC AGEFIP (N2-02-37)",
+      "type": "bureau",
+      "effectif_max": 2,
+      "detection_presence": false,
+      "rect": [
+        83.06,
+        12.58,
+        5.35,
+        7.1
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-06",
+      "niveau": "R3",
+      "nom": "Bureau directeur DSI (N2-03-06)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        2.0,
+        2.68,
+        8.05,
+        6.9
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-05",
+      "niveau": "R3",
+      "nom": "Open space es CAD (N2-03-05)",
+      "type": "open_space",
+      "effectif_max": 5,
+      "detection_presence": true,
+      "rect": [
+        2.0,
+        9.68,
+        8.05,
+        3.95
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-04",
+      "niveau": "R3",
+      "nom": "Open space eq IST INFRA (N2-03-04)",
+      "type": "open_space",
+      "effectif_max": 7,
+      "detection_presence": true,
+      "rect": [
+        2.0,
+        13.73,
+        8.05,
+        5.95
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-07",
+      "niveau": "R3",
+      "nom": "Secrétariat (N2-03-07)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        7.45,
+        2.68,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-03",
+      "niveau": "R3",
+      "nom": "Bureau chef equipe (N2-03-03)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        10.15,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-08",
+      "niveau": "R3",
+      "nom": "Bureau ADO (N2-03-08)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        11.5,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-49",
+      "niveau": "R3",
+      "nom": "Salle projet ISR (N2-03-49)",
+      "type": "reunion",
+      "effectif_max": 12,
+      "detection_presence": true,
+      "rect": [
+        11.75,
+        8.93,
+        6.55,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-02",
+      "niveau": "R3",
+      "nom": "Bureau resp contrat info (N2-03-02)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        12.84,
+        15.13,
+        2.7,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-09",
+      "niveau": "R3",
+      "nom": "Bureau URBA (N2-03-09)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        14.2,
+        2.68,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-10",
+      "niveau": "R3",
+      "nom": "Bureau chef ISR (N2-03-10)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        18.25,
+        2.68,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-11",
+      "niveau": "R3",
+      "nom": "Bureau ISR (N2-03-11)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        22.3,
+        2.68,
+        2.58,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-50",
+      "niveau": "R3",
+      "nom": "Sanitaires F (N2-03-50)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        22.3,
+        8.93,
+        3.59,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-12",
+      "niveau": "R3",
+      "nom": "Bureau ISR (N2-03-12)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        24.98,
+        2.68,
+        3.97,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-51",
+      "niveau": "R3",
+      "nom": "Sanitaires H (N2-03-51)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        26.39,
+        8.93,
+        3.36,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-13",
+      "niveau": "R3",
+      "nom": "Bureau ISR (N2-03-13)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        29.05,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-53",
+      "niveau": "R3",
+      "nom": "Douches (N2-03-53)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        29.85,
+        10.48,
+        1.52,
+        2.95
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-45",
+      "niveau": "R3",
+      "nom": "Bureau ISR (N2-03-45)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        30.4,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-14",
+      "niveau": "R3",
+      "nom": "Bureau ISR (N2-03-14)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        31.75,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-54",
+      "niveau": "R3",
+      "nom": "CFA (N2-03-54)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        32.22,
+        9.65,
+        2.33,
+        3.78
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-44",
+      "niveau": "R3",
+      "nom": "Bureau ISR (N2-03-44)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        33.1,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-15",
+      "niveau": "R3",
+      "nom": "Bureau ISR (N2-03-15)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        34.45,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-55",
+      "niveau": "R3",
+      "nom": "Local menage (N2-03-55)",
+      "type": "sanitaire",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        34.65,
+        8.93,
+        2.9,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-43",
+      "niveau": "R3",
+      "nom": "Bureau ISR (N2-03-43)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        35.8,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-16",
+      "niveau": "R3",
+      "nom": "Bureau ACE (N2-03-16)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        37.15,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-56",
+      "niveau": "R3",
+      "nom": "Local reprographie courrier (N2-03-56)",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        37.65,
+        8.93,
+        2.15,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-42",
+      "niveau": "R3",
+      "nom": "Bureau ISR (N2-03-42)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        38.5,
+        15.13,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-17",
+      "niveau": "R3",
+      "nom": "Bureau chef ACE (N2-03-17)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        39.85,
+        2.68,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-57",
+      "niveau": "R3",
+      "nom": "Bureau admin CD (N2-03-57)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        39.9,
+        8.93,
+        4.45,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-41",
+      "niveau": "R3",
+      "nom": "Bureau ACE (N2-03-41)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        42.55,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-18",
+      "niveau": "R3",
+      "nom": "Bureau ACE (N2-03-18)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        43.9,
+        2.68,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-58",
+      "niveau": "R3",
+      "nom": "Bureau admin CD (N2-03-58)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        44.45,
+        8.93,
+        4.79,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-40",
+      "niveau": "R3",
+      "nom": "Bureau ACE (N2-03-40)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        45.25,
+        15.13,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-19",
+      "niveau": "R3",
+      "nom": "Bureau ACE (N2-03-19)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        46.6,
+        2.67,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-39",
+      "niveau": "R3",
+      "nom": "Bureau ACE (N2-03-39)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        49.31,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-59",
+      "niveau": "R3",
+      "nom": "Salle de réunion 15 places (N2-03-59)",
+      "type": "reunion",
+      "effectif_max": 15,
+      "detection_presence": true,
+      "rect": [
+        49.34,
+        8.92,
+        7.52,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-20",
+      "niveau": "R3",
+      "nom": "Bureau ACE (N2-03-20)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        50.65,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-38",
+      "niveau": "R3",
+      "nom": "Bureau ACE (N2-03-38)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        52.01,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-21",
+      "niveau": "R3",
+      "nom": "Bureau ACE (N2-03-21)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        53.35,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-37",
+      "niveau": "R3",
+      "nom": "Bureau OST (N2-03-37)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        54.71,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-22",
+      "niveau": "R3",
+      "nom": "Bureau ACE (N2-03-22)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        56.06,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-60",
+      "niveau": "R3",
+      "nom": "Salle de réunion 21 places (N2-03-60)",
+      "type": "reunion",
+      "effectif_max": 21,
+      "detection_presence": true,
+      "rect": [
+        56.96,
+        8.92,
+        9.95,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-36",
+      "niveau": "R3",
+      "nom": "Bureau OST (N2-03-36)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        57.41,
+        15.13,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-23",
+      "niveau": "R3",
+      "nom": "Bureau chef OST (N2-03-23)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        58.76,
+        2.67,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-35",
+      "niveau": "R3",
+      "nom": "Bureau OST (N2-03-35)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        60.11,
+        15.13,
+        3.64,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-24",
+      "niveau": "R3",
+      "nom": "Bureau OST (N2-03-24)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        62.81,
+        2.67,
+        2.58,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-25",
+      "niveau": "R3",
+      "nom": "Bureau OST (N2-03-25)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        65.48,
+        2.67,
+        2.62,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-26",
+      "niveau": "R3",
+      "nom": "Bureau OST (N2-03-26)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        68.21,
+        2.67,
+        3.95,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-61",
+      "niveau": "R3",
+      "nom": "Salle projet ACE (N2-03-61)",
+      "type": "reunion",
+      "effectif_max": 8,
+      "detection_presence": true,
+      "rect": [
+        69.7,
+        8.92,
+        4.31,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-27",
+      "niveau": "R3",
+      "nom": "Bureau OST (N2-03-27)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        72.26,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-62",
+      "niveau": "R3",
+      "nom": "Salle projet OST (N2-03-62)",
+      "type": "reunion",
+      "effectif_max": 9,
+      "detection_presence": true,
+      "rect": [
+        74.1,
+        8.92,
+        4.86,
+        4.5
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-28",
+      "niveau": "R3",
+      "nom": "Bureau OST (N2-03-28)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        74.96,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-29",
+      "niveau": "R3",
+      "nom": "Bureau OST (N2-03-29)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        77.66,
+        2.67,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-32",
+      "niveau": "R3",
+      "nom": "Bureau chef IST (N2-03-32)",
+      "type": "bureau",
+      "effectif_max": 1,
+      "detection_presence": false,
+      "rect": [
+        77.66,
+        15.12,
+        2.6,
+        4.55
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-30",
+      "niveau": "R3",
+      "nom": "Open space eq IST PROXI (N2-03-30)",
+      "type": "open_space",
+      "effectif_max": 10,
+      "detection_presence": true,
+      "rect": [
+        80.36,
+        2.67,
+        8.05,
+        8.45
+      ],
+      "preuves": [
+        "PRV-DPO-01"
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-31",
+      "niveau": "R3",
+      "nom": "Open space eq IST PROXI (N2-03-31)",
+      "type": "open_space",
+      "effectif_max": 10,
+      "detection_presence": true,
+      "rect": [
+        80.36,
+        11.22,
+        8.05,
+        8.45
+      ]
+    },
+    {
+      "id": "ZONE-TT-TOITURE-TERRASSE-TECHNIQUE-23228",
+      "niveau": "TT",
+      "nom": "Toiture terrasse technique",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        2.14,
+        2.81,
+        86.13,
+        16.72
+      ]
+    },
+    {
+      "id": "ZONE-TT-TERRASSE-TECHNIQUE-23580",
+      "niveau": "TT",
+      "nom": "Terrasse technique",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        40.05,
+        8.39,
+        12.88,
+        9.31
+      ]
+    },
+    {
+      "id": "ZONE-TT-TERRASSE-TECHNIQUE-23231",
+      "niveau": "TT",
+      "nom": "Terrasse technique",
+      "type": "technique",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        53.31,
+        8.23,
+        6.48,
+        7.32
+      ]
+    },
+    {
+      "id": "ZONE-SS2-CIRCULATION-09069",
+      "niveau": "SS2",
+      "nom": "Circulation",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        13.11,
+        15.36,
+        2.41,
+        4.35
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2P-S2-01",
+      "niveau": "SS2",
+      "nom": "Sas (N2P-S2-01)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        14.59,
+        12.87,
+        5.56,
+        2.02
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2A-S2-01",
+      "niveau": "SS2",
+      "nom": "Circulation (N2A-S2-01)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        22.43,
+        16.62,
+        11.87,
+        2.93
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2A-S2-02",
+      "niveau": "SS2",
+      "nom": "Circulation (N2A-S2-02)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        34.54,
+        18.15,
+        21.1,
+        1.56
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2A-S2-03",
+      "niveau": "SS2",
+      "nom": "Circulation (N2A-S2-03)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        55.8,
+        18.14,
+        16.42,
+        1.56
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2A-S2-16",
+      "niveau": "SS2",
+      "nom": "Circulation (N2A-S2-16)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        67.25,
+        15.37,
+        2.47,
+        2.67
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2P-S2-05",
+      "niveau": "SS2",
+      "nom": "Sas (N2P-S2-05)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        69.92,
+        12.86,
+        5.17,
+        2.17
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2A-S2-05",
+      "niveau": "SS2",
+      "nom": "Circulation (N2A-S2-05)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        72.37,
+        18.14,
+        18.81,
+        1.56
+      ]
+    },
+    {
+      "id": "ZONE-SS2-N2A-S2-08",
+      "niveau": "SS2",
+      "nom": "Circulation (N2A-S2-08)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        85.14,
+        19.9,
+        3.43,
+        10.13
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2P-S1-07",
+      "niveau": "SS1",
+      "nom": "Sas (N2P-S1-07)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        17.06,
+        12.87,
+        3.09,
+        2.02
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-02",
+      "niveau": "SS1",
+      "nom": "Circulation (N2A-S1-02)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        30.62,
+        18.15,
+        25.02,
+        2.36
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-24",
+      "niveau": "SS1",
+      "nom": "Circulation (N2A-S1-24)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        42.83,
+        20.71,
+        1.41,
+        6.11
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-03",
+      "niveau": "SS1",
+      "nom": "Circulation (N2A-S1-03)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        55.8,
+        18.14,
+        16.42,
+        1.56
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-04",
+      "niveau": "SS1",
+      "nom": "Circulation (N2A-S1-04)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        67.0,
+        15.37,
+        2.72,
+        2.67
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2P-S1-03",
+      "niveau": "SS1",
+      "nom": "Sas (N2P-S1-03)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        69.92,
+        12.86,
+        5.17,
+        2.17
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-06",
+      "niveau": "SS1",
+      "nom": "Circulation (N2A-S1-06)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        72.37,
+        18.14,
+        24.44,
+        8.17
+      ]
+    },
+    {
+      "id": "ZONE-SS1-N2A-S1-11",
+      "niveau": "SS1",
+      "nom": "Circulation (N2A-S1-11)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        87.07,
+        19.91,
+        1.5,
+        10.12
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-72",
+      "niveau": "R0",
+      "nom": "Circulation (N2-00-72)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        6.1,
+        7.26,
+        11.3,
+        7.82
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-69",
+      "niveau": "R0",
+      "nom": "Circulation (N2-00-69)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        24.25,
+        7.33,
+        18.46,
+        1.85
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-71",
+      "niveau": "R0",
+      "nom": "Circulation (N2-00-71)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        24.74,
+        12.23,
+        17.97,
+        3.27
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-70",
+      "niveau": "R0",
+      "nom": "Circulation (N2-00-70)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        42.81,
+        7.33,
+        28.04,
+        7.7
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-31",
+      "niveau": "R0",
+      "nom": "Circulation (N2-00-31)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        67.0,
+        15.08,
+        2.45,
+        4.6
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-20",
+      "niveau": "R0",
+      "nom": "DIST circulation interne (N2-00-20)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        70.9,
+        7.33,
+        17.5,
+        1.5
+      ]
+    },
+    {
+      "id": "ZONE-R0-N2-00-27",
+      "niveau": "R0",
+      "nom": "DSI circulation interne (N2-00-27)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        70.95,
+        13.53,
+        17.45,
+        1.5
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-56",
+      "niveau": "R1",
+      "nom": "Circulation (N2-01-56)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        7.45,
+        7.33,
+        35.27,
+        8.18
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-01",
+      "niveau": "R1",
+      "nom": "Circulation (N2-01-01)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        18.4,
+        15.08,
+        3.8,
+        4.6
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-72",
+      "niveau": "R1",
+      "nom": "Circulation (N2-01-72)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        42.81,
+        7.33,
+        40.15,
+        7.7
+      ]
+    },
+    {
+      "id": "ZONE-R1-N2-01-42",
+      "niveau": "R1",
+      "nom": "Circulation (N2-01-42)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        67.0,
+        15.08,
+        2.46,
+        4.6
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-54",
+      "niveau": "R2",
+      "nom": "Circulation (N2-02-54)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        7.45,
+        7.32,
+        35.27,
+        8.18
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-01",
+      "niveau": "R2",
+      "nom": "Circulation (N2-02-01)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        18.4,
+        15.08,
+        3.8,
+        4.6
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-71",
+      "niveau": "R2",
+      "nom": "Circulation (N2-02-71)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        42.81,
+        7.32,
+        40.15,
+        7.7
+      ]
+    },
+    {
+      "id": "ZONE-R2-N2-02-41",
+      "niveau": "R2",
+      "nom": "Circulation (N2-02-41)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        67.0,
+        15.08,
+        2.46,
+        4.6
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-48",
+      "niveau": "R3",
+      "nom": "Circulation (N2-03-48)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        10.15,
+        7.32,
+        32.56,
+        8.18
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-01",
+      "niveau": "R3",
+      "nom": "Circulation (N2-03-01)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        18.4,
+        15.08,
+        3.8,
+        4.6
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-63",
+      "niveau": "R3",
+      "nom": "Circulation (N2-03-63)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        42.81,
+        7.32,
+        37.75,
+        7.7
+      ]
+    },
+    {
+      "id": "ZONE-R3-N2-03-34",
+      "niveau": "R3",
+      "nom": "Circulation (N2-03-34)",
+      "type": "circulation",
+      "effectif_max": 0,
+      "detection_presence": false,
+      "rect": [
+        67.0,
+        15.08,
+        2.46,
+        4.6
+      ]
+    }
   ],
   "ascenseurs": [
-    { "id": "ASC-01", "nom": "Ascenseur 1", "position": [9.95, 12.85], "taille": [1.3, 1.3], "niveaux": ["R0", "R1", "R2"] },
-    { "id": "ASC-02", "nom": "Ascenseur 2", "position": [11.5, 12.85], "taille": [1.3, 1.3], "niveaux": ["R0", "R1", "R2"] }
+    {
+      "id": "ASC-01",
+      "nom": "Ascenseur 01",
+      "position": [
+        16.96,
+        16.35
+      ],
+      "taille": [
+        1.6,
+        1.6
+      ],
+      "niveaux": [
+        "SS2",
+        "SS1",
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "TT"
+      ]
+    },
+    {
+      "id": "ASC-02",
+      "nom": "Ascenseur 02",
+      "position": [
+        16.96,
+        18.59
+      ],
+      "taille": [
+        1.6,
+        1.6
+      ],
+      "niveaux": [
+        "SS2",
+        "SS1",
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "TT"
+      ]
+    },
+    {
+      "id": "ASC-03",
+      "nom": "Ascenseur 03",
+      "position": [
+        65.38,
+        16.5
+      ],
+      "taille": [
+        1.6,
+        1.6
+      ],
+      "niveaux": [
+        "SS2",
+        "SS1",
+        "R0",
+        "R1",
+        "R2",
+        "R3"
+      ]
+    }
   ]
 }

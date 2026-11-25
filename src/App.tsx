@@ -22,7 +22,7 @@ export default function App() {
           <Visite />
           <BandeauErreurs />
           <BandeauConfigPartagee />
-          {r.mentionFictif && <div className="mention-fictif">Entreprise, personnes et données fictives · maquette temporaire</div>}
+          {r.mentionFictif && <div className="mention-fictif">Entreprise, personnes et données fictives · bâtiment issu du fichier IFC de l’équipe Domotique</div>}
         </ZoneDepot>
         {r.panneauDroit && <FicheDetail />}
       </div>

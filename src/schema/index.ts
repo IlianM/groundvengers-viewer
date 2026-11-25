@@ -12,13 +12,15 @@ export const Niveau = z.object({
   nom: z.string(),
   altitude: z.number(), // m, bas de la dalle
   hauteur: z.number(), // m, hauteur d'étage
+  // rectangle qui enveloppe le niveau [x, z, largeur, profondeur] ; par défaut, toute l'emprise du bâtiment
+  emprise: z.tuple([z.number(), z.number(), z.number(), z.number()]).optional(),
 })
 
 export const Zone = z.object({
   id: z.string(),
   niveau: z.string(),
   nom: z.string(),
-  type: z.enum(['open_space', 'bureau', 'reunion', 'hall', 'technique', 'circulation']),
+  type: z.enum(['open_space', 'bureau', 'reunion', 'hall', 'technique', 'circulation', 'sanitaire', 'stockage', 'parking']),
   effectif_max: z.number().int().nonnegative(),
   detection_presence: z.boolean(),
   // rectangle au sol en mètres, dans le repère du bâtiment : [x, z, largeur, profondeur]

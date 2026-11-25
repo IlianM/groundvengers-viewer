@@ -38,7 +38,7 @@ export const Reglages = z.object({
   sensZoom: nombre(1, 0.3, 2.5),
   sensDeplacement: nombre(1, 0.3, 2.5),
   vitesseClavier: nombre(1, 0.4, 3),
-  distanceMax: entier(120, 60, 260),
+  distanceMax: entier(260, 60, 600),
   animations: bool(true),
   vitesseCamera: nombre(1, 0.4, 3),
   // Rendu

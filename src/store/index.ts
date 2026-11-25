@@ -10,7 +10,7 @@ type Vec3 = [number, number, number]
 /** Mètres ajoutés entre deux niveaux en vue éclatée (réglage). */
 export const ecartNiveaux = () => useEtat.getState().reglages.ecartNiveaux
 
-export const CAMERA_DEFAUT = { position: [26, 20, 28] as Vec3, cible: [0, 4, 0] as Vec3 }
+export const CAMERA_DEFAUT = { position: [78, 52, 92] as Vec3, cible: [0, 3, 0] as Vec3 }
 
 type Etat = {
   vue: VueId
@@ -203,8 +203,8 @@ useEtat.subscribe((s, prev) => {
 function recadrer(get: () => Etat, set: (p: Partial<Etat>) => void) {
   const { eclate, eclatePieces, cameraCible: c } = get()
   const [position, cible]: [Vec3, Vec3] = eclatePieces
-    ? [[40, 34, 46], [0, eclate ? 7 : 4, 0]]
-    : eclate ? [[34, 28, 38], [0, 7, 0]] : [CAMERA_DEFAUT.position, CAMERA_DEFAUT.cible]
+    ? [[110, 80, 130], [0, eclate ? 8 : 3, 0]]
+    : eclate ? [[96, 70, 118], [0, 8, 0]] : [CAMERA_DEFAUT.position, CAMERA_DEFAUT.cible]
   set({ cameraCible: { n: c.n + 1, position, cible } })
 }
 

@@ -1,6 +1,7 @@
 // Décor extérieur grossier : herbe, parvis, route, arbres, immeubles au loin.
 // Tout est déterministe (même décor à chaque chargement) et s'active dans Options.
 import { useMemo } from 'react'
+import * as THREE from 'three'
 import { donnees } from '../data'
 import { useEtat } from '../store'
 import { usePalette } from './palette'
@@ -24,23 +25,33 @@ export function Sol() {
   const couleurHerbe = useEtat((s) => s.reglages.couleurHerbe)
   const p = usePalette()
   const marquages = useMemo<Boite[]>(
-    () => Array.from({ length: 25 }, (_, i) => ({ p: [-60 + i * 5, -0.215, ROUTE_Z], s: [2.4, 0.02, 0.18], c: p.marquage })),
+    () => Array.from({ length: 50 }, (_, i) => ({ p: [-125 + i * 5, -0.215, ROUTE_Z], s: [2.4, 0.02, 0.18], c: p.marquage })),
     [p.marquage],
   )
+  // le sol est percé à l'emprise du bâtiment : on voit ainsi les sous-sols depuis le dessus
+  const sol = useMemo(() => {
+    const s = new THREE.Shape()
+    s.absarc(0, 0, 170, 0, Math.PI * 2, false)
+    const trou = new THREE.Path()
+    trou.moveTo(-W / 2, -D / 2); trou.lineTo(-W / 2, D / 2); trou.lineTo(W / 2, D / 2); trou.lineTo(W / 2, -D / 2); trou.closePath()
+    s.holes.push(trou)
+    return s
+  }, [])
   return (
     <group>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.25, 0]}>
-        <circleGeometry args={[170, 64]} />
+        <shapeGeometry args={[sol, 48]} />
         <meshStandardMaterial color={herbe ? couleurHerbe ?? p.herbe : p.solNeutre} />
       </mesh>
       {herbe && (
         <>
-          <mesh position={[0, -0.22, 0]}>{/* parvis autour du bâtiment */}
-            <boxGeometry args={[W + 6, 0.06, D + 6]} />
-            <meshStandardMaterial color={p.chemin} />
-          </mesh>
-          <mesh position={[0, -0.22, (D / 2 + 3 + ROUTE_Z - 3) / 2]}>{/* allée vers la route */}
-            <boxGeometry args={[3, 0.06, ROUTE_Z - 3 - (D / 2 + 3)]} />
+          {/* parvis : anneau autour du bâtiment */}
+          <mesh position={[0, -0.22, -(D / 2 + 3)]}><boxGeometry args={[W + 12, 0.06, 6]} /><meshStandardMaterial color={p.chemin} /></mesh>
+          <mesh position={[0, -0.22, D / 2 + 3]}><boxGeometry args={[W + 12, 0.06, 6]} /><meshStandardMaterial color={p.chemin} /></mesh>
+          <mesh position={[-(W / 2 + 3), -0.22, 0]}><boxGeometry args={[6, 0.06, D]} /><meshStandardMaterial color={p.chemin} /></mesh>
+          <mesh position={[W / 2 + 3, -0.22, 0]}><boxGeometry args={[6, 0.06, D]} /><meshStandardMaterial color={p.chemin} /></mesh>
+          <mesh position={[0, -0.22, (D / 2 + 6 + ROUTE_Z - 3) / 2]}>{/* allée vers la route */}
+            <boxGeometry args={[3, 0.06, ROUTE_Z - 3 - (D / 2 + 6)]} />
             <meshStandardMaterial color={p.chemin} />
           </mesh>
           <mesh position={[0, -0.24, ROUTE_Z]}>
@@ -61,12 +72,12 @@ export function Arbres() {
   const tous = useMemo(() => {
     const r = alea(graineDecor)
     const pts: { x: number; z: number; s: number; conifere: boolean; couleur: string }[] = []
-    for (let essais = 0; pts.length < 64 && essais < 3000; essais++) {
+    for (let essais = 0; pts.length < 90 && essais < 4000; essais++) {
       const a = r() * Math.PI * 2
-      const dist = 16 + r() * 52
+      const dist = 30 + r() * 80
       const x = Math.cos(a) * dist
       const z = Math.sin(a) * dist
-      if (Math.abs(x) < W / 2 + 5 && Math.abs(z) < D / 2 + 5) continue // pas sur le parvis
+      if (Math.abs(x) < W / 2 + 8 && Math.abs(z) < D / 2 + 8) continue // pas sur le parvis
       if (Math.abs(z - ROUTE_Z) < 6) continue // pas sur la route
       if (Math.abs(x) < 3 && z > 0) continue // pas sur l'allée
       if (pts.some((q) => Math.hypot(q.x - x, q.z - z) < 4)) continue
@@ -112,7 +123,7 @@ export function ImmeublesLointains() {
     const liste: { x: number; z: number; w: number; d: number; h: number }[] = []
     for (let essais = 0; liste.length < 16 && essais < 600; essais++) {
       const a = r() * Math.PI * 2
-      const dist = 74 + r() * 36
+      const dist = 100 + r() * 50
       const x = Math.cos(a) * dist
       const z = Math.sin(a) * dist
       if (Math.abs(z - ROUTE_Z) < 12) continue

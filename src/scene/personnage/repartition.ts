@@ -2,9 +2,17 @@ import { donnees } from '../../data'
 import type { Siege, Voie } from '../Mobilier'
 import { hash, routesDepuis, type Occupant } from './comportement'
 
-// Trajet des personnes qui traversent le hall : boucle le long des murs, hors banque d'accueil et canapés.
-// (le bord est reste à 8,6 m : au-delà, la cage des ascenseurs)
-export const BOUCLE_HALL: [number, number][] = [[2.2, 17], [2.2, 2], [8.6, 2], [8.6, 17]]
+/** Zone d'accueil du bâtiment (la première de type hall). */
+export const zoneHall = () => donnees.batiment.zones.find((z) => z.type === 'hall')
+
+/** Trajet des personnes qui traversent le hall : boucle le long des murs, hors banque d'accueil et canapés. */
+export function boucleHall(): [number, number][] {
+  const h = zoneHall()
+  if (!h) return [[2.2, 17], [2.2, 2], [8.6, 2], [8.6, 17]]
+  const [x, z, w, d] = h.rect
+  const m = Math.min(1.4, w / 4)
+  return [[x + m, z + d - m], [x + m, z + m], [x + w - m, z + m], [x + w - m, z + d - m]]
+}
 
 /** Qui est où : n personnes par zone, sur des sièges tirés dans un ordre stable (pas de saut quand n varie). */
 export function repartir(sieges: Siege[], voies: Map<string, Voie>, effectifs: Map<string, number>): Occupant[] {
@@ -37,7 +45,7 @@ export function repartir(sieges: Siege[], voies: Map<string, Voie>, effectifs: M
       if (z.type === 'hall') {
         // alternance : une personne traverse le hall, la suivante s'assoit sur un canapé
         if (i % 2 === 1 && si < sofas.length) { poser(sofas[si++], i); continue }
-        liste.push({ cle: `${z.id}#${i}`, zone: z.id, niveau: z.niveau, tache: 'marche', x: 0, z: 0, y: 0, ry: 0, phase: i, boucle: BOUCLE_HALL, decalageDepart: (hash(z.id) % 7) + i * 11 })
+        liste.push({ cle: `${z.id}#${i}`, zone: z.id, niveau: z.niveau, tache: 'marche', x: 0, z: 0, y: 0, ry: 0, phase: i, boucle: boucleHall(), decalageDepart: (hash(z.id) % 7) + i * 11 })
         continue
       }
       if (z.amenagement === 'cafeteria' && i % 5 === 4 && ci < comptoir.length) { poser(comptoir[ci++], i); continue }

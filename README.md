@@ -1,6 +1,6 @@
 # GroundVengers Viewer
 
-Application web du projet **Bâtiment intelligent par minimalisme** (Project Lab). Elle montre le siège fictif GroundVengers en 3D avec sept vues : Architecture, Domotique, Cyber, IA, Données, Occupant et Risques.
+Application web du projet **Bâtiment intelligent par minimalisme** (Project Lab). Elle montre le siège fictif GroundVengers en 3D, d'après le fichier IFC fourni par l'équipe Domotique (voir `docs/IFC.md`), avec sept vues : Architecture, Domotique, Cyber, IA, Données, Occupant et Risques.
 
 Pour découvrir l'appli : le bouton **Visite guidée** (en haut) parcourt toutes les fonctions en lecture automatique ; **Comparer** affiche côte à côte Tout collecter et Minimum vital.
 
